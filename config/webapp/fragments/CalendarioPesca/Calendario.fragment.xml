@@ -1,0 +1,153 @@
+<core:FragmentDefinition
+    xmlns:core="sap.ui.core"
+    xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+    xmlns:unified="sap.ui.unified">
+	<!-- <SinglePlanningCalendar
+		id="SPC1"
+		title= "Calendario"
+		cellPress="onPressCell"
+		appointmentSelect="handleAppointmentSelect"
+		headerDateSelect="handleHeaderDateSelect"
+		startDateChange="handleStartDateChange"
+		startDate="{path: 'DATOSMAESTRO>/startDate'}"
+		stickyMode="All"
+		appointments="{path: 'DATOSMAESTRO>/appointments'}">
+		<actions>
+			<Button id="addNewAppointment" icon="sap-icon://add" type="Emphasized" text="Añadir Temporada" press="handleAppointmentCreate" tooltip="Agrefar nueva temporada" />
+		</actions>
+		<views  >
+			<SinglePlanningCalendarMonthView key="MonthView" title="Mes" />
+		</views>
+		<appointments>
+			<unified:CalendarAppointment
+				title= "{DATOSMAESTRO>CDTPC}"
+				text= "{DATOSMAESTRO>texto}"
+				type= "{DATOSMAESTRO>type}"
+				icon= "{DATOSMAESTRO>icon}"
+				startDate= "{DATOSMAESTRO>startDate}"
+				endDate= "{DATOSMAESTRO>endDate}"
+				color = "{DATOSMAESTRO>color}">
+				<unified:dependents>
+					<core:Fragment
+						fragmentName="com.tasa.configuraciones.fragments.CalendarioPesca.MenuTemporada"
+						type="XML" />
+				</unified:dependents>
+			</unified:CalendarAppointment>
+		</appointments>
+		<specialDates  >
+		
+			<unified:DateTypeRange
+				type="Type08"
+				modelContextChange=""
+				startDate="{DATOSMAESTRO>/startDateMonth}"
+				endDate="{DATOSMAESTRO>/endDateMonth}">
+			</unified:DateTypeRange>
+		</specialDates>
+	</SinglePlanningCalendar> -->
+	<l:DynamicSideContent
+		showSideContent="{path:'detailView>/legendShown'}">
+		<PlanningCalendar
+			id="PC1"
+			rows="{path:'DATOSMAESTRO>/tipoPesca'}"
+			specialDates="{path: 'DATOSMAESTRO>/specialDates', templateShareable: false}"
+			noDataText="Sin temporadas"
+			startDate="{path: 'DATOSMAESTRO>/startDateInit'}"
+			appointmentsVisualization="Filled"
+			appointmentSelect="onPressAppointment"
+			intervalSelect="onPressCalendar"
+			rowHeaderClick="onPressCalendar2"
+			rowSelectionChange="onPressCalendar3"
+			startDateChange="handleStartDateChange"
+			showIntervalHeaders="false"
+			appointmentHeight="Large"
+			legend="legend"
+			stickyHeader="true"
+			builtInViews="OneMonth">
+			<toolbarContent>
+				<Title text="Temporadas" titleStyle="H4"/>
+				<Button 
+					text="Habilitar"
+					visible="{detailView>/visibleButtonEnable}" 
+					icon="sap-icon://edit-outside"
+					type="Emphasized" 
+					press="onEnabledAdd" 
+					tooltip="Habilitar Agregar Temporada"/>
+				<Button 
+					text="Agregar temporada" 
+					id="addButton"
+					type="Emphasized"
+					visible="{detailView>/visibleButtonAdd}" 
+					icon="sap-icon://add" 
+					press="handleAppointmentCreate" 
+					tooltip="Add"/>
+				<ToggleButton pressed="{path: 'detailView>/legendShown'}" icon="sap-icon://legend"/>
+			</toolbarContent>
+			<rows>
+				<PlanningCalendarRow
+					icon="{pic}"
+					title="{DATOSMAESTRO>desc} - {DATOSMAESTRO>name}"
+					appointments="{path : 'DATOSMAESTRO>appointments', templateShareable: false}">
+					<!-- <customData>
+						<core:CustomData key="emp-name" value="{name}" writeToDom="true"/>
+					</customData> -->
+					<appointments>
+						<unified:CalendarAppointment
+							startDate="{DATOSMAESTRO>startDate}"
+							endDate="{DATOSMAESTRO>startDate}"
+							icon="{pic}"
+							title="Especie: {DATOSMAESTRO>DSSPC}"
+							text="Long. Inicio: {DATOSMAESTRO>LNINI} Long. Fin: {DATOSMAESTRO>LGFIN}"
+							type="{DATOSMAESTRO>type}"
+							description="Lat. inicio: {DATOSMAESTRO>LTINI} Lat. fin: {DATOSMAESTRO>LTFIN}"
+							tentative="{tentative}">
+							<unified:dependents>
+								<core:Fragment
+									fragmentName="com.tasa.config.fragments.CalendarioPesca.MenuTemporada"
+									type="XML" />
+							</unified:dependents>
+						</unified:CalendarAppointment>
+					</appointments>
+					<!-- <intervalHeaders>
+						<unified:CalendarAppointment
+							startDate="{DATOSMAESTRO>startDate}"
+							endDate="{DATOSMAESTRO>startDate}"
+							icon="{pic}"
+							title="{DATOSMAESTRO>CDTPC}"
+							text="{DATOSMAESTRO>DSSPC}"
+							type="Type08">
+						</unified:CalendarAppointment>
+					</intervalHeaders> -->
+				</PlanningCalendarRow>
+			</rows>
+			<specialDates >
+				<unified:DateTypeRange
+						startDate="{DATOSMAESTRO>startDate}"
+						endDate="{DATOSMAESTRO>endDate}"
+						type="{DATOSMAESTRO>type}"
+						secondaryType="NonWorking">
+				</unified:DateTypeRange>
+			</specialDates>
+		</PlanningCalendar>
+		<l:sideContent width="500px" >
+			<PlanningCalendarLegend 
+				id="legend"
+				items="{path:'DATOSMAESTRO>/legendItems', templateShareable: true}"
+				standardItems="Today,Selected">
+				<items>
+					<unified:CalendarLegendItem 
+						text="{DATOSMAESTRO>text}" 
+						type="{DATOSMAESTRO>type}" 
+						tooltip="{DATOSMAESTRO>text}" 
+						color="{DATOSMAESTRO>color}"/>
+				</items>
+				<!-- <appointmentItems>
+					<unified:CalendarLegendItem 
+						text="{DATOSMAESTRO>text}" 
+						type="{DATOSMAESTRO}" 
+						tooltip="{DATOSMAESTRO>text}" />
+				</appointmentItems> -->
+			</PlanningCalendarLegend>
+		</l:sideContent>
+	</l:DynamicSideContent>
+</core:FragmentDefinition>

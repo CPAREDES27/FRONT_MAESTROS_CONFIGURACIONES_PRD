@@ -1,0 +1,64 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+    <Table
+        items="{DATOSMAESTRO>/s_ps}"
+        width="auto"
+        class="sapUiNoMargin"
+        selectionChange="onSelectionItemTable"
+        mode="MultiSelect"
+        updateFinished=".onListUpdateFinished"
+        noDataText="{i18n>detailLineItemTableNoDataText}"
+        busyIndicatorDelay="{detailView>/lineItemTableDelay}">
+        <headerToolbar>
+            <Toolbar>
+                <ToolbarSpacer/>
+                <Button
+                    text="Agregar"
+                    press="onEditarEmbarcacion('s_ps')"
+                    icon="sap-icon://add"
+                    type="Ghost"/>
+                <Button
+                    text="ELiminar"
+                    press="onEliminarRegistroE"
+                    icon="sap-icon://delete"
+                    type="Reject"/>
+            </Toolbar>
+        </headerToolbar>
+        <columns>
+            <Column>
+                <Text text="Tipo de pesca"/>
+            </Column>
+            <Column>
+                <Text text="Especie"/>
+            </Column>
+            <Column>
+                <Text text="Indicador de permiso"/>
+            </Column>
+            <Column>
+                <Text text="Editar"/>
+            </Column>
+        </columns>
+        <items>
+            <ColumnListItem >
+                <cells>
+                    <Text text="{
+                        parts:[
+                            {path:'DATOSMAESTRO>CDTPC'}
+                        ],
+                        formatter:'.formatter.tipoPesca'
+                    }"/>
+                    <Text text="{DATOSMAESTRO>DSSPC}"/>
+                    <Text text="{
+                        parts:[
+                            {path:'DATOSMAESTRO>INPMS'}
+                        ],
+                        formatter:'.formatter.indPermiso'
+                    }"/>
+                    <Button text="Editar" icon="sap-icon://edit" type="Ghost" press="onEditarEmbarcacion"/>
+                </cells>
+            </ColumnListItem>
+        </items>
+    
+    </Table>
+</core:FragmentDefinition>

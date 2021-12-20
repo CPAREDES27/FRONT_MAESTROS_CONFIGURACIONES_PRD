@@ -1,0 +1,89 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+    xmlns:f="sap.ui.layout.form">
+    <Dialog
+        icon="sap-icon://detail-view"
+        title="Temporada de pesca"
+		contentWidth="60%">
+        <customHeader>
+        </customHeader>
+        <content>
+            <f:Form >
+				<f:formContainers>
+					<f:FormContainer >
+						<f:formElements>
+							<f:FormElement label="Fecha">
+								<f:fields>
+									<Input	editable="false" 
+											value="{
+												parts: ['DATOSMAESTRO>startDate'],
+												formatter: '.formatter'
+											}" />
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="Tipo de pesca">
+								<f:fields>
+									<Input editable="false" value="{DATOSMAESTRO>CDTPC}" />
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="Especie" >
+								<f:fields>
+									<Input editable="false" value="{DATOSMAESTRO>DSSPC}"/>
+								</f:fields>
+							</f:FormElement>
+                            <f:FormElement label="Latitud de inicio" >
+								<f:fields>
+									<Input editable="false" value="{DATOSMAESTRO>LTINI}" />
+                                    <!-- <Input value="{DATOSMAESTRO>/latInicioMin}" /> -->
+								</f:fields>
+							</f:FormElement>
+                            <f:FormElement label="Longitud de inicio" >
+								<f:fields>
+									<Input editable="false" value="{DATOSMAESTRO>LNINI}"/>
+                                    <!-- <Input value="{DATOSMAESTRO>/longInicioMin}"/> -->
+								</f:fields>
+							</f:FormElement>
+                            <f:FormElement label="Latitud de fin" >
+								<f:fields>
+									<Input editable="false" value="{DATOSMAESTRO>LTFIN}"/>
+                                    <!-- <Input value="{DATOSMAESTRO>/latgFinMin}"/> -->
+								</f:fields>
+							</f:FormElement>
+                            <f:FormElement label="Longitud de fin" >
+								<f:fields>
+									<Input editable="false" value="{DATOSMAESTRO>LGFIN}"/>
+                                    <!-- <Input value="{DATOSMAESTRO>/longFinMin}"/> -->
+								</f:fields>
+							</f:FormElement>
+						</f:formElements>
+					</f:FormContainer>
+				</f:formContainers>
+				<f:layout>
+					<f:ResponsiveGridLayout
+						labelSpanXL="2"
+						labelSpanL="2"
+						labelSpanM="2"
+						labelSpanS="12"
+						adjustLabelSpan="false"
+						emptySpanXL="0"
+						emptySpanL="0"
+						emptySpanM="0"
+						emptySpanS="0"
+						columnsXL="2"
+						columnsL="1"
+						columnsM="1"
+						singleContainerFullSize="false" />
+				</f:layout>
+			</f:Form>
+        </content>
+        <beginButton>
+            <Button text="Eliminar" icon="sap-icon://delete" type="Reject" press="onAppoimentDelete" />
+        </beginButton>
+        <endButton>
+            <Button text="Cerrar" icon="sap-icon://decline" type="Reject" press="closeDialog" />
+        </endButton>
+        <subHeader>
+        </subHeader>
+    </Dialog>
+</core:FragmentDefinition>

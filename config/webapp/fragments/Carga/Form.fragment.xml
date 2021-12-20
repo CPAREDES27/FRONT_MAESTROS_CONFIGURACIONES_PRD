@@ -1,0 +1,68 @@
+<c:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:c="sap.ui.core"
+    xmlns:form="sap.ui.layout.form"
+    xmlns:u="sap.ui.unified">
+    
+    <form:Form 
+        binding="{DATOSMAESTRO>/form}"
+        editable="true">
+        <form:formContainers >
+            <form:FormContainer>
+                <form:formElements>
+                    <form:FormElement label="Tipo">
+                        <form:fields>
+                            <Select
+                                items="{path: 'DATOSMAESTRO>/ZDO_TPCARG'}"
+                                selectedKey="{DATOSMAESTRO>/tipoCarga}" 
+                                forceSelection="false">
+                                <c:Item key="{DATOSMAESTRO>id}" text="{DATOSMAESTRO>descripcion}" />
+                            </Select>
+                        </form:fields>
+                    </form:FormElement>
+                </form:formElements>
+            </form:FormContainer>
+            <form:FormContainer>
+                <form:formElements>
+                    <form:FormElement label="Archivo">
+                        <form:fields>
+                            <u:FileUploader
+                                name="myFileUpload"
+                                uploadUrl="upload/"
+                                tooltip="Subir un archivo desde el servidor local"
+                                change="onCargarArchivo"/>
+                            <!-- <Button
+                                text="Subir"
+                                icon="sap-icon://upload"
+                                press="onUploadFile"
+                                type="Emphasized"/> -->
+                        </form:fields>
+                    </form:FormElement>
+                </form:formElements>
+            </form:FormContainer>
+        </form:formContainers>
+        <form:layout>
+            <form:ResponsiveGridLayout
+                adjustLabelSpan="true"
+                breakpointL="1024"
+                breakpointM="600"
+                breakpointXL="1440"
+                columnsL="2"
+                columnsM="2"
+                columnsXL="-1"
+                emptySpanL="0"
+                emptySpanM="0"
+                emptySpanS="0"
+                emptySpanXL="-1"
+                labelSpanL="4"
+                labelSpanM="2"
+                labelSpanS="12"
+                labelSpanXL="-1"
+                singleContainerFullSize="true">
+                
+            </form:ResponsiveGridLayout>
+        </form:layout>
+    </form:Form>
+
+    
+</c:FragmentDefinition>

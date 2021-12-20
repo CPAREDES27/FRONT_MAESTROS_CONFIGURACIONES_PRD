@@ -1,0 +1,14 @@
+<c:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:c="sap.ui.core"
+    xmlns:form="sap.ui.layout.form">
+    <form:Form title="Datos de selección">
+        <form:layout>
+            <form:ResponsiveGridLayout 
+            columnsXL="1"
+            columnsL="1"
+            columnsM="1"/>
+        </form:layout>
+    </form:Form>
+
+</c:FragmentDefinition>

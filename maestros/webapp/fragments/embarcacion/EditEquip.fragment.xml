@@ -1,0 +1,77 @@
+<c:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:c="sap.ui.core"
+    xmlns:f="sap.ui.layout.form">
+    <Dialog
+        contentHeight="auto"
+        contentWidth="auto"
+        icon="sap-icon://edit"
+        state="Information"
+        title="Equipamiento por embarcación"
+        type="Message">
+        <beginButton>
+            <Button text="Guardar" type="Emphasized" icon="sap-icon://save" press="onGuardarEdit('s_ee')"/>
+        </beginButton>
+        <content>
+            <f:Form binding="{path:'DATOSMAESTRO>/ITEMs_ee'}">
+                <f:formContainers>
+                    <f:FormContainer>
+                        <f:formElements>
+                            <f:FormElement
+                                label="Equipamiento">
+                                <f:fields>
+                                    <Input
+                                        value="{DATOSMAESTRO>CDEQP}" 
+                                        description="{DATOSMAESTRO>DSEQP}"
+                                        editable="{=${DATOSMAESTRO>/typeRegEmb}==='nuevo'?true:false}"
+                                        showSuggestion="true"
+                                        valueState="Information"
+                                        valueStateText="Seleccione equipo"
+                                        showTableSuggestionValueHelp="false"
+			                            suggestionRows="{AYUDABUSQUEDA>/B07}"
+                                        suggestionItemSelected="onSeletedItemSuggest" >
+                                        <suggestionColumns>
+                                                <Column>
+                                                    <Label text="Equipamiento" />
+                                                </Column>
+                                                <Column>
+                                                    <Label text="Cantidad" />
+                                                </Column>
+                                                <Column>
+                                                    <Label text="Unidad medida" />
+                                                </Column>
+                                            </suggestionColumns>
+
+                                            <suggestionRows>
+                                                <ColumnListItem>
+                                                    <Text text="{AYUDABUSQUEDA>CDEQP}" />
+                                                    <Text text="{AYUDABUSQUEDA>DSEQP}" />
+                                                    <Text text="{AYUDABUSQUEDA>DSUMD}" />
+                                                </ColumnListItem>
+                                            </suggestionRows>
+                                    </Input>
+                                </f:fields>
+                            </f:FormElement>
+                            <f:FormElement
+                                label="Cantidad">
+                                <f:fields>
+                                    <Input 
+                                        value="{parts:[{path:'DATOSMAESTRO>CNEPE'}]}"
+                                        description="{path:'DATOSMAESTRO>DSUMD'}"/>
+                                </f:fields>
+                            </f:FormElement>
+                        </f:formElements>
+                    </f:FormContainer>
+                </f:formContainers>
+                <f:layout>
+                    <f:ResponsiveGridLayout 
+                    columnsL="3"
+                    columnsM="2"/>
+                </f:layout>
+            </f:Form>
+        </content>
+        <endButton>
+            <Button text="Cancelar" type="Reject" icon="sap-icon://decline" press="close"/>
+        </endButton>
+    </Dialog>
+</c:FragmentDefinition>

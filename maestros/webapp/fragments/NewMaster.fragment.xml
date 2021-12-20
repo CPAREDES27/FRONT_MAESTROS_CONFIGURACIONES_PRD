@@ -1,0 +1,22 @@
+<core:FragmentDefinition
+    xmlns:core="sap.ui.core"
+    xmlns:form="sap.ui.layout.form"
+    xmlns="sap.m">
+    <Dialog
+        id="idDialogNewMaster"
+        icon="sap-icon://edit"
+        state="Information"
+        title="{/titleDialog} {title}"
+        showHeader="true"
+        contentWidth="80%">
+        <content>
+            
+        </content>
+        <beginButton>
+            <Button text="Guardar" icon="sap-icon://save" type="Success" press="onSaveNew" />
+        </beginButton>
+        <endButton>
+            <Button text="Cancelar" icon="sap-icon://decline" type="Reject" press="close" />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

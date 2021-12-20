@@ -1,0 +1,243 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+    xmlns:form="sap.ui.layout.form">
+    <VBox binding="{DATOSMAESTRO>/LISTACONTROLDEVIVERES/0}">
+        <form:Form>
+            <form:formContainers>
+                <form:FormContainer>
+                    <form:formElements>
+                        <form:FormElement>
+                            <form:label>
+                                <Label text="Código"/>
+                            </form:label>
+                            <form:fields>
+                                <Input value="{DATOSMAESTRO>CLSIS}" editable="false"/>
+                            </form:fields>
+                        </form:FormElement>
+                        <form:FormElement>
+                            <form:label>
+                                <Label text="Indicador de ejecución"/>
+                            </form:label>
+                            <form:fields>
+                                <!-- <RadioButtonGroup columns="2" binding="{DATOSMAESTRO>/INEIF}" >
+                                    <RadioButton text="{DATOSMAESTRO>descripcion}"  />
+                                    <RadioButton text="{DATOSMAESTRO>descripcion}"/>
+                                </RadioButtonGroup> -->
+                                <Select
+                                    selectedKey="{=${DATOSMAESTRO>INEIF}==='Si'?'S':'N'}"
+                                    forceSelection="false" 
+                                    items="{DATOSMAESTRO>/INEIF}">
+                                    <core:Item key="{DATOSMAESTRO>id}" text="{DATOSMAESTRO>descripcion}" />
+                                </Select>
+                            </form:fields>
+                        </form:FormElement>
+                        <form:FormElement>
+                            <form:label>
+                                <Label text="Tolerancia máxima de regularización"/>
+                            </form:label>
+                            <form:fields>
+                                <Input value="{DATOSMAESTRO>TXRGZ}" type="Number"/>
+                            </form:fields>
+                        </form:FormElement>
+                    </form:formElements>
+                    <form:title>
+                    </form:title>
+                    <form:toolbar>
+                    </form:toolbar>
+                </form:FormContainer>
+            </form:formContainers>
+            <form:layout>
+                <form:ResponsiveGridLayout
+                    columnsL="1"
+                    labelSpanL="4"
+                    labelSpanM="3"/>
+            </form:layout>
+            <form:title>
+                <core:Title
+                    icon="sap-icon://edit"
+                    text="Ingresar datos"/>
+            </form:title>
+        </form:Form>
+        <Panel
+			backgroundDesign="Solid"
+			expandable="true"
+			expanded="true"
+			headerText="Texto de Panel">
+			<content>
+				<form:Form>
+                    <form:formContainers>
+                        <form:FormContainer>
+                            <form:formElements>
+                                <form:FormElement>
+                                    <form:fields>
+                                        <Input
+                                            value="{DATOSMAESTRO>BSART}"
+                                            valueState="Information"
+                                            valueStateText="Seleccione clase de doc. para pedido"
+                                            showSuggestion="true"
+                                            showTableSuggestionValueHelp="false"
+                                            suggestionRows="{AYUDABUSQUEDA>/B21}"
+                                            suggestionItemSelected="onSuggestionItemSelected">
+                                            <suggestionColumns>
+                                                <Column>
+                                                    <Label text="Cod. clase de doc."/>
+                                                </Column>
+                                                <Column>
+                                                    <Label text="Descripción"/>
+                                                </Column>
+                                            </suggestionColumns>
+                                            <suggestionRows>
+                                                <ColumnListItem>
+                                                    <cells>
+                                                        <ObjectStatus 
+                                                            text="{AYUDABUSQUEDA>BSART}"
+                                                            state="Information"/>
+                                                        <Text text="{AYUDABUSQUEDA>BATXT}"/>
+                                                    </cells>
+                                                </ColumnListItem>
+                                            </suggestionRows>
+                                        </Input>
+                                    </form:fields>
+                                    <form:label>
+                                        <Label text="Clase de doc. para pedido de compra"/>
+                                    </form:label>
+                                </form:FormElement>
+                                <form:FormElement>
+                                    <form:fields>
+                                        <Input
+                                            value="{DATOSMAESTRO>BLART}"
+                                            valueState="Information"
+                                            valueStateText="Seleccione clase de documento "
+                                            filterSuggests="true"
+                                            maxSuggestionWidth=""
+                                            showSuggestion="true"
+                                            showTableSuggestionValueHelp="false"
+                                            suggestionRows="{AYUDABUSQUEDA>/B22}"
+                                            suggestionItemSelected="onSuggestionItemSelected">
+                                            <suggestionColumns>
+                                                <Column>
+                                                    <Label text="Cod. clase de doc."/>
+                                                </Column>
+                                                <Column>
+                                                    <Label text="Descripción"/>
+                                                </Column>
+                                            </suggestionColumns>
+                                            <suggestionRows>
+                                                <ColumnListItem>
+                                                    <cells>
+                                                        <ObjectStatus 
+                                                            text="{AYUDABUSQUEDA>BLART}"
+                                                            state="Information"/>
+                                                        <Text text="{AYUDABUSQUEDA>LTEXT}"/>
+                                                    </cells>
+                                                </ColumnListItem>
+                                            </suggestionRows>
+                                        </Input>
+                                    </form:fields>
+                                    <form:label>
+                                        <Label text="Clase de documento"/>
+                                    </form:label>
+                                </form:FormElement>
+                                <form:FormElement>
+                                    <form:fields>
+                                        <Select
+                                            selectedKey="{DATOSMAESTRO>EKORG}"
+                                            forceSelection="false" 
+                                            items="{DATOSMAESTRO>/EKORG}">
+                                            <core:Item key="{DATOSMAESTRO>id}" text="{DATOSMAESTRO>descripcion}"/>
+                                        </Select>
+                                    </form:fields>
+                                    <form:label>
+                                        <Label text="Organización de compras"/>
+                                    </form:label>
+                                </form:FormElement>
+                                <form:FormElement>
+                                    <form:fields>
+                                        <Input
+                                            value="{DATOSMAESTRO>EKGRP}"
+                                            valueState="Information"
+                                            valueStateText="Seleccione grupo de compras "
+                                            filterSuggests="true"
+                                            maxSuggestionWidth=""
+                                            showSuggestion="true"
+                                            showTableSuggestionValueHelp="false"
+                                            suggestionRows="{AYUDABUSQUEDA>/B23}"
+                                            suggestionItemSelected="onSuggestionItemSelected">
+                                            <suggestionColumns>
+                                                <Column>
+                                                    <Label text="Cod. grupo de compras"/>
+                                                </Column>
+                                                <Column>
+                                                    <Label text="Descripción"/>
+                                                </Column>
+                                            </suggestionColumns>
+                                            <suggestionRows>
+                                                <ColumnListItem>
+                                                    <cells>
+                                                        <ObjectStatus 
+                                                            text="{AYUDABUSQUEDA>EKGRP}"
+                                                            state="Information"/>
+                                                        <Text text="{AYUDABUSQUEDA>EKNAM}"/>
+                                                    </cells>
+                                                </ColumnListItem>
+                                            </suggestionRows>
+                                        </Input>
+                                    </form:fields>
+                                    <form:label>
+                                        <Label text="Grupo de compras"/>
+                                    </form:label>
+                                </form:FormElement>
+                                <form:FormElement>
+                                    <form:fields>
+                                        <Select
+                                            selectedKey="{DATOSMAESTRO>CDMND}"
+                                            forceSelection="false" 
+                                            items="{DATOSMAESTRO>/CDMND}">
+                                            <core:Item key="{DATOSMAESTRO>id}" text="{DATOSMAESTRO>descripcion}"/>
+                                        </Select>
+                                    </form:fields>
+                                    <form:label>
+                                        <Label text="Moneda"/>
+                                    </form:label>
+                                </form:FormElement>
+                            </form:formElements>
+                            <form:title>
+                            </form:title>
+                            <form:toolbar>
+                            </form:toolbar>
+                        </form:FormContainer>
+                    </form:formContainers>
+                    <form:layout>
+                        <form:ResponsiveGridLayout
+                            adjustLabelSpan="true"
+                            breakpointL="1024"
+                            breakpointM="600"
+                            breakpointXL="1440"
+                            columnsL="2"
+                            columnsM="1"
+                            columnsXL="-1"
+                            emptySpanL="0"
+                            emptySpanM="0"
+                            emptySpanS="0"
+                            emptySpanXL="-1"
+                            labelSpanL="4"
+                            labelSpanM="3"
+                            labelSpanS="12"
+                            labelSpanXL="-1"
+                            singleContainerFullSize="true"/>
+                    </form:layout>
+                    <form:title>
+                    </form:title>
+                    <form:toolbar>
+                    </form:toolbar>
+                </form:Form>
+			</content>
+			<headerToolbar>
+				<OverflowToolbar>
+					<Label  text="Datos de compra"/>
+				</OverflowToolbar>
+			</headerToolbar>
+		</Panel>
+    </VBox>
+</core:FragmentDefinition>

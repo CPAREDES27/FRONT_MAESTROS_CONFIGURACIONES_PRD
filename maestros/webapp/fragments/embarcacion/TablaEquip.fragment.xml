@@ -1,0 +1,57 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+    <Table
+        items="{DATOSMAESTRO>/s_ee}"
+        width="auto"
+        class="sapUiNoMargin"
+        mode="MultiSelect"
+        updateFinished=".onListUpdateFinished"
+        noDataText="{i18n>detailLineItemTableNoDataText}"
+        busyIndicatorDelay="{detailView>/lineItemTableDelay}">
+        <headerToolbar>
+            <Toolbar>
+                <ToolbarSpacer/>
+                <Button
+                    text="Agregar"
+                    press="onEditarEmbarcacion('s_ee')"
+                    icon="sap-icon://add"
+                    type="Ghost"/>
+                <Button
+                    text="ELiminar"
+                    press="onEliminarRegistroE"
+                    icon="sap-icon://delete"
+                    type="Reject"/>
+            </Toolbar>
+        </headerToolbar>
+        <columns>
+            <Column>
+                <Text text="Código"/>
+            </Column>
+            <Column>
+                <Text text="Descripción"/>
+            </Column>
+            <Column>
+                <Text text="Cantidad"/>
+            </Column>
+            <Column>
+                <Text text="Unidad de medida"/>
+            </Column>
+            <Column>
+                <Text text="Editar"/>
+            </Column>
+        </columns>
+        <items>
+            <ColumnListItem >
+                <cells>
+                    <Text text="{DATOSMAESTRO>CDEQP}"/>
+                    <Text text="{DATOSMAESTRO>DSEQP}"/>
+                    <Text text="{DATOSMAESTRO>CNEPE}"/>
+                    <Text text="{DATOSMAESTRO>DSUMD}"/>
+                    <Button text="Editar" icon="sap-icon://edit" type="Ghost" press="onEditarEmbarcacion"/>
+                </cells>
+            </ColumnListItem>
+        </items>
+    
+    </Table>
+</core:FragmentDefinition>

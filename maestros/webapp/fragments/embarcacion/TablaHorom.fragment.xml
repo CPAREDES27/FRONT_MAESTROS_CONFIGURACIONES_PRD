@@ -1,0 +1,57 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+    <Table
+        items="{DATOSMAESTRO>/str_hor}"
+        width="auto"
+        class="sapUiNoMargin"
+        mode="MultiSelect"
+        updateFinished=".onListUpdateFinished"
+        noDataText="{i18n>detailLineItemTableNoDataText}"
+        busyIndicatorDelay="{detailView>/lineItemTableDelay}">
+        <headerToolbar>
+            <Toolbar>
+                <ToolbarSpacer/>
+                <Button
+                    text="Agregar"
+                    press="onEditarEmbarcacion('str_hor')"
+                    icon="sap-icon://add"
+                    type="Ghost"/>
+                <Button
+                    text="ELiminar"
+                    press="onEliminarRegistroE"
+                    icon="sap-icon://delete"
+                    type="Reject"/>
+            </Toolbar>
+        </headerToolbar>
+        <columns>
+            <Column>
+                <Text text="Tipo de horómetro"/>
+            </Column>
+            <Column>
+                <Text text="Punto de medida"/>
+            </Column>
+            <Column>
+                <Text text="Equipo"/>
+            </Column>
+            <Column>
+                <Text text="Estado"/>
+            </Column>
+            <Column>
+                <Text text="Editar"/>
+            </Column>
+        </columns>
+        <items>
+            <ColumnListItem >
+                <cells>
+                    <Text text="{parts:[{path:'DATOSMAESTRO>CDTHR'}],formatter:'.formatter.tipoHorometro'}"/>
+                    <Text text="{DATOSMAESTRO>POINT}"/>
+                    <Text text="{DATOSMAESTRO>EQUNR}"/>
+                    <Text text="{parts:[{path:'DATOSMAESTRO>ESREG'}],formatter:'.formatter.estado'}"/>
+                    <Button text="Editar" icon="sap-icon://edit" type="Ghost" press="onEditarEmbarcacion"/>
+                </cells>
+            </ColumnListItem>
+        </items>
+    
+    </Table>
+</core:FragmentDefinition>

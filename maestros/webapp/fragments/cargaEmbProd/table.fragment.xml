@@ -1,0 +1,95 @@
+<core:FragmentDefinition
+    controllerName="com.tasa.maestros.controller.Fragments"
+    xmlns:core="sap.ui.core"
+    xmlns="sap.m"
+    >
+    <Table
+        width="auto"
+        class="sapUiNoMargin"
+        mode="MultiSelect"
+        fixedLayout="false"
+        updateFinished=".onListUpdateFinished"
+        noDataText="{i18n>detailLineItemTableNoDataText}"
+        busy="{detailView>/busyTable}"
+        busyIndicatorDelay="{detailView>/lineItemTableDelay}">
+        <headerToolbar>
+            <Toolbar>
+                <Title
+                    text="Lista de Registros {=${DATOSMAESTRO>/cantData} > 0 ? '('+${DATOSMAESTRO>/cantData}+')':'(0)'}"
+                    titleStyle="H3"
+                    level="H3"/>
+                <ToolbarSpacer/>
+                <Button
+                    text="Descagar"
+                    press="onDescargar"
+                    icon="sap-icon://download"
+                    type="Emphasized"/>
+                <!-- <Button
+                    press="onExportar"
+                    icon="sap-icon://excel-attachment"
+                    type="Emphasized"/> -->
+                <!-- <Button
+                    id="idBotonNuevo"
+                    text="Nuevo"
+                    visible="{detailView>/visibleBtnNew}"
+                    press="onNuevoMaestro"
+                    icon="sap-icon://add"
+                    type="Ghost"/> -->
+                <SearchField
+                    id="searchFieldDetail"
+                    showRefreshButton="true"
+                    tooltip="{i18n>masterSearchTooltip}"
+                    search=".onSearchFilter"
+                    width="auto">
+                    <layoutData>
+                        <OverflowToolbarLayoutData
+                            minWidth="150px"
+                            maxWidth="240px"
+                            shrinkable="true"
+                            priority="NeverOverflow"/>
+                    </layoutData>
+                </SearchField>
+            </Toolbar>
+        </headerToolbar>
+        <columns>
+            <Column>
+                <Text text="Nombre de Archivo"/>
+            </Column>
+            <Column>
+                <Text text="Fecha"/>
+            </Column>
+            <!-- <Column>
+                <Text text="Descripción"/>
+            </Column>
+            <Column>
+                <Text text="Centro"/>
+            </Column>
+            <Column>
+                <Text text="Almacén externo"/>
+            </Column>
+            <Column>
+                <Text text="Cuenta asociada"/>
+            </Column>
+            <Column>
+                <Text text="Estado de registro"/>
+            </Column>
+            <Column>
+                <Text text="Editar"/>
+            </Column> -->
+        </columns>
+        <items>
+            <ColumnListItem>
+                <cells>
+                    <Text text=""/>
+                    <Text text=""/>
+                    <!-- <Text text=""/>
+                    <Text text=""/>
+                    <Text text=""/>
+                    <Text text=""/>
+                    <Text text=""/>
+                    <Button text="Editar" type="Ghost" press=""/> -->
+                </cells>
+            </ColumnListItem>
+        </items>
+    </Table>
+</core:FragmentDefinition>

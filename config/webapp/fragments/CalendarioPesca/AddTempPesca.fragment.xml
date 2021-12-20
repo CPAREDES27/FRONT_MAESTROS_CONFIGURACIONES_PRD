@@ -1,0 +1,191 @@
+<core:FragmentDefinition xmlns:unified="sap.ui.unified"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+    xmlns:f="sap.ui.layout.form">
+    <Dialog
+        icon="sap-icon://add-folder"
+        title="Añadir temporada de pesca"
+		contentWidth="60%"
+		state="Information">
+        <customHeader>
+        </customHeader>
+        <content>
+            <f:Form >
+				<f:formContainers>
+					<f:FormContainer title="Añadir temporada">
+						<f:formElements>
+							<!-- <f:FormElement label="Fecha">
+								<f:fields>
+									<Input editable="false" value="{DATOSMAESTRO>/fechaActual}" />
+								</f:fields>
+							</f:FormElement> -->
+							<f:FormElement label="Tipo de pesca">
+								<f:fields>
+									<Select	forceSelection="false" 
+											selectedKey="{DATOSMAESTRO>/selectedTipoPesca}"
+											items="{DATOSMAESTRO>/CDTPC}">
+										<core:Item key="{DATOSMAESTRO>id}" text="{DATOSMAESTRO>descripcion}" />
+									</Select>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="Especie"  >
+								<f:fields>
+									<Input	value="{DATOSMAESTRO>/especie}"
+											valueState="Information"
+											valueStateText="Seleccione Especie" 
+											showSuggestion="true"
+											showTableSuggestionValueHelp="false"
+											suggestionRows="{AYUDABUSQUEDA>/B12}"
+											required="true">
+											<suggestionColumns>
+												<Column>
+													<Label text="Cod. especie" />
+												</Column>
+												<Column >
+													<Label text="Descripción" />
+												</Column>
+											</suggestionColumns>
+
+											<suggestionRows>
+												<ColumnListItem>
+													<Label text="{AYUDABUSQUEDA>CDSPC}" />
+													<Label text="{AYUDABUSQUEDA>DSSPC}" />
+												</ColumnListItem>
+											</suggestionRows>
+									</Input>
+								</f:fields>
+							</f:FormElement>
+                            <f:FormElement label="Latitud de inicio" >
+								<f:fields>
+									<Input 	value="{DATOSMAESTRO>/latInicioGrad}"
+											placeholder="desde 004°"
+											change="onInputChange" 
+											maxLength="3" 
+											description="°"
+											fieldWidth="80%"
+											required="true"/>
+									<Input	value="{DATOSMAESTRO>/latInicioMin}"
+											placeholder="desde 00'"
+											change="onInputChange" 
+											maxLength="2"
+											description="'"
+											fieldWidth="80%"
+											required="true"/>
+								</f:fields>
+							</f:FormElement>
+                            <f:FormElement label="Latitud de fin" >
+								<f:fields>
+									<Input value="{DATOSMAESTRO>/latFinGrad}"
+											placeholder="hasta 018°" 
+											change="onInputChange"
+											maxLength="3"
+											description="°"
+											fieldWidth="80%"
+											required="true"/>
+                                    <Input value="{DATOSMAESTRO>/latFinMin}"
+											placeholder="hasta 30'" 
+											change="onInputChange"
+											maxLength="2"  
+											description="'"
+											fieldWidth="80%"
+											required="true"/>
+								</f:fields>
+							</f:FormElement>
+                            <f:FormElement label="Longitud de inicio" >
+								<f:fields>
+									<Input 	value="{DATOSMAESTRO>/longInicioGrad}"
+											placeholder="desde 070°" 
+											change="onInputChange"
+											maxLength="3"
+											description="°"
+											fieldWidth="80%"
+											required="true"/>
+                                    <Input 	value="{DATOSMAESTRO>/longInicioMin}"
+											placeholder="desde 00'" 
+											change="onInputChange"
+											maxLength="2"
+											description="'"
+											fieldWidth="80%"
+											required="true"/>
+								</f:fields>
+							</f:FormElement>
+                            <f:FormElement label="Longitud de fin" >
+								<f:fields>
+									<Input 	value="{DATOSMAESTRO>/longFinGrad}"
+											placeholder="hasta 084°" 
+											change="onInputChange"
+											maxLength="3" 
+											description="°"
+											fieldWidth="80%"
+											required="true"/>
+                                    <Input 	value="{DATOSMAESTRO>/longFinMin}"
+											placeholder="hasta 00'" 
+											change="onInputChange"
+											maxLength="2" 
+											description="'"
+											fieldWidth="80%"
+											required="true"/>
+								</f:fields>
+							</f:FormElement>
+						</f:formElements>
+					</f:FormContainer>
+					<f:FormContainer title="Dias seleccionados">
+						<f:formElements>
+							<f:FormElement>
+								<f:fields>
+									<unified:Calendar 
+										id="calendarDias"
+										singleSelection="false"
+										select="onSelectedDates"
+										
+										showWeekNumbers="false">
+										<unified:disabledDates>
+											<unified:DateRange
+												endDate="{DATOSMAESTRO>/startDateDisabled}"
+												startDate="{DATOSMAESTRO>/endDateDisabled}"/>
+										</unified:disabledDates>
+									</unified:Calendar>
+								</f:fields>
+							</f:FormElement>
+							<!-- <f:FormElement>
+								<f:fields>
+									<List
+											id="selectedDatesList"
+											class="labelMarginLeft"
+											noDataText="No Dates Selected"
+											headerText="Días seleccionados"
+											items="{path: 'DATOSMAESTRO>/selectedDates'}">
+										<StandardListItem
+												title="{DATOSMAESTRO>Date}" />
+									</List>
+								</f:fields>
+							</f:FormElement> -->
+						</f:formElements>
+					</f:FormContainer>
+				</f:formContainers>
+				<f:layout>
+					<f:ResponsiveGridLayout
+						labelSpanXL="2"
+						labelSpanL="3"
+						labelSpanM="4"
+						labelSpanS="12"
+						adjustLabelSpan="false"
+						emptySpanXL="0"
+						emptySpanL="0"
+						emptySpanM="0"
+						emptySpanS="0"
+						columnsXL="2"
+						columnsL="2"
+						columnsM="2"
+						singleContainerFullSize="false" />
+				</f:layout>
+			</f:Form>
+        </content>
+        <beginButton>
+            <Button text="Guardar" icon="sap-icon://save" type="Emphasized" press="onSaveTemp" />
+        </beginButton>
+        <endButton>
+            <Button text="Cerrar" icon="sap-icon://decline" type="Reject" press="closeDialog" />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

@@ -1,0 +1,87 @@
+<c:FragmentDefinition
+    controllerName = "com.tasa.maestros.controller.embarcaciones.embarcaciones"
+	xmlns="sap.m"
+	xmlns:c="sap.ui.core"
+    xmlns:f="sap.ui.layout.form">
+    <Dialog
+        contentHeight="auto"
+        contentWidth="auto"
+        icon="sap-icon://edit"
+        state="Information"
+        title="Permisos por especie"
+        type="Message">
+        <beginButton>
+            <Button text="Guardar" type="Emphasized" icon="sap-icon://save" press="onGuardarEdit('s_ps')"/>
+        </beginButton>
+        <content>
+            <f:Form binding="{DATOSMAESTRO>/ITEMs_ps}" >
+                <f:formContainers>
+                    <f:FormContainer>
+                        <f:formElements>
+                            <f:FormElement
+                                label="Tipo de pesca">
+                                <f:fields>
+                                    <Select selectedKey="{DATOSMAESTRO>CDTPC}"
+                                            forceSelection="false"
+                                            enabled="{=${DATOSMAESTRO>/typeRegEmb}==='nuevo'?true:false}"
+                                            items="{DATOSMAESTRO>/CDTPC}">
+                                        <c:Item key="{DATOSMAESTRO>id}" text="{DATOSMAESTRO>descripcion}" ></c:Item>
+                                    </Select>
+                                </f:fields>
+                            </f:FormElement>
+                            <f:FormElement
+                                label="Especie">
+                                <f:fields>
+                                    <Input  value="{DATOSMAESTRO>CDSPC}"
+                                            description="{DATOSMAESTRO>DSSPC}"
+                                            enabled="{=${DATOSMAESTRO>/typeRegEmb}==='nuevo'?true:false}"
+                                            showSuggestion="true"
+                                            valueState="Information"
+                                            valueStateText="Seleccione especie"
+                                            showTableSuggestionValueHelp="false"
+			                                suggestionRows="{AYUDABUSQUEDA>/B12}"
+                                            suggestionItemSelected="onSeletedItemSuggest">
+                                            <suggestionColumns>
+                                                <Column>
+                                                    <Label text="Cod. especie" />
+                                                </Column>
+                                                <Column>
+                                                    <Label text="Descripción" />
+                                                </Column>
+                                            </suggestionColumns>
+
+                                            <suggestionRows>
+                                                <ColumnListItem>
+                                                    <Text text="{AYUDABUSQUEDA>CDSPC}" />
+                                                    <Text text="{AYUDABUSQUEDA>DSSPC}" />
+                                                </ColumnListItem>
+                                            </suggestionRows>
+                                    </Input>
+                                </f:fields>
+                            </f:FormElement>
+                            <f:FormElement
+                                label="Indicador de permiso">
+                                <f:fields>
+                                    <Select 
+                                        selectedKey="{DATOSMAESTRO>INPMS}"
+                                        forceSelection="false"
+                                        items="{DATOSMAESTRO>/INPMS}" >
+                                        <c:ListItem key="{DATOSMAESTRO>id}" text="{DATOSMAESTRO>descripcion}" />
+                                    </Select>
+                                </f:fields>
+                            </f:FormElement>
+                        </f:formElements>
+                    </f:FormContainer>
+                </f:formContainers>
+                <f:layout>
+                    <f:ResponsiveGridLayout 
+                    columnsL="3"
+                    columnsM="2"/>
+                </f:layout>
+            </f:Form>
+        </content>
+        <endButton>
+            <Button text="Cancelar" type="Reject" icon="sap-icon://decline" press="close"/>
+        </endButton>
+    </Dialog>
+</c:FragmentDefinition>

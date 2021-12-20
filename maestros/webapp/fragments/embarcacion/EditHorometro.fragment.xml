@@ -1,0 +1,94 @@
+<c:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:c="sap.ui.core"
+    xmlns:f="sap.ui.layout.form">
+    <Dialog
+        contentHeight="auto"
+        contentWidth="auto"
+        icon="sap-icon://edit"
+        state="Information"
+        title="Puntos de medida"
+        type="Message">
+        <beginButton>
+            <Button text="Guardar" type="Emphasized" icon="sap-icon://save" press="onGuardarEdit('str_hor')"/>
+        </beginButton>
+        <content>
+            <f:Form binding="{DATOSMAESTRO>/ITEMstr_hor}">
+                <f:formContainers>
+                    <f:FormContainer>
+                        <f:formElements>
+                            <f:FormElement
+                                label="Tipo de horómetro">
+                                <f:fields>
+                                    <Select
+                                        selectedKey="{path:'DATOSMAESTRO>CDTHR'}"
+                                        forceSelection="false"
+                                        items="{DATOSMAESTRO>/CDTHR}">
+                                        <c:Item key="{DATOSMAESTRO>id}" text="{DATOSMAESTRO>descripcion}" />
+                                        </Select>
+                                </f:fields>
+                            </f:FormElement>
+                            <f:FormElement
+                                label="Punto de medida">
+                                <f:fields>
+                                    <Input value="{parts:[{path:'DATOSMAESTRO>POINT'}]}"/>
+                                </f:fields>
+                            </f:FormElement>
+							<f:FormElement
+                                label="Equipo">
+                                <f:fields>
+                                    <Input 
+										value="{DATOSMAESTRO>EQUNR}"
+                                        description="{DATOSMAESTRO>EQKTX}"
+                                        tooltip="{DATOSMAESTRO>EQKTX}"
+										valueState="Information"
+                                        valueStateText="Seleccione equipo"
+                                        showTableSuggestionValueHelp="false"
+                                        suggestionRows="{AYUDABUSQUEDA>/B08}"
+										showSuggestion="true"
+                                        suggestionItemSelected="onSeletedItemSuggest">
+										<suggestionColumns>
+                                            <Column>
+                                                <Label text="Cod. equipo"/>
+                                            </Column>
+                                            <Column>
+                                                <Label text="Descripcion"/>
+                                            </Column>
+                                        </suggestionColumns>
+                                        <suggestionRows>
+                                            <ColumnListItem>
+                                                <cells>
+                                                    <Text text="{AYUDABUSQUEDA>EQUNR}" />
+                                                    <Text text="{AYUDABUSQUEDA>EQKTX}" />
+                                                </cells>
+                                            </ColumnListItem>
+                                        </suggestionRows>
+									</Input>
+                                </f:fields>
+                            </f:FormElement>
+							<f:FormElement
+                                label="Estado">
+                                <f:fields>
+                                    <Select 
+                                        selectedKey="{DATOSMAESTRO>ESREG}"
+                                        forceSelection="false"
+                                        items="{DATOSMAESTRO>/ESREG}" >
+                                        <c:Item key="{DATOSMAESTRO>id}" text="{DATOSMAESTRO>descripcion}"/>
+                                    </Select>
+                                </f:fields>
+                            </f:FormElement>
+                        </f:formElements>
+                    </f:FormContainer>
+                </f:formContainers>
+                <f:layout>
+                    <f:ResponsiveGridLayout 
+                    columnsL="3"
+                    columnsM="2"/>
+                </f:layout>
+            </f:Form>
+        </content>
+        <endButton>
+            <Button text="Cancelar" type="Reject" icon="sap-icon://decline" press="close"/>
+        </endButton>
+    </Dialog>
+</c:FragmentDefinition>

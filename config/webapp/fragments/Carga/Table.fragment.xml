@@ -1,0 +1,43 @@
+<core:FragmentDefinition
+    xmlns:core="sap.ui.core"
+    xmlns="sap.m">
+    <ScrollContainer
+        focusable="false"
+        height="auto"
+        horizontal="true"
+        vertical="true"
+        width="auto">
+        <Table
+        id="tablaArchivos"
+        width="auto"
+        class="sapUiNoMargin"
+        updateFinished=".onListUpdateFinished"
+        noDataText="{i18n>detailLineItemTableNoDataText}"
+        busy="{detailView>/busyTable}"
+        busyIndicatorDelay="{detailView>/lineItemTableDelay}">
+            <headerToolbar>
+                <Toolbar>
+                    <Title
+                        text="Lista de Registros {=${DATOSMAESTRO>/cantData} > 0 ? '('+${DATOSMAESTRO>/cantData}+')':'(0)'}"
+                        titleStyle="H3"
+                        level="H3"/>
+                    <ToolbarSpacer/>
+                    <SearchField
+                        showRefreshButton="true"
+                        tooltip="{i18n>masterSearchTooltip}"
+                        search=".onSearchFilter"
+                        width="auto">
+                        <layoutData>
+                            <OverflowToolbarLayoutData
+                                minWidth="150px"
+                                maxWidth="240px"
+                                shrinkable="true"
+                                priority="NeverOverflow"/>
+                        </layoutData>
+                    </SearchField>
+                </Toolbar>
+            </headerToolbar>
+        </Table>
+    </ScrollContainer>
+    
+</core:FragmentDefinition>

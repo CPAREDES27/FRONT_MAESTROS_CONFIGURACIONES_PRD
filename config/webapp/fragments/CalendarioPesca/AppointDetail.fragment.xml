@@ -1,0 +1,72 @@
+<core:FragmentDefinition
+    xmlns:core="sap.ui.core"
+    xmlns="sap.m">
+    <Dialog
+        contentHeight=""
+        contentWidth=""
+        draggable="false"
+        escapeHandler=""
+        horizontalScrolling="true"
+        icon=""
+        resizable="false"
+        showHeader="true"
+        state="None"
+        stretch="false"
+        title=""
+        type="Standard"
+        verticalScrolling="true"
+    >
+        <beginButton>
+            <Button text="Cerrar" icon="sap-icon://decline" type="Reject" press="closeDialog" />
+        </beginButton>
+        <content>
+            <Table>
+                <headerToolbar>
+                    <OverflowToolbar >
+                        <Title text="Temporda de pesca {}" />
+                        <ToolbarSpacer/>
+                    </OverflowToolbar>
+                </headerToolbar>
+                <columns>
+                    <Column >
+                        <Label text="Fecha"/>
+                    </Column>
+                    <Column >
+                        <Label text="Tipo de pesca"/>
+                    </Column>
+                    <Column >
+                        <Label text="Especie"/>
+                    </Column>
+                    <Column >
+                        <Label text="Latitud Inicio"/>
+                    </Column>
+                    <Column >
+                        <Label text="Longitud Inicio"/>
+                    </Column>
+                    <Column >
+                        <Label text="Latitud Fin"/>
+                    </Column>
+                    <Column >
+                        <Label text="Longitud Fin"/>
+                    </Column>
+                    <Column >
+                        <Label text="Millas naúticas"/>
+                    </Column>
+                </columns>
+                <items>
+                    <ColumnListItem >
+                        <Text text="{}" />
+                        <Text text="{}" />
+                        <Text text="{}" />
+                        <Text text="{}" />
+                        <Text text="{}" />
+                        <Text text="{}" />
+                        <Text text="{}" />
+                        <Text text="{}" />
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </content>
+    </Dialog>
+</core:FragmentDefinition>
+

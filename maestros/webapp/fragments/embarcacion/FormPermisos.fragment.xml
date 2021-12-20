@@ -1,0 +1,53 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+    xmlns:form="sap.ui.layout.form"
+	xmlns:core="sap.ui.core">
+    <form:Form binding="{DATOSMAESTRO>/s_pe/0}" editable="true" >
+        <form:formContainers>
+            <form:FormContainer>
+                <form:formElements>
+                    <form:FormElement
+                        label="Tipo de permiso">
+                        <form:fields>
+                            <Select 
+                                selectedKey="{parts:[{path:'DATOSMAESTRO>CDTPM'}]}"
+                                forceSelection="false"
+                                items="{DATOSMAESTRO>/CDTPM}" >
+                                <core:ListItem key="{DATOSMAESTRO>id}" text="{DATOSMAESTRO>descripcion}" />
+                            </Select>
+                        </form:fields>
+                    </form:FormElement>
+                    <form:FormElement
+                        label="Resolución">
+                        <form:fields>
+                            <Input value="{DATOSMAESTRO>RSPMS}"/>
+                        </form:fields>
+                    </form:FormElement>
+                    <form:FormElement
+                        label="Fecha de inicio">
+                        <form:fields>
+                            <DatePicker value="{DATOSMAESTRO>FIPMS}"
+                                        displayFormat="dd/MM/yyyy" />
+                        </form:fields>
+                    </form:FormElement>
+                    <form:FormElement
+                        label="Fecha de fin">
+                        <form:fields>
+                            <DatePicker value="{DATOSMAESTRO>FFPMS}"
+                                        displayFormat="dd/MM/yyyy" />
+                        </form:fields>
+                    </form:FormElement>
+                </form:formElements>
+            </form:FormContainer>
+        </form:formContainers>
+        <form:layout>
+            <form:ResponsiveGridLayout 
+                adjustLabelSpan="false" 
+                columnsL="2" 
+                labelSpanL="3" 
+                columnsM="1" 
+                labelSpanM="2" 
+                labelSpanS="12"/>
+        </form:layout>
+    </form:Form>
+</core:FragmentDefinition>           

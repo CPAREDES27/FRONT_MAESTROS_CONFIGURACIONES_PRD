@@ -1,0 +1,14 @@
+<ActionSheet
+    xmlns="sap.m"
+    title="Choose Your Action"
+    showCancelButton="true"
+    placement="HorizontalPreferredRight">
+    <Button
+        text="Detalle"
+        icon="sap-icon://show"
+        press="onShowDetail" />
+    <Button
+        text="Borrar"
+        icon="sap-icon://delete"
+        press="onAppoimentDelete" />
+</ActionSheet>

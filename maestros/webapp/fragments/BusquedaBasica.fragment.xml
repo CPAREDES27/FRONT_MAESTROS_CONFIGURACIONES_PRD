@@ -1,0 +1,30 @@
+<core:FragmentDefinition
+    controllerName="com.tasa.maestros.controller.Fragments"
+    xmlns:core="sap.ui.core"
+    xmlns:form="sap.ui.layout.form"
+    xmlns="sap.m">
+    <form:Form width="100%" editable="true" visible="{=${ConfigMaestros>seleccion}.length>0?true:false}">
+        <form:title>
+            <core:Title text="Datos de selección" level="Auto"/>
+        </form:title>
+        <form:formContainers >
+            <form:FormContainer id="idFormContainer" >
+            </form:FormContainer>
+        </form:formContainers>
+        <form:layout>
+            <form:ResponsiveGridLayout 
+                adjustLabelSpan="false" 
+                labelSpanXL="3"
+                labelSpanL="3"
+                labelSpanM="2"
+                labelSpanS="12"
+                emptySpanXL="0"
+                emptySpanL="0"
+                emptySpanM="0"
+                emptySpanS="0"
+                columnsXL="2"
+                columnsL="1"
+                columnsM="1"/>
+        </form:layout>
+    </form:Form>
+</core:FragmentDefinition>

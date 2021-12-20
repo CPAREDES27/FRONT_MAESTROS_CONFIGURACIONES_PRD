@@ -1,0 +1,74 @@
+<core:FragmentDefinition 
+    xmlns:form="sap.ui.layout.form"
+    xmlns:core="sap.ui.core"
+    xmlns="sap.m">
+    <Dialog
+        icon="sap-icon://complete"
+        title="Seleccione un temporada">
+        <content>
+            <VBox>
+                <items>
+                    
+                    <form:Form editable="true" >
+                        <form:formContainers>
+                            <form:FormContainer>
+                                <form:formElements>
+                                    <form:FormElement label="">
+                                        <form:fields>
+                                            <Select
+                                                items="{DATOSMAESTRO>/TEMPO}"
+                                                forceSelection="false"
+                                                icon="sap-icon://select"
+                                                selectedKey="{DATOSMAESTRO>/keyHist}"
+                                                change="onSelectionHistCompet">
+                                                <core:Item key="{DATOSMAESTRO>id}" text="{DATOSMAESTRO>descripcion}"/>
+                                            </Select>
+                                        </form:fields>
+                                    </form:FormElement>
+                                    <form:FormElement label="Código">
+                                        <form:fields>
+                                            <Input value="{DATOSMAESTRO>/keyHist}" editable="false" />
+                                        </form:fields>
+                                    </form:FormElement>
+                                    <form:FormElement label="Descripción">
+                                        <form:fields>
+                                            <Input value="{DATOSMAESTRO>/descHist}" editable="false"/>
+                                        </form:fields>
+                                    </form:FormElement>
+                                </form:formElements>
+                            </form:FormContainer>
+                        </form:formContainers>
+                        <form:layout>
+                            <form:ResponsiveGridLayout
+                                adjustLabelSpan="true"
+                                breakpointL="1024"
+                                breakpointM="600"
+                                breakpointXL="1440"
+                                columnsL="2"
+                                columnsM="1"
+                                columnsXL="-1"
+                                emptySpanL="0"
+                                emptySpanM="0"
+                                emptySpanS="0"
+                                emptySpanXL="-1"
+                                labelSpanL="4"
+                                labelSpanM="2"
+                                labelSpanS="12"
+                                labelSpanXL="-1"
+                                singleContainerFullSize="true"
+                            >
+                                
+                            </form:ResponsiveGridLayout>
+                        </form:layout>
+                    </form:Form>
+                </items>
+            </VBox>
+        </content>
+        <beginButton>
+            <Button text="Guardar" icon="sap-icon://save" type="Success" press="onSaveHistCompet" />
+        </beginButton>
+        <endButton>
+            <Button text="Cerrar" icon="sap-icon://decline" type="Reject" press="closeDialogEdit" />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

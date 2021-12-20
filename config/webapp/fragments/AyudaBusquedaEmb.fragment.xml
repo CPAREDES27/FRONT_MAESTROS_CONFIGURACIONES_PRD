@@ -1,0 +1,248 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+    xmlns:form="sap.ui.layout.form"
+    xmlns:table="sap.ui.table"
+	xmlns:core="sap.ui.core">
+    <Dialog
+        icon="sap-icon://search"
+        state="Information"
+        title="Búsqueda de embarcaciones"
+        stretch="true">
+        <content>
+            <!-- <VBox > -->
+                <!-- <items > -->
+                    <form:Form 
+                        binding="{DATOSMAESTRO>/searchEmbar}" 
+                        width="100%" 
+                        editable="true">
+                        <form:formContainers>
+                            <form:FormContainer>
+                                <form:formElements>
+                                    <form:FormElement>
+                                        <form:fields>
+                                            <Input value="{DATOSMAESTRO>CDEMB}" />
+                                        </form:fields>
+                                        <form:label>
+                                            <Label text="Cod. Embarcación" />
+                                        </form:label>
+                                    </form:FormElement>
+                                    <form:FormElement>
+                                        <form:fields>
+                                            <Input value="{DATOSMAESTRO>NMEMB}" />
+                                        </form:fields>
+                                        <form:label>
+                                            <Label text="Nomb. Embarcación" />
+                                        </form:label>
+                                    </form:FormElement>
+                                    <form:FormElement>
+                                        <form:fields>
+                                            <Input value="{DATOSMAESTRO>STCD1}" />
+                                        </form:fields>
+                                        <form:label>
+                                            <Label text="R.U.C. armador" />
+                                        </form:label>
+                                    </form:FormElement>
+                                </form:formElements>
+                            </form:FormContainer>
+                        <!-- </form:formContainers>
+                        <form:formContainers> -->
+                            <form:FormContainer>
+                                <form:formElements>
+                                    <form:FormElement>
+                                        <form:fields>
+                                            <Input value="{DATOSMAESTRO>MREMB}" />
+                                        </form:fields>
+                                        <form:label>
+                                            <Label text="Mátricula" />
+                                        </form:label>
+                                    </form:FormElement>
+                                     <form:FormElement>
+                                        <form:fields>
+                                            <!-- <Input value="{DATOSMAESTRO>indProp}" /> -->
+                                            <Select
+                                                selectedKey="{DATOSMAESTRO>INPRP}"
+                                                forceSelection="false" 
+                                                items="{path:'DATOSMAESTRO>/INPRP'}">
+                                                <core:Item
+                                                    key="{DATOSMAESTRO>id}"
+                                                    text="{DATOSMAESTRO>descripcion}"/>
+                                            </Select>
+                                        </form:fields>
+                                        <form:label>
+                                            <Label text="Ind. de Propiedad" />
+                                        </form:label>
+                                    </form:FormElement>
+                                     <form:FormElement>
+                                        <form:fields>
+                                            <Input value="{DATOSMAESTRO>NAME1}" />
+                                        </form:fields>
+                                        <form:label>
+                                            <Label text="Desc armador" />
+                                        </form:label>
+                                    </form:FormElement>
+                                </form:formElements>
+                            </form:FormContainer>
+                        <!-- </form:formContainers>
+                        <form:formContainers> -->
+                            <form:FormContainer>
+                                <form:formElements>
+                                    <form:FormElement>
+                                        <form:fields>
+                                            <Button text="Buscar" icon="sap-icon://search" type="Emphasized" press="onPressSearchEmbar('1')" />
+                                        </form:fields>
+                                        <form:label>
+                                            <Label text=""/>
+                                        </form:label>
+                                    </form:FormElement>
+                                </form:formElements>
+                            </form:FormContainer>
+                            <form:FormContainer>
+                                <form:formElements>
+                                    <form:FormElement>
+                                        <form:fields>
+                                            <Button text="Limpiar" icon="sap-icon://clear-filter" type="Ghost" press="onCleanSearh" />
+                                        </form:fields>
+                                        <form:label>
+                                            <Label text=""/>
+                                        </form:label>
+                                    </form:FormElement>
+                                </form:formElements>
+                            </form:FormContainer>
+                        </form:formContainers>
+                        <form:layout>
+                            <form:ResponsiveGridLayout
+                                adjustLabelSpan="false"
+                                columnsM="2"/>
+                            <!-- <form:ResponsiveGridLayout
+                                adjustLabelSpan="true"
+                                breakpointL="1024"
+                                breakpointM="600"
+                                breakpointXL="1440"
+                                columnsL="2"
+                                columnsM="2"
+                                columnsXL="-1"
+                                emptySpanL="0"
+                                emptySpanM="0"
+                                emptySpanS="0"
+                                emptySpanXL="-1"
+                                labelSpanL="4"
+                                labelSpanM="2"
+                                labelSpanS="12"
+                                labelSpanXL="-1"
+                                singleContainerFullSize="true"/> -->
+                        </form:layout>
+                    </form:Form>
+                    <!-- <table:Table
+                        rows="{DATOSMAESTRO>/listaEmbarcaciones}"
+                        visibleRowCount="7">
+                        <table:columns>
+                            <table:Column>
+                                <table:label>
+                                    <Label text="Cod. Embarcación" />
+                                </table:label>
+                                <table:template>
+                                    <Text text="{DATOSMAESTRO>CDEMB}"/>
+                                </table:template>
+                            </table:Column>
+                            <table:Column>
+                                <table:label>
+                                    <Label text="Mátricula" />
+                                </table:label>
+                                <table:template>
+                                    <Text text="{DATOSMAESTRO>MREMB}"/>
+                                </table:template>
+                            </table:Column>
+                            <table:Column>
+                                <table:label>
+                                    <Label text="Nmb. Embarcación" />
+                                </table:label>
+                                <table:template>
+                                    <Text text=""/>
+                                </table:template>
+                            </table:Column>
+                            <table:Column>
+                                <table:label>
+                                   <Label text="R.U.C. armador" /> 
+                                </table:label>
+                                <table:template>
+                                    <Text text=""/>
+                                </table:template>
+                            </table:Column>
+                            <table:Column>
+                                <table:label>
+                                    <Label text="Desc. armador" />
+                                </table:label>
+                                <table:template>
+                                    <Text text=""/>
+                                </table:template>
+                            </table:Column>
+                        </table:columns>
+                        <table:rowActionTemplate>
+                            <table:RowAction>
+                                <table:items>
+                                    <table:RowActionItem
+                                        icon="sap-icon://detail-view"
+                                        text="Hola"
+                                        type="Navigation"
+                                        press="onSelect"
+                                    />
+                                </table:items>
+                            </table:RowAction>
+                        </table:rowActionTemplate>
+                    </table:Table> -->
+                    <ScrollContainer
+                        height="20rem" vertical="true">
+                        <Table  id="HelpTable"
+                                items="{DATOSMAESTRO>/dataEmbarcaciones/data}"
+                                growing="false"
+                                growingScrollToLoad="false"
+                                growingThreshold="50"
+                                updateFinished="onUpdateTable">
+                            <headerToolbar>
+                                <OverflowToolbar>
+                                    <ObjectStatus
+                                        text="{DATOSMAESTRO>/pageTable/text}" 
+                                        state="Warning"/>
+                                </OverflowToolbar>
+                            </headerToolbar>
+                            <columns>
+                                <Column>
+                                    <Label text="Cod. Embarcación" />
+                                </Column>
+                                <Column>
+                                    <Label text="Mátricula" />
+                                </Column>
+                                <Column>
+                                    <Label text="Nmb. Embarcación" />
+                                </Column>
+                                <Column>
+                                    <Label text="R.U.C. armador" />
+                                </Column>
+                                <Column>
+                                    <Label text="Desc. armador" />
+                                </Column>
+                            </columns>
+                            <items>
+                                <ColumnListItem
+                                    type="Active"
+                                    press="onSelectItem">
+                                    <cells>
+                                        <ObjectStatus text="{DATOSMAESTRO>CDEMB}" state="Information" />
+                                        <Text text="{DATOSMAESTRO>MREMB}" />
+                                        <Text text="{DATOSMAESTRO>NMEMB}" />
+                                        <Text text="{DATOSMAESTRO>STCD1}" />
+                                        <Text text="{DATOSMAESTRO>NAME1}" />
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>         
+                    </ScrollContainer>
+                <!-- </items>
+            </VBox> -->
+            
+        </content>
+        <endButton>
+            <Button text="Cerrar" type="Reject" icon="sap-icon://decline" press="close"/>
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

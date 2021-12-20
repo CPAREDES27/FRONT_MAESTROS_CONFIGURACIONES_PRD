@@ -1,0 +1,107 @@
+_schema-version: "3.2"
+ID: MasterConfig
+description: Aplicación de maestros y configuraciones
+version: 0.0.1
+modules:
+- name: MasterConfig-dest-content
+  type: com.sap.application.content
+  requires:
+  - name: MasterConfig-dest-srv
+    parameters:
+      content-target: true
+  - name: MasterConfig-repo-host
+    parameters:
+      service-key:
+        name: MasterConfig-repo-host-key
+  - name: MasterConfig-uaa
+    parameters:
+      service-key:
+        name: MasterConfig-uaa-key
+  parameters:
+    content:
+      instance:
+        destinations:
+        - Name: MasterConfig_repo_host
+          ServiceInstanceName: MasterConfig-html5-srv
+          ServiceKeyName: MasterConfig-repo-host-key
+          sap.cloud.service: MasterConfig
+        - Authentication: OAuth2UserTokenExchange
+          Name: MasterConfig_uaa
+          ServiceInstanceName: MasterConfig-xsuaa-srv
+          ServiceKeyName: MasterConfig-uaa-key
+          sap.cloud.service: MasterConfig
+        existing_destinations_policy: update
+  build-parameters:
+    no-source: true
+- name: MasterConfig-app-content
+  type: com.sap.application.content
+  path: .
+  requires:
+  - name: MasterConfig-repo-host
+    parameters:
+      content-target: true
+  build-parameters:
+    build-result: resources
+    requires:
+    - artifacts:
+      - comtasamaestros.zip
+      name: comtasamaestros
+      target-path: resources/
+    - artifacts:
+      - comtasaconfig.zip
+      name: comtasaconfig
+      target-path: resources/
+- name: comtasamaestros
+  type: html5
+  path: maestros
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: comtasaconfig
+  type: html5
+  path: config
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+resources:
+- name: MasterConfig-uaa
+  type: org.cloudfoundry.managed-service
+  parameters:
+    path: ./xs-security.json
+    service: xsuaa
+    service-name: MasterConfig-xsuaa-srv
+    service-plan: application
+- name: MasterConfig-dest-srv
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      HTML5Runtime_enabled: true
+      init_data:
+        instance:
+          destinations:
+          - Authentication: NoAuthentication
+            Name: ui5
+            ProxyType: Internet
+            Type: HTTP
+            URL: https://ui5.sap.com
+          existing_destinations_policy: update
+      version: 1.0.0
+    service: destination
+    service-name: MasterConfig-dest-srv
+    service-plan: lite
+- name: MasterConfig-repo-host
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-name: MasterConfig-html5-srv
+    service-plan: app-host
+parameters:
+  deploy_mode: html5-repo

@@ -1,0 +1,372 @@
+<core:FragmentDefinition xmlns:form="sap.ui.layout.form"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+    <Dialog
+        showHeader="false" 
+        contentWidth="85%"
+        contentHeight="100%">
+        <subHeader>
+            <OverflowToolbar>
+                <ObjectStatus
+                    icon="sap-icon://edit"
+                    state="Information"
+                    text="{DATOSMAESTRO>/titleDialog}"
+                    title="Editar vale"
+                />
+            </OverflowToolbar>
+        </subHeader>
+        <content>
+            <IconTabBar
+                selectedKey="01">
+                <items>
+                    <IconTabFilter
+                        icon="sap-icon://form"
+                        key="01">
+                        <content>
+                            <form:Form editable="true">
+                                <form:formContainers>
+                                    <form:FormContainer>
+                                        <form:formElements>
+                                            <!-- <form:FormElement>
+                                                <form:label>
+                                                    <Label text="Vale" />
+                                                </form:label>
+                                                <form:fields>
+                                                    <Input value="{DATOSMAESTRO>NRVVI}" editable="false" />
+                                                </form:fields>
+                                            </form:FormElement> -->
+
+                                            <form:FormElement>
+                                                <form:label>
+                                                    <Label text="Estado de impresión"/>
+                                                </form:label>
+                                                <form:fields>
+                                                    <Select
+                                                        selectedKey="{DATOSMAESTRO>ESIMP}"
+                                                        forceSelection="false"
+                                                        items="{ path: 'DATOSMAESTRO>/ESIMP' }">
+                                                        <core:Item
+                                                            key="{DATOSMAESTRO>id}"
+                                                            text="{DATOSMAESTRO>descripcion}"/>
+                                                    </Select>
+                                                </form:fields>
+                                            </form:FormElement>
+                                            <form:FormElement>
+                                                <form:label>
+                                                    <Label text="Estado de registro" />
+                                                </form:label>
+                                                <form:fields>
+                                                    <Input value="{DATOSMAESTRO>DESC_ESVVI}" editable="false" />
+                                                </form:fields>
+                                            </form:FormElement>
+
+                                            <form:FormElement>
+                                                <form:label>
+                                                    <Label text="Temporada"/>
+                                                </form:label>
+                                                <form:fields>
+                                                    <Input value="{DATOSMAESTRO>DSTPO}" editable="false" />
+                                                </form:fields>
+                                            </form:FormElement>
+                                            <form:FormElement>
+                                                <form:label>
+                                                    <Label text="Fecha de creación"/>
+                                                </form:label>
+                                                <form:fields>
+                                                    <Input value="{DATOSMAESTRO>FCVVI}" editable="false" />
+                                                </form:fields>
+                                            </form:FormElement>
+
+                                            <form:FormElement>
+                                                <form:label>
+                                                    <Label text="Planta" />
+                                                </form:label>
+                                                <form:fields>
+                                                    <Input 
+                                                        value="{DATOSMAESTRO>CDPTA}" 
+                                                        editable="false" 
+                                                        description="{DATOSMAESTRO>DESCR}"
+                                                        tooltip="{DATOSMAESTRO>DESCR}" /> 
+                                                </form:fields>
+                                            </form:FormElement>
+                                            <form:FormElement>
+                                                <form:label>
+                                                    <Label text="Centro" />
+                                                </form:label>
+                                                <form:fields>
+                                                    <Input 
+                                                        value="{DATOSMAESTRO>WERKS}" 
+                                                        description="{DATOSMAESTRO>NAME3}" 
+                                                        editable="false"
+                                                        tooltip="{DATOSMAESTRO>NAME3}" />
+                                                </form:fields>
+                                            </form:FormElement>
+
+                                            <form:FormElement>
+                                                <form:label>
+                                                    <Label text="Almacén" />
+                                                </form:label>
+                                                <form:fields>
+                                                    <Input 
+                                                        value="{DATOSMAESTRO>CDALM}" 
+                                                        description="{DATOSMAESTRO>DSALM}" 
+                                                        editable="false" 
+                                                        tooltip="{DATOSMAESTRO>DSALM}"/>
+                                                </form:fields>
+                                            </form:FormElement>
+                                            <form:FormElement>
+                                                <form:label>
+                                                    <Label text="Almacén externo" />
+                                                </form:label>
+                                                <form:fields>
+                                                    <Input value="{DATOSMAESTRO>LGORT}" editable="false" />
+                                                </form:fields>
+                                            </form:FormElement>
+
+                                            <form:FormElement>
+                                                <form:label>
+                                                    <Label text="Embarcación" />
+                                                </form:label>
+                                                <form:fields>
+                                                    <Input 
+                                                        value="{DATOSMAESTRO>CDEMB}" 
+                                                        editable="false" 
+                                                        description="{DATOSMAESTRO>NMEMB}"
+                                                        tooltip="{DATOSMAESTRO>NMEMB}"/>
+                                                </form:fields>
+                                            </form:FormElement>
+
+                                            <form:FormElement>
+                                                <form:label>
+                                                    <Label text="Matrícula" />
+                                                </form:label>
+                                                <form:fields>
+                                                    <Input value="{DATOSMAESTRO>MREMB}" editable="false" />
+                                                </form:fields>
+                                            </form:FormElement>
+                                            <form:FormElement>
+                                                <form:label>
+                                                    <Label text="Indicador de propiedad" />
+                                                </form:label>
+                                                <form:fields>
+                                                    <Input value="{DATOSMAESTRO>DESC_INPRP}" editable="false" /> 
+                                                </form:fields>
+                                            </form:FormElement>
+                                            <form:FormElement>
+                                                <form:label>
+                                                    <Label text="Armador comercial" />
+                                                </form:label>
+                                                <form:fields>
+                                                    <Input value="{DATOSMAESTRO>ARCMC}" editable="false" />
+                                                </form:fields>
+                                            </form:FormElement>
+                                            <form:FormElement>
+                                                <form:label>
+                                                    <Label text="RUC armador comerc." />
+                                                </form:label>
+                                                <form:fields>
+                                                    <Input value="{DATOSMAESTRO>STCD1}" editable="false" />
+                                                </form:fields>
+                                            </form:FormElement>
+
+                                        </form:formElements>
+                                    </form:FormContainer>
+
+                                    <form:FormContainer>
+                                        <form:formElements>
+                                            
+                                            <form:FormElement>
+                                                <form:label>
+                                                    <Label text="Inicio de travesía" />
+                                                </form:label>
+                                                <form:fields>
+                                                    <Input value="{DATOSMAESTRO>FITVS}" editable="false" />
+                                                </form:fields>
+                                            </form:FormElement>
+
+                                            <form:FormElement>
+                                                <form:label>
+                                                    <Label text="Fin de travesía" />
+                                                </form:label>
+                                                <form:fields>
+                                                    <Input value="{DATOSMAESTRO>FFTVS}" editable="false" />
+                                                </form:fields>
+                                            </form:FormElement>
+                                            <form:FormElement>
+                                                <form:label>
+                                                    <Label text="Duración de travesía" />
+                                                </form:label>
+                                                <form:fields>
+                                                    <Input value="{DATOSMAESTRO>DRTVS}" editable="false" />
+                                                </form:fields>
+                                            </form:FormElement>
+                                            <form:FormElement>
+                                                <form:label>
+                                                    <Label text="Nro tripulantes" />
+                                                </form:label>
+                                                <form:fields>
+                                                    <Input value="{DATOSMAESTRO>NRTRI}" editable="false" />
+                                                </form:fields>
+                                            </form:FormElement>
+
+                                            <form:FormElement>
+                                                <form:label>
+                                                    <Label text="Cocinero" />
+                                                </form:label>
+                                                <form:fields>
+                                                    <Input 
+                                                        value="{DATOSMAESTRO>PERNR}" 
+                                                        description="{DATOSMAESTRO>NMPER}"
+                                                        tooltip="{DATOSMAESTRO>NMPER}" 
+                                                        editable="false" />
+                                                </form:fields>
+                                            </form:FormElement>
+
+                                            <form:FormElement>
+                                                <form:label>
+                                                    <Label text="Proveedor" />
+                                                </form:label>
+                                                <form:fields>
+                                                    <Input 
+                                                        value="{DATOSMAESTRO>CDPVE}" 
+                                                        description="{DATOSMAESTRO>NAME2}" 
+                                                        editable="false"
+                                                        tooltip="{DATOSMAESTRO>NAME2}"  />
+                                                </form:fields>
+                                            </form:FormElement>
+
+                                            <form:FormElement>
+                                                <form:label>
+                                                    <Label text="Nro. orden de compra" />
+                                                </form:label>
+                                                <form:fields>
+                                                    <Input value="{DATOSMAESTRO>EBELN}" editable="false" />
+                                                </form:fields>
+                                            </form:FormElement>
+
+                                            <form:FormElement>
+                                                <form:label>
+                                                    <Label text="Observaciones" />
+                                                </form:label>
+                                                <form:fields>
+                                                    <TextArea value="{DATOSMAESTRO>OBVVI}" rows="3" editable="false" />
+                                                </form:fields>
+                                            </form:FormElement>
+
+                                            <form:FormElement>
+                                                <form:label>
+                                                    <Label text="Importe de víveres incluido IGV S/." />
+                                                </form:label>
+                                                <form:fields>
+                                                    <Input value="{DATOSMAESTRO>QTSUM}" editable="false" />
+                                                </form:fields>
+                                            </form:FormElement>
+                                            <form:FormElement>
+                                                <form:label>
+                                                    <Label text="RUC proveedor" />
+                                                </form:label>
+                                                <form:fields>
+                                                    <Input value="{DATOSMAESTRO>RUCCP}" editable="false" />
+                                                </form:fields>
+                                            </form:FormElement>
+
+                                            <form:FormElement>
+                                                <form:label>
+                                                    <Label text="Nro. documento" />
+                                                </form:label>
+                                                <form:fields>
+                                                    <Input value="{DATOSMAESTRO>BELNR}" editable="false" />
+                                                </form:fields>
+                                            </form:FormElement>
+
+                                        </form:formElements>
+                                    </form:FormContainer>
+                                </form:formContainers>
+
+                                <form:layout>
+                                    <form:ResponsiveGridLayout
+                                        adjustLabelSpan="true"
+                                        breakpointL="1024"
+                                        breakpointM="600"
+                                        breakpointXL="1440"
+                                        columnsL="2"
+                                        columnsM="2"
+                                        columnsXL="-1"
+                                        emptySpanL="0"
+                                        emptySpanM="0"
+                                        emptySpanS="0"
+                                        emptySpanXL="-1"
+                                        labelSpanL="4"
+                                        labelSpanM="3"
+                                        labelSpanS="12"
+                                        labelSpanXL="-1"
+                                        singleContainerFullSize="true"/>
+                                </form:layout>
+                            </form:Form>
+                        </content>
+                    </IconTabFilter>
+                    <IconTabFilter
+                        icon="sap-icon://table-view"
+                        key="02">
+                        <content>
+                            <Table
+                                items="{DATOSMAESTRO>/detailVale}">
+                                <columns>
+                                    <Column width="6rem">
+                                        <Label text="Posición" />
+                                    </Column>
+                                    <Column demandPopin="true" minScreenWidth="Tablet" >
+                                        <Label text="Fecha" />
+                                    </Column>
+                                
+                                    <Column demandPopin="true">
+                                        <Label text="Suministro" />
+                                    </Column>
+                                
+                                    <Column demandPopin="true">
+                                        <Label text="Ración" />
+                                    </Column>
+                                
+                                    <Column demandPopin="true">
+                                        <Label text="Unidad de medida" />
+                                    </Column>
+                            
+                                    <Column demandPopin="true">
+                                        <Label text="Costo unitario" />
+                                    </Column>
+                                
+                                    <Column demandPopin="true">
+                                        <Label text="Costo total" />
+                                    </Column>
+                                    <Column demandPopin="true">
+                                        <Label text="Observaciones" />
+                                    </Column>
+                                </columns>
+                                <items>
+                                    <ColumnListItem >
+                                        <cells>
+                                            <Text text="{DATOSMAESTRO>NRPOS}"/>
+                                            <Text text="{DATOSMAESTRO>FECHA}"/>
+                                            <Text text="{DATOSMAESTRO>DSSUM}"/>
+                                            <Text text="{DATOSMAESTRO>CNRAC}"/>
+                                            <Text text="{DATOSMAESTRO>DSUMD}"/>
+                                            <Text text="{DATOSMAESTRO>CUSUM}"/>
+                                            <Text text="{DATOSMAESTRO>QTSUM}"/>
+                                            <Text text="{DATOSMAESTRO>OBPVA}"/>
+                                        </cells>
+                                    </ColumnListItem>
+                                </items>
+                            </Table>
+                        </content>
+                    </IconTabFilter>
+                </items>
+            </IconTabBar>
+        </content>
+        <beginButton>
+            <Button text="Guardar" icon="sap-icon://save" type="Emphasized" press="onGuardarImpreValViv"/>
+        </beginButton>
+        <endButton>
+            <Button type="Reject" text="Cerrar" icon="sap-icon://decline" press="onCloseDialog" />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

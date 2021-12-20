@@ -1,0 +1,55 @@
+<c:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:c="sap.ui.core"
+    xmlns:form="sap.ui.layout.form"
+    xmlns:u="sap.ui.unified">
+    
+        <form:Form title="Carga de archivos">
+            <form:formContainers >
+                <form:FormContainer>
+                    <form:formElements>
+                        <form:FormElement
+                            label="">
+                            <form:fields>
+                                <u:FileUploader
+                                    
+                                    name="myFileUpload"
+                                    uploadUrl="upload/"
+                                    tooltip="Upload your file to the local server"
+                                    change="handleSelectFile"/>
+                                <Button
+                                    text="Subir"
+                                    icon="sap-icon://upload"
+                                    press="base64coonversionMethod"
+                                    type="Emphasized"/>
+                            </form:fields>
+                        </form:FormElement>
+                    </form:formElements>
+                </form:FormContainer>
+            </form:formContainers>
+            <form:layout>
+                <form:ResponsiveGridLayout
+                    adjustLabelSpan="true"
+                    breakpointL="1024"
+                    breakpointM="600"
+                    breakpointXL="1440"
+                    columnsL="2"
+                    columnsM="1"
+                    columnsXL="-1"
+                    emptySpanL="0"
+                    emptySpanM="0"
+                    emptySpanS="0"
+                    emptySpanXL="-1"
+                    labelSpanL="4"
+                    labelSpanM="2"
+                    labelSpanS="12"
+                    labelSpanXL="-1"
+                    singleContainerFullSize="true"
+                >
+                    
+                </form:ResponsiveGridLayout>
+            </form:layout>
+        </form:Form>
+
+    
+</c:FragmentDefinition>

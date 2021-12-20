@@ -1,0 +1,52 @@
+<c:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:c="sap.ui.core"
+    xmlns:f="sap.ui.layout.form">
+    <Dialog
+        contentHeight="auto"
+        contentWidth="auto"
+        icon="sap-icon://edit"
+        state="Information"
+        title="Bodega por embarcación"
+        type="Message">
+        <beginButton>
+            <Button text="Guardar" type="Emphasized" icon="sap-icon://save" press="onGuardarEdit('s_be')"/>
+        </beginButton>
+        <content>
+            <f:Form binding="{DATOSMAESTRO>/ITEMs_be}">
+                <f:formContainers>
+                    <f:FormContainer>
+                        <f:formElements>
+                            <f:FormElement
+                                label="Bodega">
+                                <f:fields>
+                                    <Select 
+                                        selectedKey="{path:'DATOSMAESTRO>CDBOD'}"
+                                        forceSelection="false"
+                                        items="{DATOSMAESTRO>/CDBOD}"
+                                        enabled="{=${DATOSMAESTRO>/typeRegEmb}==='nuevo'?true:false}" >
+                                        <c:Item key="{DATOSMAESTRO>id}" text="{DATOSMAESTRO>descripcion}"/>
+                                    </Select>
+                                </f:fields>
+                            </f:FormElement>
+                            <f:FormElement
+                                label="Capacidad">
+                                <f:fields>
+                                    <Input value="{DATOSMAESTRO>CAPES}"/>
+                                </f:fields>
+                            </f:FormElement>
+                        </f:formElements>
+                    </f:FormContainer>
+                </f:formContainers>
+                <f:layout>
+                    <f:ResponsiveGridLayout 
+                    columnsL="3"
+                    columnsM="2"/>
+                </f:layout>
+            </f:Form>
+        </content>
+        <endButton>
+            <Button text="Cancelar" type="Reject" icon="sap-icon://decline" press="close"/>
+        </endButton>
+    </Dialog>
+</c:FragmentDefinition>

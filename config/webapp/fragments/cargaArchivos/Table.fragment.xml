@@ -1,0 +1,69 @@
+<core:FragmentDefinition
+    xmlns:core="sap.ui.core"
+    xmlns="sap.m"
+    >
+    <Table
+        width="auto"
+        class="sapUiNoMargin"
+        mode="MultiSelect"
+        fixedLayout="false"
+        updateFinished=".onListUpdateFinished"
+        noDataText="{i18n>detailLineItemTableNoDataText}"
+        busy="{detailView>/busyTable}"
+        busyIndicatorDelay="{detailView>/lineItemTableDelay}">
+        <headerToolbar>
+            <Toolbar>
+                <Title
+                    text="Lista de Registros {=${DATOSMAESTRO>/cantData} > 0 ? '('+${DATOSMAESTRO>/cantData}+')':'(0)'}"
+                    titleStyle="H3"
+                    level="H3"/>
+                <ToolbarSpacer/>
+                <!-- <Button
+                    text="Descagar"
+                    press="onDescargar"
+                    icon="sap-icon://download"
+                    type="Emphasized"/> -->
+                <!-- <Button
+                    press="onExportar"
+                    icon="sap-icon://excel-attachment"
+                    type="Emphasized"/> -->
+                <!-- <Button
+                    id="idBotonNuevo"
+                    text="Nuevo"
+                    visible="{detailView>/visibleBtnNew}"
+                    press="onNuevoMaestro"
+                    icon="sap-icon://add"
+                    type="Ghost"/> -->
+                <SearchField
+                    showRefreshButton="true"
+                    tooltip="{i18n>masterSearchTooltip}"
+                    search=".onSearchFilter"
+                    width="auto">
+                    <layoutData>
+                        <OverflowToolbarLayoutData
+                            minWidth="150px"
+                            maxWidth="240px"
+                            shrinkable="true"
+                            priority="NeverOverflow"/>
+                    </layoutData>
+                </SearchField>
+            </Toolbar>
+        </headerToolbar>
+        <columns>
+            <Column>
+                <Text text="Nombre de Archivo"/>
+            </Column>
+            <Column>
+                <Text text="Fecha"/>
+            </Column>
+        </columns>
+        <items>
+            <ColumnListItem>
+                <cells>
+                    <Text text=""/>
+                    <Text text=""/>
+                </cells>
+            </ColumnListItem>
+        </items>
+    </Table>
+</core:FragmentDefinition>
