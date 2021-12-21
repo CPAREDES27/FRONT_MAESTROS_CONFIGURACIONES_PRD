@@ -19,7 +19,7 @@
                                     <Select
                                         selectedKey="{DATOSMAESTRO>CDUPL}"
                                         forceSelection="false" 
-                                        items="{DATOSMAESTRO>/UNIDADMEDIDA}">
+                                        items="{DATOSMAESTRO>/CDUPL}">
                                         <core:Item key="{DATOSMAESTRO>id}" text="{DATOSMAESTRO>descripcion}" />
                                     </Select>
                                 </form:fields>
@@ -43,11 +43,6 @@
                         labelSpanL="4"
                         labelSpanM="3"/>
                 </form:layout>
-                <form:title>
-                    <core:Title
-                        icon="sap-icon://edit"
-                        text="{detailView>titleDialogDistribFlota}"/>
-                </form:title>
             </form:Form>
             <Panel
                 backgroundDesign="Solid"
@@ -101,13 +96,18 @@
             </Panel>
         </content>
          <beginButton>
-            <Button text="Guardar" icon="sap-icon://save" type="" press="" />
+            <Button text="Guardar" icon="sap-icon://save" type="Emphasized" press="" />
         </beginButton>
         <endButton>
-            <Button text="" icon="" type="" press="" />
+            <Button text="Cancelar" icon="sap-icon://decline" type="Reject" press=".onCloseDialog" />
         </endButton>
         <customHeader>
-            
+            <OverflowToolbar>
+                <ObjectStatus
+                        icon="sap-icon://edit"
+                        state="Indication06"
+                        text="{DATOSMAESTRO>/titleDialogDistribFlota}"/>
+            </OverflowToolbar>
         </customHeader>
     </Dialog>
 </core:FragmentDefinition>

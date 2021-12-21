@@ -31,6 +31,8 @@ sap.ui.define([
         formatter
     ) {
     'use strict';
+    const HOST2 = "https://tasaqas.launchpad.cfapps.us10.hana.ondemand.com";
+
     return ManagedObject.extend("com.tasa.config.controller.Fragments",{
         constructor: function(oView,sFragName) {
 			this._oView = oView;
@@ -422,13 +424,61 @@ sap.ui.define([
         },
 
         showSearchHelp:function(oEvent){
-            // this.getController().crearFragments("AyudaBusquedaEmb");
             let oModelMaster = this.getController().getModel("DATOSMAESTRO"),
-            sIdControl = oEvent.getParameter("id");
-            oModelMaster.setProperty("/searchEmbar",{});
-            oModelMaster.setProperty("/idControl",sIdControl);
-            let oDialog = new AyudaBusquedaEmb(this.getView());
-            oDialog.open();
+            oView = this.getView(),
+            INPRP = oModelMaster.getProperty("/INPRP"),
+			sUrl = HOST2 + "/9acc820a-22dc-4d66-8d69-bed5b2789d3c.AyudasBusqueda.busqembarcaciones-1.0.0",
+			nameComponent = "busqembarcaciones",
+			idComponent = "busqembarcaciones",
+            oModel = oEvent.getSource().getBindingContext().getModel();
+
+            oModel.setProperty("/searchEmbar",{});
+            oModel.setProperty("/INPRP",INPRP);
+
+			if(!this.DialogComponent){
+				this.DialogComponent = new sap.m.Dialog({
+					title:"Búsqueda de Embarcaciones",
+					icon:"sap-icon://search",
+					state:"Information",
+					endButton:new sap.m.Button({
+						icon:"sap-icon://decline",
+						text:"Cerrar",
+						type:"Reject",
+						press:function(oEvent){
+							this.onCloseDialog(oEvent);
+						}.bind(this)
+					})
+				});
+				oView.addDependent(this.DialogComponent);
+				oModel.setProperty("/idDialogComp",this.DialogComponent.getId());
+			}
+
+			let compCreateOk = function(){
+				BusyIndicator.hide()
+			}
+			if(this.DialogComponent.getContent().length===0){
+				BusyIndicator.show(0);
+				const oContainer = new sap.ui.core.ComponentContainer({
+					id: idComponent,
+					name: nameComponent,
+					url: sUrl,
+					settings: {},
+					componentData: {},
+					propagateModel: true,
+					componentCreated: compCreateOk,
+					height: '100%',
+					// manifest: true,
+					async: false
+				});
+				this.DialogComponent.addContent(oContainer);
+			}
+
+			this.DialogComponent.open();
+        },
+
+        onCloseDialog:function(){
+            let oDialog = oEvent.getSource().getParent();
+            oDialog.close();
         },
 
         buildTable:function(oMaster,aFields){

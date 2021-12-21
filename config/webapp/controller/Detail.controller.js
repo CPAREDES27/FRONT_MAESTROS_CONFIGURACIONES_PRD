@@ -714,9 +714,9 @@ sap.ui.define([
 		 */
 
 		crearFormNuevo: async function(oMaster,oContextData){
-			let oModelView = this.getModel("detailView"),
+			let oModelMaster = oContextData.getModel(),
 			sTitleDialog = oContextData ? "Editar registro":"Nuevo registro";
-			oModelView.setProperty("/titleDialogDistribFlota",sTitleDialog);
+			oModelMaster.setProperty("/titleDialogDistribFlota",sTitleDialog);
 			if(!this.editDialogDistrib){
 				this.editDialogDistrib = await Fragment.load({
 					name:"com.tasa.config.fragments.DistribFlota.form",
@@ -724,8 +724,13 @@ sap.ui.define([
 				});
 				this.getView().addDependent(this.editDialogDistrib);
 			}
-			this.editDialogDistrib.bindElement("DATOSMAESTRO>"+oContextData.getPath())
+			this.editDialogDistrib.bindElement("DATOSMAESTRO>"+oContextData.getPath());
 			this.editDialogDistrib.open();
+		},
+
+		onCloseDialog:function(oEvent){
+			let oDialog = oEvent.getSource().getParent();
+			oDialog.close();
 		},
 
 		removeControls:function(){
