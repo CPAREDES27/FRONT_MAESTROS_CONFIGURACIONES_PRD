@@ -4,7 +4,7 @@
 	xmlns:core="sap.ui.core">
     <form:Form
         editable="true"
-        binding = "{DATOSMAESTRO>/listaControlComb}">
+        binding = "{DATOSMAESTRO>/LISTACONTROLDECOMBUSTIBLE/0}">
         <form:title>
             <core:Title
                 emphasized="true"

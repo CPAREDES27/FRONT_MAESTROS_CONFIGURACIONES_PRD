@@ -14,7 +14,7 @@
             <Toolbar>
                 <Title
                     id="lineItemsTitle"
-                    text="Lista de Registros {=${DATOSMAESTRO>/cantData} > 0 ? '('+${DATOSMAESTRO>/cantData}+')':'(0)'}"
+                    text="{detailView>/lineItemListTitle}"
                     titleStyle="H3"
                     level="H3"/>
                 <ToolbarSpacer/>

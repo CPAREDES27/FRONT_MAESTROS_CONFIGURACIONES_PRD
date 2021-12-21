@@ -3,11 +3,10 @@
   "authenticationMethod": "route",
   "routes": [
     {
-      "source":"^/api/(.*)$",
+      "source":"^/roles/(.*)$",
       "target":"$1",
-      "authenticationType":"none",
-      "destination":"nodeapi",
-      "csrfProtection":false
+      "authenticationType":"xsuaa",
+      "destination":"MasterConfig_roles"
     },
     {
       "source": "^/resources/(.*)$",

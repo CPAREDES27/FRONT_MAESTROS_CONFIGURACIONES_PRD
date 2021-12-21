@@ -15,6 +15,20 @@ sap.ui.define([], function () {
 			}
 
 			return parseFloat(sValue).toFixed(2);
+		},
+
+		setTipoPesca:function(sCodPesca){
+			if(sCodPesca){
+				let oModel = this.getView().getModel("DATOSMAESTRO"),
+				aDataTipoPesca = oModel.getProperty("/CDTPC"),
+				sDescTipoPesca;
+				aDataTipoPesca.forEach(item => {
+					if(item["id"] === sCodPesca) sDescTipoPesca = item.descripcion;
+				});
+				return sDescTipoPesca;
+			}else{
+				return sCodPesca;
+			}
 		}
 	};
 });

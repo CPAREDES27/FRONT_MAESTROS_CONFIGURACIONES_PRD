@@ -585,9 +585,9 @@ sap.ui.define([
             oModel.setProperty("/INPRP",INPRP);
             
             let oView = this.getView(),
-			sUrl = HOST2 + "/10f4c59e-35e6-4d6a-88ef-e0267faac0ab.AyudasBusqueda.ayudaembarcaciones-1.0.0",
-			nameComponent = "ayudaembarcaciones",
-			idComponent = "ayudaembarcaciones";
+			sUrl = HOST2 + "/9acc820a-22dc-4d66-8d69-bed5b2789d3c.AyudasBusqueda.busqembarcaciones-1.0.0",
+			nameComponent = "busqembarcaciones",
+			idComponent = "busqembarcaciones";
 
 			if(!that.DialogComponent){
 				that.DialogComponent = new sap.m.Dialog({

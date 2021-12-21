@@ -3,48 +3,6 @@
     xmlns="sap.m"
 	xmlns:l="sap.ui.layout"
     xmlns:unified="sap.ui.unified">
-	<!-- <SinglePlanningCalendar
-		id="SPC1"
-		title= "Calendario"
-		cellPress="onPressCell"
-		appointmentSelect="handleAppointmentSelect"
-		headerDateSelect="handleHeaderDateSelect"
-		startDateChange="handleStartDateChange"
-		startDate="{path: 'DATOSMAESTRO>/startDate'}"
-		stickyMode="All"
-		appointments="{path: 'DATOSMAESTRO>/appointments'}">
-		<actions>
-			<Button id="addNewAppointment" icon="sap-icon://add" type="Emphasized" text="Añadir Temporada" press="handleAppointmentCreate" tooltip="Agrefar nueva temporada" />
-		</actions>
-		<views  >
-			<SinglePlanningCalendarMonthView key="MonthView" title="Mes" />
-		</views>
-		<appointments>
-			<unified:CalendarAppointment
-				title= "{DATOSMAESTRO>CDTPC}"
-				text= "{DATOSMAESTRO>texto}"
-				type= "{DATOSMAESTRO>type}"
-				icon= "{DATOSMAESTRO>icon}"
-				startDate= "{DATOSMAESTRO>startDate}"
-				endDate= "{DATOSMAESTRO>endDate}"
-				color = "{DATOSMAESTRO>color}">
-				<unified:dependents>
-					<core:Fragment
-						fragmentName="com.tasa.configuraciones.fragments.CalendarioPesca.MenuTemporada"
-						type="XML" />
-				</unified:dependents>
-			</unified:CalendarAppointment>
-		</appointments>
-		<specialDates  >
-		
-			<unified:DateTypeRange
-				type="Type08"
-				modelContextChange=""
-				startDate="{DATOSMAESTRO>/startDateMonth}"
-				endDate="{DATOSMAESTRO>/endDateMonth}">
-			</unified:DateTypeRange>
-		</specialDates>
-	</SinglePlanningCalendar> -->
 	<l:DynamicSideContent
 		showSideContent="{path:'detailView>/legendShown'}">
 		<PlanningCalendar

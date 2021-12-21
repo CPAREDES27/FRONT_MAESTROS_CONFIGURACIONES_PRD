@@ -25,7 +25,7 @@
                                     <RadioButton text="{DATOSMAESTRO>descripcion}"/>
                                 </RadioButtonGroup> -->
                                 <Select
-                                    selectedKey="{=${DATOSMAESTRO>INEIF}==='Si'?'S':'N'}"
+                                    selectedKey="{DATOSMAESTRO>INEIF}"
                                     forceSelection="false" 
                                     items="{DATOSMAESTRO>/INEIF}">
                                     <core:Item key="{DATOSMAESTRO>id}" text="{DATOSMAESTRO>descripcion}" />
@@ -193,7 +193,7 @@
                                         <Select
                                             selectedKey="{DATOSMAESTRO>CDMND}"
                                             forceSelection="false" 
-                                            items="{DATOSMAESTRO>/CDMND}">
+                                            items="{ path : 'DATOSMAESTRO>/CDMND' }">
                                             <core:Item key="{DATOSMAESTRO>id}" text="{DATOSMAESTRO>descripcion}"/>
                                         </Select>
                                     </form:fields>
@@ -227,10 +227,6 @@
                             labelSpanXL="-1"
                             singleContainerFullSize="true"/>
                     </form:layout>
-                    <form:title>
-                    </form:title>
-                    <form:toolbar>
-                    </form:toolbar>
                 </form:Form>
 			</content>
 			<headerToolbar>

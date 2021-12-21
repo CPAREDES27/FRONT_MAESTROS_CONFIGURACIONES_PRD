@@ -1,11 +1,13 @@
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
     "sap/ui/unified/library",
-	"sap/m/library"
+	"sap/m/library",
+    "../model/formatter"
 ], function(
 	ManagedObject,
     unifiedLibrary, 
-    mLibrary
+    mLibrary,
+    formatter
 ) {
 	"use strict";
     var StandardCalendarLegendItem = unifiedLibrary.StandardCalendarLegendItem;
@@ -17,6 +19,27 @@ sap.ui.define([
                 "com.tasa.config.fragments.CalendarioPesca."+sFragName, this);
 			this._bInit = false;
 		},
+
+        fomatter:formatter,
+
+        /**
+         * Iplementado porque el formatter de model no lo reconoce
+         * @param {*} SCode 
+         * @returns 
+         */
+        formato:function(sCodPesca){
+            if(sCodPesca){
+				let oModel = this.getView().getModel("DATOSMAESTRO"),
+				aDataTipoPesca = oModel.getProperty("/CDTPC"),
+				sDescTipoPesca;
+				aDataTipoPesca.forEach(item => {
+					if(item["id"] === sCodPesca) sDescTipoPesca = item.descripcion;
+				});
+				return sDescTipoPesca;
+			}else{
+				return sCodPesca;
+			}
+        },
 
 		exit: function() {
 			delete this._oView;

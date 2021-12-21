@@ -1,0 +1,113 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+    xmlns:form="sap.ui.layout.form">
+    <Dialog
+        showHeader="false">
+        <content>
+            <form:Form>
+                <form:formContainers>
+                    <form:FormContainer>
+                        <form:formElements>
+                            <form:FormElement label="Código">
+                                <form:fields>
+                                    <Input value="{DATOSMAESTRO>CLSIS}" editable="false"/>
+                                </form:fields>
+                            </form:FormElement>
+                            <form:FormElement label="Unidad de medida de planificación">
+                                <form:fields>
+                                    <Select
+                                        selectedKey="{DATOSMAESTRO>CDUPL}"
+                                        forceSelection="false" 
+                                        items="{DATOSMAESTRO>/UNIDADMEDIDA}">
+                                        <core:Item key="{DATOSMAESTRO>id}" text="{DATOSMAESTRO>descripcion}" />
+                                    </Select>
+                                </form:fields>
+                            </form:FormElement>
+                            <form:FormElement label="Horizonte de planificación">
+                                <form:fields>
+                                    <Input value="{DATOSMAESTRO>HZPLN}" type="Number"/>
+                                </form:fields>
+                            </form:FormElement>
+                            <form:FormElement label="Utilización máxima de capacidad de planta">
+                                <form:fields>
+                                    <Input value="{DATOSMAESTRO>UXCAP}" type="Number"/>
+                                </form:fields>
+                            </form:FormElement>
+                        </form:formElements>
+                    </form:FormContainer>
+                </form:formContainers>
+                <form:layout>
+                    <form:ResponsiveGridLayout
+                        columnsL="1"
+                        labelSpanL="4"
+                        labelSpanM="3"/>
+                </form:layout>
+                <form:title>
+                    <core:Title
+                        icon="sap-icon://edit"
+                        text="{detailView>titleDialogDistribFlota}"/>
+                </form:title>
+            </form:Form>
+            <Panel
+                backgroundDesign="Solid"
+                expandable="true"
+                expanded="true"
+                headerText="Texto de Panel">
+                <content>
+                    <form:Form>
+                        <form:formContainers>
+                            <form:FormContainer>
+                                <form:formElements>
+                                    <form:FormElement label="Alerta de utilización de capacidad mínima">
+                                        <form:fields>
+                                            <Input value="{DATOSMAESTRO>AUCMN}"/>
+                                        </form:fields>
+                                    </form:FormElement>
+                                    <form:FormElement label="Alerta de utilización de capacidad máxima">
+                                        <form:fields>
+                                            <Input value="{DATOSMAESTRO>AUCMD}"/>
+                                        </form:fields>
+                                    </form:FormElement>
+                                </form:formElements>
+                            </form:FormContainer>
+                        </form:formContainers>
+                        <form:layout>
+                            <form:ResponsiveGridLayout
+                                adjustLabelSpan="true"
+                                breakpointL="1024"
+                                breakpointM="600"
+                                breakpointXL="1440"
+                                columnsL="2"
+                                columnsM="1"
+                                columnsXL="-1"
+                                emptySpanL="0"
+                                emptySpanM="0"
+                                emptySpanS="0"
+                                emptySpanXL="-1"
+                                labelSpanL="4"
+                                labelSpanM="3"
+                                labelSpanS="12"
+                                labelSpanXL="-1"
+                                singleContainerFullSize="true"/>
+                        </form:layout>
+                    </form:Form>
+                </content>
+                <headerToolbar>
+                    <OverflowToolbar>
+                        <Label  text="Datos de alerta"/>
+                    </OverflowToolbar>
+                </headerToolbar>
+            </Panel>
+        </content>
+         <beginButton>
+            <Button text="Guardar" icon="sap-icon://save" type="" press="" />
+        </beginButton>
+        <endButton>
+            <Button text="" icon="" type="" press="" />
+        </endButton>
+        <customHeader>
+            
+        </customHeader>
+    </Dialog>
+</core:FragmentDefinition>

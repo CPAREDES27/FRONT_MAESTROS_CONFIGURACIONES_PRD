@@ -526,7 +526,7 @@ sap.ui.define([
 			// Tabla principal
 			if(aServiceTable.length > 0){
 				aServiceTable.forEach(oServ => {
-					oTableService.param = {
+					oServ.param = {
 						delimitador: oServ.DELIMITADOR,
 						fields: [],
 						no_data: oServ.NO_DATA,
@@ -538,9 +538,9 @@ sap.ui.define([
 						rowskips: oServ.ROWSKIPS,
 						tabla: oServ.TABLA
 					};
-					oTableService.MODEL = oServ.MODEL;
-					oTableService.PATH = oServ.PATH;
-					this._getReadTable(oTableService,oObject);
+					// oTableService.MODEL = oServ.MODEL;
+					// oTableService.PATH = oServ.PATH;
+					this._getReadTable(oServ,oObject);
 				});
 			}
 
@@ -707,6 +707,27 @@ sap.ui.define([
 			}
 		},
 
+		/**
+		 * Genracion de Dialog Editar y nuevo
+		 * @param {*} oMaestro 
+		 * @param {*} oContextData 
+		 */
+
+		crearFormNuevo: async function(oMaster,oContextData){
+			let oModelView = this.getModel("detailView"),
+			sTitleDialog = oContextData ? "Editar registro":"Nuevo registro";
+			oModelView.setProperty("/titleDialogDistribFlota",sTitleDialog);
+			if(!this.editDialogDistrib){
+				this.editDialogDistrib = await Fragment.load({
+					name:"com.tasa.config.fragments.DistribFlota.form",
+					controller:this
+				});
+				this.getView().addDependent(this.editDialogDistrib);
+			}
+			this.editDialogDistrib.bindElement("DATOSMAESTRO>"+oContextData.getPath())
+			this.editDialogDistrib.open();
+		},
+
 		removeControls:function(){
 			let oView = this.getView(),
 			oDetailPage = oView.byId("detailPage"),
@@ -814,64 +835,67 @@ sap.ui.define([
 				MessageBox.error("Debe seleccionar un tipo de carga");
 			}
 		},
+		
 
 		/**
 		 * Evento del footer de la pagina
 		 */
 		onGuardar:function(oEvent){
-			// BusyIndicator.show(0)
-			// let oContext = oEvent.getSource().getBindingContext(),
-			// oMaster = oContext.getObject(),
-			// oServiceUpdate = oMaster.services.find(oServ=>oServ.IDSERVICE==="UPDATE"),
-			// oModelMaster = this.getModel("DATOSMAESTRO"),
-			// aDataUpdate = oModelMaster.getProperty("/LISTACONTROLDEVIVERES"),
-			// aOpcion=[],
-			// aKeys=[],
-			// oFieldExist,
-			// sFieldWhere,
-			// sKeyWhere;
+			BusyIndicator.show(0);
+			this.Count = 0; 
+            this.CountService = 2;
+			let oContext = oEvent.getSource().getBindingContext(),
+			oMaster = oContext.getObject(),
+			oServiceUpdate = oMaster.services.find(oServ=>oServ.IDSERVICE==="UPDATE"),
+			oModelMaster = this.getModel("DATOSMAESTRO"),
+			aDataUpdate = oModelMaster.getProperty("/LISTACONTROLDEVIVERES"),
+			aOpcion=[],
+			aKeys=[],
+			oFieldExist,
+			sFieldWhere,
+			sKeyWhere;
 
-			// switch(oMaster.IDAPP) {
-			// 	case "C14":
-			// 		let aDataListaArchivos = oModelMaster.getProperty("/listaArchivos");
-			// 		if(aDataListaArchivos && aDataListaArchivos.length > 0){
-			// 			this.cargaDinamicaArchivos(aDataListaArchivos);
-			// 		}
-			// 		break;
-			// 	case "C04":
-			// 		aDataUpdate.forEach(item=>{
-			// 			aKeys = Object.keys(item)
-			// 			oMaster.fields.forEach(oField=>{
-			// 				oFieldExist = aKeys.find(key=>key===oField.IDFIELD)
-			// 				if(oFieldExist){
-			// 					aOpcion.push({
-			// 						field:oField.IDFIELD,
-			// 						valor:item[oField.IDFIELD]
-			// 					})
-			// 				}
-			// 				if(oField.ORDENMEW===1){
-			// 					sFieldWhere=oField.IDFIELD;
-			// 					sKeyWhere=item[oField.IDFIELD]
-			// 				}
-			// 			})
-			// 		})
-			// 		// oModelMaster.getProperty("/")
-			// 		oServiceUpdate.param={
-			// 			data:"",
-			// 			fieldWhere:sFieldWhere,
-			// 			keyWhere:sKeyWhere,
-			// 			flag:"X",
-			// 			opcion:aOpcion,
-			// 			p_case:"E",
-			// 			p_user:"FGARCIA",
-			// 			tabla:oServiceUpdate.TABLA
-			// 		}
+			switch(oMaster.IDAPP) {
+				case "C14":
+					let aDataListaArchivos = oModelMaster.getProperty("/listaArchivos");
+					if(aDataListaArchivos && aDataListaArchivos.length > 0){
+						this.cargaDinamicaArchivos(aDataListaArchivos);
+					}
+					break;
+				case "C04":
+					aDataUpdate.forEach(item=>{
+						aKeys = Object.keys(item)
+						oMaster.fields.forEach(oField=>{
+							oFieldExist = aKeys.find(key=>key===oField.IDFIELD)
+							if(oFieldExist){
+								aOpcion.push({
+									field:oField.IDFIELD,
+									valor:item[oField.IDFIELD]
+								})
+							}
+							if(oField.ORDENMEW===1){
+								sFieldWhere=oField.IDFIELD;
+								sKeyWhere=item[oField.IDFIELD]
+							}
+						})
+					})
+					// oModelMaster.getProperty("/")
+					oServiceUpdate.param={
+						data:"",
+						fieldWhere:sFieldWhere,
+						keyWhere:sKeyWhere,
+						flag:"X",
+						opcion:aOpcion,
+						p_case:"E",
+						p_user:"FGARCIA",
+						tabla:oServiceUpdate.TABLA
+					}
 					
-			// 		this._updateService(oServiceUpdate);
-			// 		break;
-			// }
+					this._updateService(oServiceUpdate);
+					break;
+			}
 			
-			// BusyIndicator.hide();
+			BusyIndicator.hide();
 		},
 
 		 /**
@@ -886,29 +910,6 @@ sap.ui.define([
 			if(aDatatable){
 				oModel.setProperty(service.PROPERTY,aDatatable.data);
 			}
-			// .then(data=>{
-			//    aData = data.data;
-			//    if(aData.length>0){
-			// 	   let aServicesDom=oMaster.services.filter(serv=>serv.TIPOPARAM==="DOMINIO"),
-			// 	   aDataDom;
-			// 	   aData.forEach(item=>{
-			// 		   aServicesDom.forEach(serv=>{
-			// 			   if(item[serv?.IDSERVICE]){
-			// 				   aDataDom=oModel.getProperty(`/${serv.IDSERVICE}`);
-			// 				   aDataDom?.forEach(dom=>{
-			// 					   if(dom.id===item[serv.IDSERVICE])
-			// 						   item[serv.IDSERVICE]=dom.descripcion;
-			// 				   })
-			// 			   }
-			// 		   })
-			// 	   })
-			// 	//    oModel.setProperty("/cantData",aData.length)
-			//    }else{
-			// 		this.getMessageDialog("Information", "No existen registros para la búsqueda");
-			// 		oModel.setProperty(service.PROPERTY,[])
-			//    }
-			//    BusyIndicator.hide();
-		    // })
 	     },
 
 		_getDataDominios: async function(service,oMaster){
@@ -924,29 +925,6 @@ sap.ui.define([
                             oModelMaster.setProperty(`/${serv.IDSERVICE}`,dom.data);
                     });
                 });
-                // let aServices = oMaster.services.filter(serv=>serv.INITSERVICE==="TRUE"&&serv.TIPOPARAM==="PARAM");
-                // if(aServices.length>0){
-                //     aServices.forEach(serv=>{
-                //         serv.param={};
-                //         serv.param={};
-                //         serv.param.delimitador=serv.DELIMITADOR;
-                //         serv.param.fields=[];
-                //         serv.param.no_data=serv.NO_DATA;
-                //         serv.param.option=[];
-                //         serv.param.options=[];
-                //         serv.param.order="";
-                //         serv.param.p_user="FGARCIA";
-                //         serv.param.rowcount=serv.ROWCOUNT_S;
-                //         serv.param.rowskips=serv.ROWSKIPS;
-                //         serv.param.tabla=serv.TABLA;
-                //         this._getReadTable(serv,oMaster);
-                //     });
-                    
-                // }
-                // if(oMaster.IDAPP==="C01"){
-                //     let oDate = new Date;
-                //     // this._getTemporadaPesca(oMaster,oDate);
-                // }
             }
         },
 	    _getSearchingHelp: async function(service,oObject){
@@ -961,13 +939,6 @@ sap.ui.define([
 				aFieldsName.sort((a,b)=>a.ORDENMEW - b.ORDENMEW);
 				oModelService.setProperty(`/${service.IDAPP}`,oGetSearchingHelp.data);
 				oModelService.setProperty(`/name${service.IDAPP}`,aFieldsName);
-				// if(this.cantServ === this.iFlag){
-				// 	if(oObject["IDAPP"]==="C01"||oObject["IDAPP"]==="C04"){
-				// 		this.buildContent(oObject);
-				// 	}else{
-				// 		this.buildHeaderContent(oObject);
-				// 		this.buildContent(oObject);
-				// 	}
 			}
 		},
 		_getTemporadaPesca:function(oObject,sStartDate){
@@ -1134,21 +1105,16 @@ sap.ui.define([
 			})
 		},
 
-		_updateService:function(oService,oMaster){
+		_updateService: async function(oService,oMaster){
 			let sUrl = HOST+oService.PATH,
 			oModelMaster = this.getModel(oService.MODEL),
-			oUpdateData = this.getDataService(sUrl,oService.param);
-			oUpdateData
-			.then(data=>{
-				// BusyIndicator.hide();
-				let sMessage = data.t_mensaje[0].DSMIN;
+			oUpdateData = await this.getDataService(sUrl,oService.param);
+			if(oUpdateData){
+				let sMessage = oUpdateData.t_mensaje[0].DSMIN;
 				this.getMessageDialog("Success",sMessage);
 				let oSearchService = oModelMaster.getProperty("/serviceBusqueda");
 				this._getReadTable(oSearchService,oMaster);
-			})
-			.catch(error=>{
-				console.log(error)
-			})
+			}
 		},
 		/**
 		 *  Servicio para consumir la ayuda de busqueda
@@ -1239,11 +1205,11 @@ sap.ui.define([
 			})
 		 },
 
-		 onSaveControlCombus:function(){
+		 onSaveControlCombus: async function(){
 			BusyIndicator.show(0);
 			let oModelMaster = this.getModel("DATOSMAESTRO"),
 			sUrl = HOST + "/api/General/Update_Table/",
-			oDataForm = oModelMaster.getProperty("/listaControlComb"),
+			oDataForm =  oModelMaster.getProperty("/LISTACONTROLDECOMBUSTIBLE/0"),
 			sData = `|${oDataForm["CLSIS"]}|${oDataForm["INEIF"]}|${oDataForm["BWART"]}|${oDataForm["MATNR"]}|${oDataForm["WERKS"]}|${oDataForm["CDUMD"]}`,
 			param = {
 				data: sData,
@@ -1252,13 +1218,12 @@ sap.ui.define([
 				p_user: "FGARCIA",
 				tabla: "ZFLCCC"
 			  },
-			  oUpdateData = this.getDataService(sUrl,param);
+			  oUpdateData = await this.getDataService(sUrl,param);
 
-			  oUpdateData
-			  .then(data=>{
-				this.getMessageDialog("Success",data.t_mensaje[0].DSMIN);
-				BusyIndicator.hide();
-			  })
+			  if(oUpdateData){
+				  this.getMessageDialog("Success",oUpdateData.t_mensaje[0].DSMIN);
+				  BusyIndicator.hide();
+			  }
 		 }
 	});
 

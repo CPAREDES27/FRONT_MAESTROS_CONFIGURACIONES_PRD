@@ -42,9 +42,7 @@ sap.ui.define([
             this.Count = 0; 
             this.CountService = 1;
 			this._getListaMaestros(oViewModel);
-            // this._getCurrentUser();
-
-            this.getUserInfo();
+            this._getCurrentUser();
 		},
 
 		_getListaMaestros: async function(oViewModel){
@@ -113,7 +111,7 @@ sap.ui.define([
             // });
             
             // $.ajax({
-            // url: USER_HOST + "/getuserinfo",
+            // url: "/roles/",
             // dataType: 'jsonp',
             //     success: function (result, status, xhr) {
             //         console.log(result);
@@ -123,7 +121,10 @@ sap.ui.define([
             //     }
             // });
 
-            $.ajax( "/api",{
+            $.ajax( "/roles/",{
+                header:{
+                    "x-csrf-token":"fetch"
+                },
                 "success": function(response) {
                     console.log(response)
                 },
@@ -131,29 +132,7 @@ sap.ui.define([
                     console.log(errorThrown)
                 }
             });
-        },
-
-        getUserInfo: function () {
-            const url = this.getBaseURL() + "/user-api/currentUser";
-            var oModelUser = new JSONModel();
-
-            oModelUser.loadData(url);
-            oModelUser.dataLoaded()
-            .then(()=>{
-                console.log(oModelUser.getData())
-            })
-            .catch((error)=>{               
-                console.log(error)
-            });
-        },      
-        
-        getBaseURL: function () {
-            var appId = this.getOwnerComponent().getManifestEntry("/sap.app/id");
-            var appPath = appId.replaceAll(".", "/");
-            var appModulePath = jQuery.sap.getModulePath(appPath);
-            return appModulePath;
-        },        
-
+        }
 
 	});
 });

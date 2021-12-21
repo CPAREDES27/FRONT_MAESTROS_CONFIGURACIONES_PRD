@@ -24,7 +24,12 @@
 							</f:FormElement>
 							<f:FormElement label="Tipo de pesca">
 								<f:fields>
-									<Input editable="false" value="{DATOSMAESTRO>CDTPC}" />
+									<Input 
+										value="{ 
+											path: 'DATOSMAESTRO>CDTPC',
+											formatter: '.formato'
+										}" 
+										editable="false" />
 								</f:fields>
 							</f:FormElement>
 							<f:FormElement label="Especie" >

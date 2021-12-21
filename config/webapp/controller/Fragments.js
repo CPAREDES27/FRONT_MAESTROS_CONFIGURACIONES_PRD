@@ -28,7 +28,7 @@ sap.ui.define([
         Data,
         AyudaBusquedaEmb,
         Fragment,
-        format
+        formatter
     ) {
     'use strict';
     return ManagedObject.extend("com.tasa.config.controller.Fragments",{
@@ -38,7 +38,7 @@ sap.ui.define([
 			this._bInit = false;
 		},
 
-        formatter:format,
+        formatter:formatter,
 
         // formatter:function(sFecha){
         //     return this.getController().setFormatDate(sFecha);
@@ -440,80 +440,80 @@ sap.ui.define([
          * Creacion de Formulario nuevo y editar
          * @param {*} arrayCampos 
          */
-        setCamposNuevo:function(oMaster,param){
-            let oControl=this._oControl,
-            oServiceInit = oMaster.services.find(serv=>serv.INITSERVICE==="TRUE"),
-            oServiceTable = oMaster.services.find(serv=>serv.IDSERVICE==="TABLE"),
-            oFormContainer = new FormContainer(),
-            oFormElement={},
-            oItemTemplate,
-            control,
-            sBindEdit,
-            aFields =  oMaster.fields.filter(oField=>oField.CONTROLNEW);
-            // oDataEdit = this.getController().oModelMaestro.getProperty("/editar");
-             if(param)
-                aFields =  oMaster.fields.filter(oField=>oField.keyTab===param);
+        // setCamposNuevo:function(oMaster,param){
+        //     let oControl=this._oControl,
+        //     oServiceInit = oMaster.services.find(serv=>serv.INITSERVICE==="TRUE"),
+        //     oServiceTable = oMaster.services.find(serv=>serv.IDSERVICE==="TABLE"),
+        //     oFormContainer = new FormContainer(),
+        //     oFormElement={},
+        //     oItemTemplate,
+        //     control,
+        //     sBindEdit,
+        //     aFields =  oMaster.fields.filter(oField=>oField.CONTROLNEW);
+        //     // oDataEdit = this.getController().oModelMaestro.getProperty("/editar");
+        //      if(param)
+        //         aFields =  oMaster.fields.filter(oField=>oField.keyTab===param);
             
-            aFields.forEach(oCampo=>{
-                if(oCampo.CONTROLNEW){
-                    oFormElement = new FormElement({
-                        label:new sap.m.Label({text:oCampo.NAMEFIELD}),
-                        fields:[]
-                    });
-                    sBindEdit=`${oServiceTable.MODEL}>/${oCampo.IDFIELD}N`
-                    control = this.getController().mFields[oCampo.IDFIELD+"N"];
-                    if(!control){
-                        if (oCampo.CONTROLNEW==="INPUT"){
-                            control = new sap.m.Input(oCampo.IDFIELD+"N",{
-                                // value:oDataEdit?oDataEdit[oCampo.IDFIELD]:"",
-                                value:`{${sBindEdit}}`,
-                                placeholder:"Ingrese "+ oCampo.NAMEFIELD,
-                                editable:oCampo.READONLY==="TRUE"?false:true,
-                                showValueHelp:oCampo.COMPONENT?true:false,
-                                valueHelpRequest:function(){
-                                    this.onSearchComponent(oMaster,oCampo,oCampo.IDFIELD+"N");   
-                                }.bind(this)
-                            })
-                        }else if(oCampo.CONTROLNEW==="COMBOBOX"){
-                            oItemTemplate = new sap.ui.core.ListItem({
-                                key:`{${oServiceInit.MODEL}>id}`,
-                                text:`{${oServiceInit.MODEL}>descripcion}`
-                            });
-                            control = new sap.m.ComboBox(oCampo.IDFIELD+"N",{
-                                placeholder:"Ingrese "+ oCampo.NAMEFIELD,
-                                selectedKey:sBindEdit,
-                                items: {
-                                    path: `${oServiceInit.MODEL}>${oServiceInit.PROPERTY}/0/data`,
-                                    template: oItemTemplate,
-                                    templateShareable: false
-                                }
-                            })
-                        }else if(oCampo.CONTROLNEW==="FECHA"){
-                            control = new sap.m.DatePicker(oCampo.IDFIELD+"N",{
+        //     aFields.forEach(oCampo=>{
+        //         if(oCampo.CONTROLNEW){
+        //             oFormElement = new FormElement({
+        //                 label:new sap.m.Label({text:oCampo.NAMEFIELD}),
+        //                 fields:[]
+        //             });
+        //             sBindEdit=`${oServiceTable.MODEL}>/${oCampo.IDFIELD}N`
+        //             control = this.getController().mFields[oCampo.IDFIELD+"N"];
+        //             if(!control){
+        //                 if (oCampo.CONTROLNEW==="INPUT"){
+        //                     control = new sap.m.Input(oCampo.IDFIELD+"N",{
+        //                         // value:oDataEdit?oDataEdit[oCampo.IDFIELD]:"",
+        //                         value:`{${sBindEdit}}`,
+        //                         placeholder:"Ingrese "+ oCampo.NAMEFIELD,
+        //                         editable:oCampo.READONLY==="TRUE"?false:true,
+        //                         showValueHelp:oCampo.COMPONENT?true:false,
+        //                         valueHelpRequest:function(){
+        //                             this.onSearchComponent(oMaster,oCampo,oCampo.IDFIELD+"N");   
+        //                         }.bind(this)
+        //                     })
+        //                 }else if(oCampo.CONTROLNEW==="COMBOBOX"){
+        //                     oItemTemplate = new sap.ui.core.ListItem({
+        //                         key:`{${oServiceInit.MODEL}>id}`,
+        //                         text:`{${oServiceInit.MODEL}>descripcion}`
+        //                     });
+        //                     control = new sap.m.ComboBox(oCampo.IDFIELD+"N",{
+        //                         placeholder:"Ingrese "+ oCampo.NAMEFIELD,
+        //                         selectedKey:sBindEdit,
+        //                         items: {
+        //                             path: `${oServiceInit.MODEL}>${oServiceInit.PROPERTY}/0/data`,
+        //                             template: oItemTemplate,
+        //                             templateShareable: false
+        //                         }
+        //                     })
+        //                 }else if(oCampo.CONTROLNEW==="FECHA"){
+        //                     control = new sap.m.DatePicker(oCampo.IDFIELD+"N",{
                                 
-                            })
-                        }else{
-                            control = new sap.m.Button(oCampo.IDFIELD+"N",{
-                                text:"Guardar",
-                                type:"Emphasized",
-                                press:function(oEvent){
-                                    BusyIndicator.show(0);
-                                    // this.setItems(arrayCampos)
-                                    this.onBusquedaSimple(oEvent);
-                                }.bind(this)
-                            });
-                        }
-                        this.getController().mFields[oCampo.IDFIELD+"N"]=control;
-                    };
-                    control.bindProperty("value",sBindEdit);
-                    oFormElement.addField(control);
+        //                     })
+        //                 }else{
+        //                     control = new sap.m.Button(oCampo.IDFIELD+"N",{
+        //                         text:"Guardar",
+        //                         type:"Emphasized",
+        //                         press:function(oEvent){
+        //                             BusyIndicator.show(0);
+        //                             // this.setItems(arrayCampos)
+        //                             this.onBusquedaSimple(oEvent);
+        //                         }.bind(this)
+        //                     });
+        //                 }
+        //                 this.getController().mFields[oCampo.IDFIELD+"N"]=control;
+        //             };
+        //             control.bindProperty("value",sBindEdit);
+        //             oFormElement.addField(control);
                     
-                    oFormContainer.addFormElement(oFormElement);
-                }
+        //             oFormContainer.addFormElement(oFormElement);
+        //         }
 
-            });
-            oControl.addFormContainer(oFormContainer);
-        },
+        //     });
+        //     oControl.addFormContainer(oFormContainer);
+        // },
 
         openEditImpreVale:function(oEvent){
             let oContext = oEvent.getSource().getBindingContext("DATOSMAESTRO"),
@@ -626,13 +626,14 @@ sap.ui.define([
              let oContext = this.getControl().getBindingContext(),
              oContextData = oEvent.getSource().getBindingContext("DATOSMAESTRO"),
              oDataMaster=oContextData.getObject(),
-             oMaster = oContext.getObject();
+             oMaster = oContext.getObject(),
+             oModelMaster = oContext.getModel();
              oMaster.fields.forEach(oField=>{
                 if(oField.CONTROLNEW){
                     if(!oDataMaster){
-                        this.getController().oModelMaestro.setProperty(`/${oField.IDFIELD}N`,"")
+                        oModelMaster.setProperty(`/${oField.IDFIELD}N`,"")
                     }else{
-                        this.getController().oModelMaestro.setProperty(`/${oField.IDFIELD}N`,oDataMaster[oField.IDFIELD])
+                        oModelMaster.setProperty(`/${oField.IDFIELD}N`,oDataMaster[oField.IDFIELD])
                     }
                 }
             });
@@ -640,13 +641,15 @@ sap.ui.define([
                 this.openEditImpreVale(oEvent);
             }else{
 
-                this.getController().crearFormNuevo(oMaster,oDataMaster);
+                this.getController().crearFormNuevo(oMaster,oContextData);
             }
 
         },
         
         onSaveNew:function(oEvent){
             BusyIndicator.show(0);
+            this.getController().Count = 0; 
+            this.getController().CountService = 1;
             let oMaster = oEvent.getSource().getBindingContext().getObject(),
             serv = oMaster.services.find(oServ=>oServ.IDSERVICE==="TABLE"),
             sFieldWhere,
@@ -721,6 +724,10 @@ sap.ui.define([
 			oBinding.filter(oFilter, "Application");
         },
 
+        onListUpdateFinished:function(oEvent){
+            this.getController().onListUpdateFinished(oEvent);
+        },
+
         onExportar:function(oEvent){
             let oMaster=oEvent.getSource().getBindingContext().getObject(),
             oService = oMaster.services.find(oServ=>oServ.IDSERVICE==="TABLE"),
@@ -762,6 +769,8 @@ sap.ui.define([
          * Eventos para Formulario basico
          */
          onBusquedaSimple:function(oEvent){
+            this.getController().Count = 0; 
+            this.getController().CountService = 1;
             let oContext = this._oControl.getBindingContext(),
              oMaestro = oContext.getObject(),
              oService = oMaestro.services.find(serv=>serv.IDSERVICE==="TABLE"&&serv.INITSERVICE==="FALSE"||serv.IDSERVICE==="TABLE"),
