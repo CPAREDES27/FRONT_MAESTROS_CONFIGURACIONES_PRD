@@ -39,17 +39,19 @@ sap.ui.define([
 			this.getView().addStyleClass(this.getOwnerComponent().getContentDensityClass());
 
 			this._getListaMaestros(oViewModel);
+            // this._getCurrentUser(oViewModel);
 		},
 
-		_getListaMaestros:function(oViewModel){
+		_getListaMaestros:function(oViewModel,sEmail){
             let oModel = this.getModel(),
             that = this,
             iOriginalBusyDelay = this.getView().getBusyIndicatorDelay(),
             sUrl = HOST+"/api/General/AppMaestros/",
             oParams = {
-                "p_app": "",
-                "p_rol": "ADMINISTRADOR_SISTEMA",
-                "p_tipo":"MAESTRO"
+                p_app: "",
+                // "p_rol": sEmail,
+                p_rol: "CTIRADO@XTERNAL.BIZ",
+                p_tipo:"MAESTRO"
             };
 
             let aDataMaster = this.getDataService(sUrl, oParams);
@@ -94,6 +96,14 @@ sap.ui.define([
                 oViewModel.setProperty("/busy",false);
                 oViewModel.setProperty("/delay",iOriginalBusyDelay);
             })
+        },
+
+        _getCurrentUser: async function(oViewModel){
+            let oUserInfo = await sap.ushell.Container.getServiceAsync("UserInfo");
+            if(oUserInfo){
+                let sEmail = oUserInfo.getEmail().toUpperCase();
+                this._getListaMaestros(oViewModel,sEmail);
+            }
         }
 
 	});

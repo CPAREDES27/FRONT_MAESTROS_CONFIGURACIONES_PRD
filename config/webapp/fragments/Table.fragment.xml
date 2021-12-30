@@ -23,13 +23,13 @@
                     press="onExportar"
                     icon="sap-icon://excel-attachment"
                     type="Ghost"/>
-                <Button
+                <!-- <Button
                     id="idBotonNuevo"
                     text="Nuevo"
-                    visible="{detailView>/visibleBtnNew}"
+                    visible="{DATOSMAESTRO>/visibleBtnNew}"
                     press="onNuevoMaestro"
                     icon="sap-icon://add"
-                    type="Emphasized"/>
+                    type="Emphasized"/> -->
                 <SearchField
                     id="searchFieldDetail"
                     showRefreshButton="true"

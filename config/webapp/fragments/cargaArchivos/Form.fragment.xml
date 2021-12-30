@@ -16,11 +16,11 @@
                                     name="myFileUpload"
                                     uploadUrl="upload/"
                                     tooltip="Upload your file to the local server"
-                                    change="handleSelectFile"/>
+                                    change="onHandleSelectFile"/>
                                 <Button
                                     text="Subir"
                                     icon="sap-icon://upload"
-                                    press="base64coonversionMethod"
+                                    press="onBase64coonversionMethod"
                                     type="Emphasized"/>
                             </form:fields>
                         </form:FormElement>

@@ -96,7 +96,7 @@
             </Panel>
         </content>
          <beginButton>
-            <Button text="Guardar" icon="sap-icon://save" type="Emphasized" press="" />
+            <Button text="Guardar" icon="sap-icon://save" type="Emphasized" press=".onSaveNewDistribFlota" />
         </beginButton>
         <endButton>
             <Button text="Cancelar" icon="sap-icon://decline" type="Reject" press=".onCloseDialog" />

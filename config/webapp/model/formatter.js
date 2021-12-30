@@ -17,6 +17,11 @@ sap.ui.define([], function () {
 			return parseFloat(sValue).toFixed(2);
 		},
 
+		/**
+		 * No esta funcionando
+		 * @param {*} sCodPesca 
+		 * @returns 
+		 */
 		setTipoPesca:function(sCodPesca){
 			if(sCodPesca){
 				let oModel = this.getView().getModel("DATOSMAESTRO"),
@@ -29,6 +34,24 @@ sap.ui.define([], function () {
 			}else{
 				return sCodPesca;
 			}
+		},
+
+		setFormatHour:function(sHour){
+			if(sHour){
+				let sFormattedHour = sHour.replace(/:/g,""); 
+				if(sFormattedHour.length === 2) sFormattedHour = `${sFormattedHour}0000`
+				if(sFormattedHour.length === 4) sFormattedHour = `${sFormattedHour}00`
+				return sFormattedHour;
+			}
+		},
+
+
+		/**
+		 * Formato para la tabla dinamica
+		 * @param {string} sText 
+		 */
+		formatTable:function(sText){
+			console.log(sText)
 		}
 	};
 });

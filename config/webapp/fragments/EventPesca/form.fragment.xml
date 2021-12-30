@@ -1,0 +1,747 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+    xmlns:form="sap.ui.layout.form">
+    <VBox binding="{DATOSMAESTRO>/LISTACONFEVENTOSPESCA}">
+        <items>
+            <form:Form editable="true">
+                <form:formContainers>
+                    <form:FormContainer>
+                        <form:formElements>
+                            <form:FormElement label="Código">
+                                <form:fields>
+                                    <Input value="{DATOSMAESTRO>CLSIS}" editable="false"/>
+                                </form:fields>
+                            </form:FormElement>
+                            <form:FormElement label="Indicador de ejecución de interfaz">
+                                <form:fields>
+                                    <Select
+                                        selectedKey="{DATOSMAESTRO>INEIF}"
+                                        forceSelection="false" 
+                                        items="{DATOSMAESTRO>/INEIF}">
+                                        <core:Item key="{DATOSMAESTRO>id}" text="{DATOSMAESTRO>descripcion}" />
+                                    </Select>
+                                </form:fields>
+                            </form:FormElement>
+                        </form:formElements>
+                    </form:FormContainer>
+                </form:formContainers>
+                <form:layout>
+                    <form:ResponsiveGridLayout
+                        columnsL="1"
+                        labelSpanL="4"
+                        labelSpanM="3"/>
+                </form:layout>
+                <form:title>
+                    <core:Title
+                        icon="sap-icon://edit"
+                        text="Datos de configuración de eventos de pesca"/>
+                </form:title>
+            </form:Form>
+            <Panel
+                backgroundDesign="Solid"
+                expandable="true"
+                expanded="true">
+                <content>
+                    <form:Form editable="true">
+                        <form:formContainers>
+                            <form:FormContainer>
+                                <form:formElements>
+                                    <form:FormElement label = "Clase de aviso de mantenimiento">
+                                        <form:fields>
+                                            <ComboBox
+                                                selectedKey="{DATOSMAESTRO>QMART}"
+                                                showSecondaryValues= "true"
+                                                showClearIcon="true" 
+                                                items = "{DATOSMAESTRO>/QMART}"
+                                                change="onHandleChange">
+                                                <core:ListItem 
+                                                    key = "{DATOSMAESTRO>id}" 
+                                                    text="{DATOSMAESTRO>descripcion}" 
+                                                    additionalText = "{DATOSMAESTRO>id}" />
+                                            </ComboBox>
+                                        </form:fields>
+                                    </form:FormElement>
+                                </form:formElements>
+                                <form:title>
+                                </form:title>
+                                <form:toolbar>
+                                </form:toolbar>
+                            </form:FormContainer>
+                        </form:formContainers>
+                        <form:layout>
+                            <form:ResponsiveGridLayout
+                                adjustLabelSpan="true"
+                                breakpointL="1024"
+                                breakpointM="600"
+                                breakpointXL="1440"
+                                columnsL="2"
+                                columnsM="1"
+                                columnsXL="-1"
+                                emptySpanL="0"
+                                emptySpanM="0"
+                                emptySpanS="0"
+                                emptySpanXL="-1"
+                                labelSpanL="4"
+                                labelSpanM="3"
+                                labelSpanS="12"
+                                labelSpanXL="-1"
+                                singleContainerFullSize="true"/>
+                        </form:layout>
+                    </form:Form>
+                </content>
+                <headerToolbar>
+                    <OverflowToolbar>
+                        <ObjectStatus
+                            icon="sap-icon://warning2"
+                            text="Datos de siniestro" 
+                            state = "Indication06"/>
+                    </OverflowToolbar>
+                </headerToolbar>
+            </Panel>
+            <Panel
+                backgroundDesign="Solid"
+                expandable="true"
+                expanded="true">
+                <content>
+                    <form:Form editable="true">
+                        <form:formContainers>
+                            <form:FormContainer>
+                                <form:formElements>
+                                    <form:FormElement label="Límite mínimo de espera">
+                                        <form:fields>
+                                            <Input
+                                                type = "Number"
+                                                value="{DATOSMAESTRO>MNESP}"/>
+                                        </form:fields>
+                                    </form:FormElement>
+                                    <form:FormElement label="Límite máximo de espera">
+                                        <form:fields>
+                                            <Input
+                                                type = "Number"
+                                                value="{DATOSMAESTRO>MXESP}"/>
+                                        </form:fields>
+                                    </form:FormElement>
+                                    <form:FormElement label="Unidad de medida de tiempo de espera">
+                                        <form:fields>
+                                            <Select
+                                                selectedKey="{DATOSMAESTRO>NTESP}"
+                                                forceSelection="false" 
+                                                items="{DATOSMAESTRO>/NTESP}">
+                                                <core:Item key="{DATOSMAESTRO>id}" text="{DATOSMAESTRO>descripcion}"/>
+                                            </Select>
+                                        </form:fields>
+                                        <form:label>
+                                            <Label text="Organización de compras"/>
+                                        </form:label>
+                                    </form:FormElement>
+                                </form:formElements>
+                            </form:FormContainer>
+                        </form:formContainers>
+                        <form:layout>
+                            <form:ResponsiveGridLayout
+                                adjustLabelSpan="true"
+                                breakpointL="1024"
+                                breakpointM="600"
+                                breakpointXL="1440"
+                                columnsL="2"
+                                columnsM="1"
+                                columnsXL="-1"
+                                emptySpanL="0"
+                                emptySpanM="0"
+                                emptySpanS="0"
+                                emptySpanXL="-1"
+                                labelSpanL="4"
+                                labelSpanM="3"
+                                labelSpanS="12"
+                                labelSpanXL="-1"
+                                singleContainerFullSize="true"/>
+                        </form:layout>
+                    </form:Form>
+                </content>
+                <headerToolbar>
+                    <OverflowToolbar>
+                        <ObjectStatus
+                            icon="sap-icon://fob-watch"
+                            text="Datos de espera" 
+                            state = "Indication06"/>
+                    </OverflowToolbar>
+                </headerToolbar>
+            </Panel>
+            <Panel
+                backgroundDesign="Solid"
+                expandable="true"
+                expanded="true">
+                <content>
+                    <form:Form editable="true">
+                        <form:formContainers>
+                            <form:FormContainer>
+                                <form:formElements>
+                                    <form:FormElement label="Clase de mov. de combustible">
+                                        <form:fields>
+                                            <Input
+                                                value="{DATOSMAESTRO>BWART_ZARPE}"/>
+                                        </form:fields>
+                                    </form:FormElement>
+                                    <form:FormElement label="Material de combustible">
+                                        <form:fields>
+                                            <Input
+                                                value="{DATOSMAESTRO>MATNR_ZARPE}"
+                                                description = "{DATOSMAESTRO>MAKTX_ZARPE}"
+                                                valueState="Information"
+                                                valueStateText="Seleccione material"
+                                                showSuggestion="true"
+                                                showTableSuggestionValueHelp="false"
+                                                suggestionRows="{AYUDABUSQUEDA>/B21}"
+                                                suggestionItemSelected="onSuggestionItemSelected">
+                                                <suggestionColumns>
+                                                    <Column>
+                                                        <Label text="Cod. maerial"/>
+                                                    </Column>
+                                                    <Column>
+                                                        <Label text="Descripción"/>
+                                                    </Column>
+                                                </suggestionColumns>
+                                                <suggestionRows>
+                                                    <ColumnListItem>
+                                                        <cells>
+                                                            <ObjectStatus 
+                                                                text="{AYUDABUSQUEDA>BSART}"
+                                                                state="Information"/>
+                                                            <Text text="{AYUDABUSQUEDA>BATXT}"/>
+                                                        </cells>
+                                                    </ColumnListItem>
+                                                </suggestionRows>
+                                            </Input>
+                                        </form:fields>
+                                    </form:FormElement>
+                                    <form:FormElement label="Unidad de medida de combustible">
+                                        <form:fields>
+                                        <Select
+                                                selectedKey="{DATOSMAESTRO>UNICB_ZARPE}"
+                                                forceSelection="false" 
+                                                items="{DATOSMAESTRO>/NTESP}">
+                                                <core:Item key="{DATOSMAESTRO>id}" text="{DATOSMAESTRO>descripcion}"/>
+                                            </Select>
+                                        </form:fields>
+                                    </form:FormElement>
+                                    <form:FormElement label="Autor de lectura de horómetro">
+                                        <form:fields>
+                                            <Input
+                                                value="{DATOSMAESTRO>ATLHO_ZARPE}" />
+                                        </form:fields>
+                                    </form:FormElement>
+                                </form:formElements>
+                            </form:FormContainer>
+                        </form:formContainers>
+                        <form:layout>
+                            <form:ResponsiveGridLayout
+                                adjustLabelSpan="true"
+                                breakpointL="1024"
+                                breakpointM="600"
+                                breakpointXL="1440"
+                                columnsL="2"
+                                columnsM="1"
+                                columnsXL="-1"
+                                emptySpanL="0"
+                                emptySpanM="0"
+                                emptySpanS="0"
+                                emptySpanXL="-1"
+                                labelSpanL="4"
+                                labelSpanM="3"
+                                labelSpanS="12"
+                                labelSpanXL="-1"
+                                singleContainerFullSize="true"/>
+                        </form:layout>
+                    </form:Form>
+                </content>
+                <headerToolbar>
+                    <OverflowToolbar>
+                        <ObjectStatus
+                            icon="sap-icon://chevron-phase"
+                            text="Datos de zarpe" 
+                            state = "Indication06"/>
+                    </OverflowToolbar>
+                </headerToolbar>
+            </Panel>
+            <Panel
+                backgroundDesign="Solid"
+                expandable="true"
+                expanded="true">
+                <content>
+                    <form:Form editable="true">
+                        <form:formContainers>
+                            <form:FormContainer>
+                                <form:formElements>
+                                    <form:FormElement label="Unidad de medida de pesca declarada">
+                                        <form:fields>
+                                            <Select
+                                                selectedKey="{DATOSMAESTRO>UMPDC}"
+                                                forceSelection="false" 
+                                                items="{DATOSMAESTRO>/NTESP}">
+                                                <core:Item key="{DATOSMAESTRO>id}" text="{DATOSMAESTRO>descripcion}"/>
+                                            </Select>
+                                        </form:fields>
+                                    </form:FormElement>
+                                    <form:FormElement label ="Especie por defecto para pesca CHI">
+                                        <form:fields>
+                                            <Input
+                                                value="{DATOSMAESTRO>PRCHI}"
+                                                description = "{DATOSMAESTRO>DSSPC}"
+                                                valueState="Information"
+                                                valueStateText="Seleccione especie por defecto"
+                                                filterSuggests="true"
+                                                maxSuggestionWidth=""
+                                                showSuggestion="true"
+                                                showTableSuggestionValueHelp="false"
+                                                suggestionRows="{AYUDABUSQUEDA>/B22}"
+                                                suggestionItemSelected="onSuggestionItemSelected">
+                                                <suggestionColumns>
+                                                    <Column>
+                                                        <Label text="Cod. especie"/>
+                                                    </Column>
+                                                    <Column>
+                                                        <Label text="Descripción"/>
+                                                    </Column>
+                                                </suggestionColumns>
+                                                <suggestionRows>
+                                                    <ColumnListItem>
+                                                        <cells>
+                                                            <ObjectStatus 
+                                                                text="{AYUDABUSQUEDA>BLART}"
+                                                                state="Information"/>
+                                                            <Text text="{AYUDABUSQUEDA>LTEXT}"/>
+                                                        </cells>
+                                                    </ColumnListItem>
+                                                </suggestionRows>
+                                            </Input>
+                                        </form:fields>
+                                    </form:FormElement>
+                                    <form:FormElement label="Tiempo máximo de cala">
+                                        <form:fields>
+                                            <Input 
+                                                value = "{DATOSMAESTRO>TMXCA}"
+                                                type = "Number" />
+                                            <Select
+                                                selectedKey="{DATOSMAESTRO>UMTMX}"
+                                                forceSelection="false" 
+                                                items="{DATOSMAESTRO>/NTESP}">
+                                                <core:Item key="{DATOSMAESTRO>id}" text="{DATOSMAESTRO>descripcion}"/>
+                                            </Select>
+                                        </form:fields>
+                                    </form:FormElement>
+                                    <form:FormElement label="Tiempo mínimo entre calas">
+                                        <form:fields>
+                                            <Input
+                                                value="{DATOSMAESTRO>TMICA}"
+                                                type="Number"/>
+                                            <Select
+                                                selectedKey="{DATOSMAESTRO>UMTMI}"
+                                                forceSelection="false" 
+                                                items="{DATOSMAESTRO>/NTESP}">
+                                                <core:Item key="{DATOSMAESTRO>id}" text="{DATOSMAESTRO>descripcion}"/>
+                                            </Select>
+                                        </form:fields>
+                                    </form:FormElement>
+                                </form:formElements>
+                            </form:FormContainer>
+                        </form:formContainers>
+                        <form:layout>
+                            <form:ResponsiveGridLayout
+                                adjustLabelSpan="true"
+                                breakpointL="1024"
+                                breakpointM="600"
+                                breakpointXL="1440"
+                                columnsL="2"
+                                columnsM="1"
+                                columnsXL="-1"
+                                emptySpanL="0"
+                                emptySpanM="0"
+                                emptySpanS="0"
+                                emptySpanXL="-1"
+                                labelSpanL="4"
+                                labelSpanM="3"
+                                labelSpanS="12"
+                                labelSpanXL="-1"
+                                singleContainerFullSize="true"/>
+                        </form:layout>
+                    </form:Form>
+                </content>
+                <headerToolbar>
+                    <OverflowToolbar>
+                        <ObjectStatus
+                            icon="sap-icon://pull-down"
+                            text="Datos de cala" 
+                            state = "Indication06"/>
+                    </OverflowToolbar>
+                </headerToolbar>
+            </Panel>
+            <Panel
+                backgroundDesign="Solid"
+                expandable="true"
+                expanded="true">
+                <content>
+                    <form:Form editable="true">
+                        <form:formContainers>
+                            <form:FormContainer>
+                                <form:formElements>
+                                    <form:FormElement label="Clase de mov. de combustible">
+                                        <form:fields>
+                                            <Input
+                                                value="{DATOSMAESTRO>BWART_ARRBPTO}"/>
+                                        </form:fields>
+                                    </form:FormElement>
+                                    <form:FormElement label="Material de combustible">
+                                        <form:fields>
+                                            <Input
+                                                value="{DATOSMAESTRO>MATNR_ARRBPTO}"
+                                                description = "{DATOSMAESTRO>MAKTX_ARRBPTO}"
+                                                valueState="Information"
+                                                valueStateText="Seleccione clase de doc. para pedido"
+                                                showSuggestion="true"
+                                                showTableSuggestionValueHelp="false"
+                                                suggestionRows="{AYUDABUSQUEDA>/B21}"
+                                                suggestionItemSelected="onSuggestionItemSelected">
+                                                <suggestionColumns>
+                                                    <Column>
+                                                        <Label text="Cod. maerial"/>
+                                                    </Column>
+                                                    <Column>
+                                                        <Label text="Descripción"/>
+                                                    </Column>
+                                                </suggestionColumns>
+                                                <suggestionRows>
+                                                    <ColumnListItem>
+                                                        <cells>
+                                                            <ObjectStatus 
+                                                                text="{AYUDABUSQUEDA>BSART}"
+                                                                state="Information"/>
+                                                            <Text text="{AYUDABUSQUEDA>BATXT}"/>
+                                                        </cells>
+                                                    </ColumnListItem>
+                                                </suggestionRows>
+                                            </Input>
+                                        </form:fields>
+                                    </form:FormElement>
+                                    <form:FormElement label="Unidad de medida de combustible">
+                                        <form:fields>
+                                        <Select
+                                                selectedKey="{DATOSMAESTRO>UNICB_ARRBPTO}"
+                                                forceSelection="false" 
+                                                items="{DATOSMAESTRO>/NTESP}">
+                                                <core:Item key="{DATOSMAESTRO>id}" text="{DATOSMAESTRO>descripcion}"/>
+                                            </Select>
+                                        </form:fields>
+                                    </form:FormElement>
+                                    <form:FormElement label="Autor de lectura de horómetro">
+                                        <form:fields>
+                                            <Input
+                                                value="{DATOSMAESTRO>ATLHO_ARRBPTO}" />
+                                        </form:fields>
+                                    </form:FormElement>
+                                </form:formElements>
+                            </form:FormContainer>
+                        </form:formContainers>
+                        <form:layout>
+                            <form:ResponsiveGridLayout
+                                adjustLabelSpan="true"
+                                breakpointL="1024"
+                                breakpointM="600"
+                                breakpointXL="1440"
+                                columnsL="2"
+                                columnsM="1"
+                                columnsXL="-1"
+                                emptySpanL="0"
+                                emptySpanM="0"
+                                emptySpanS="0"
+                                emptySpanXL="-1"
+                                labelSpanL="4"
+                                labelSpanM="3"
+                                labelSpanS="12"
+                                labelSpanXL="-1"
+                                singleContainerFullSize="true"/>
+                        </form:layout>
+                    </form:Form>
+                </content>
+                <headerToolbar>
+                    <OverflowToolbar>
+                        <ObjectStatus
+                            icon="sap-icon://outdent"
+                            text="Datos de arribo a puerto" 
+                            state = "Indication06"/>
+                    </OverflowToolbar>
+                </headerToolbar>
+            </Panel>
+            <Panel
+                backgroundDesign="Solid"
+                expandable="true"
+                expanded="true">
+                <content>
+                    <form:Form editable="true">
+                        <form:formContainers>
+                            <form:FormContainer>
+                                <form:formElements>
+                                    <form:FormElement label="Unidad de medida de pesca descargada">
+                                        <form:fields>
+                                        <Select
+                                                selectedKey="{DATOSMAESTRO>UMPDS}"
+                                                forceSelection="false" 
+                                                items="{DATOSMAESTRO>/NTESP}">
+                                                <core:Item key="{DATOSMAESTRO>id}" text="{DATOSMAESTRO>descripcion}"/>
+                                            </Select>
+                                        </form:fields>
+                                    </form:FormElement>
+                                    <form:FormElement label="Clase mens. para notificación de descarga">
+                                        <form:fields>
+                                            <Input
+                                                value="{DATOSMAESTRO>BAUGR}"/>
+                                        </form:fields>
+                                    </form:FormElement>
+                                    <form:FormElement label="Origen de lote de inspección">
+                                        <form:fields>
+                                            <Input
+                                                value="{DATOSMAESTRO>HERKUNFT}"/>
+                                        </form:fields>
+                                    </form:FormElement>
+                                    <form:FormElement label="Clase de doc. para pedido de compra">
+                                        <form:fields>
+                                            <Input
+                                                value="{DATOSMAESTRO>BSART}"
+                                                description = "{DATOSMAESTRO>LTEXT}"
+                                                valueState="Information"
+                                                valueStateText="Seleccione clase de doc."
+                                                filterSuggests="true"
+                                                showSuggestion="true"
+                                                showTableSuggestionValueHelp="false"
+                                                suggestionRows="{AYUDABUSQUEDA>/B23}"
+                                                suggestionItemSelected="onSuggestionItemSelected">
+                                                <suggestionColumns>
+                                                    <Column>
+                                                        <Label text="Cod. clase de doc."/>
+                                                    </Column>
+                                                    <Column>
+                                                        <Label text="Descripción"/>
+                                                    </Column>
+                                                </suggestionColumns>
+                                                <suggestionRows>
+                                                    <ColumnListItem>
+                                                        <cells>
+                                                            <ObjectStatus 
+                                                                text="{AYUDABUSQUEDA>EKGRP}"
+                                                                state="Information"/>
+                                                            <Text text="{AYUDABUSQUEDA>EKNAM}"/>
+                                                        </cells>
+                                                    </ColumnListItem>
+                                                </suggestionRows>
+                                            </Input>
+                                        </form:fields>
+                                    </form:FormElement>
+                                    <form:FormElement label="Organización de compras">
+                                        <form:fields>
+                                            <Select
+                                                selectedKey="{DATOSMAESTRO>EKORG}"
+                                                forceSelection="false" 
+                                                items="{DATOSMAESTRO>/EKORG}">
+                                                <core:Item key="{DATOSMAESTRO>id}" text="{DATOSMAESTRO>descripcion}"/>
+                                            </Select>
+                                        </form:fields>
+                                    </form:FormElement>
+                                    <form:FormElement label="Grupo de compras">
+                                        <form:fields>
+                                            <Input
+                                                value="{DATOSMAESTRO>EKGRP}"
+                                                description = "{DATOSMAESTRO>EKNAM}"
+                                                valueState="Information"
+                                                valueStateText="Seleccione grupo de compras "
+                                                filterSuggests="true"
+                                                showSuggestion="true"
+                                                showTableSuggestionValueHelp="false"
+                                                suggestionRows="{AYUDABUSQUEDA>/B23}"
+                                                suggestionItemSelected="onSuggestionItemSelected">
+                                                <suggestionColumns>
+                                                    <Column>
+                                                        <Label text="Cod. grupo de compras"/>
+                                                    </Column>
+                                                    <Column>
+                                                        <Label text="Descripción"/>
+                                                    </Column>
+                                                </suggestionColumns>
+                                                <suggestionRows>
+                                                    <ColumnListItem>
+                                                        <cells>
+                                                            <ObjectStatus 
+                                                                text="{AYUDABUSQUEDA>EKGRP}"
+                                                                state="Information"/>
+                                                            <Text text="{AYUDABUSQUEDA>EKNAM}"/>
+                                                        </cells>
+                                                    </ColumnListItem>
+                                                </suggestionRows>
+                                            </Input>
+                                        </form:fields>
+                                    </form:FormElement>
+                                    <form:FormElement label="Clase de doc. para pedido de venta">
+                                        <form:fields>
+                                            <Input
+                                                value="{DATOSMAESTRO>AUART}"
+                                                description = "{DATOSMAESTRO>BEZEI}"
+                                                valueState="Information"
+                                                valueStateText="Seleccione clase de doc."
+                                                filterSuggests="true"
+                                                showSuggestion="true"
+                                                showTableSuggestionValueHelp="false"
+                                                suggestionRows="{AYUDABUSQUEDA>/B23}"
+                                                suggestionItemSelected="onSuggestionItemSelected">
+                                                <suggestionColumns>
+                                                    <Column>
+                                                        <Label text="Cod. clase de doc."/>
+                                                    </Column>
+                                                    <Column>
+                                                        <Label text="Descripción"/>
+                                                    </Column>
+                                                </suggestionColumns>
+                                                <suggestionRows>
+                                                    <ColumnListItem>
+                                                        <cells>
+                                                            <ObjectStatus 
+                                                                text="{AYUDABUSQUEDA>EKGRP}"
+                                                                state="Information"/>
+                                                            <Text text="{AYUDABUSQUEDA>EKNAM}"/>
+                                                        </cells>
+                                                    </ColumnListItem>
+                                                </suggestionRows>
+                                            </Input>
+                                        </form:fields>
+                                    </form:FormElement>
+                                    <form:FormElement label="Organización de ventas">
+                                        <form:fields>
+                                            <ComboBox
+                                                selectedKey="{DATOSMAESTRO>VKORG}"
+                                                showSecondaryValues= "true"
+                                                showClearIcon="true"
+                                                change = "onHandleChange"
+                                                items="{DATOSMAESTRO>/VKORG}">
+                                                <core:ListItem key="{DATOSMAESTRO>id}" text="{DATOSMAESTRO>descripcion}" additionalText="{DATOSMAESTRO>id}"/>
+                                            </ComboBox>
+                                        </form:fields>
+                                    </form:FormElement>
+                                    <form:FormElement label="Clase de mov. de entrada de mercancias">
+                                        <form:fields>
+                                            <Input
+                                                value="{DATOSMAESTRO>BWART1}"/>
+                                        </form:fields>
+                                    </form:FormElement>
+                                    <form:FormElement label="Canal de distrib. para pedido de venta">
+                                        <form:fields>
+                                            <Select
+                                                selectedKey="{DATOSMAESTRO>VTWEG}"
+                                                forceSelection="false" 
+                                                items="{DATOSMAESTRO>/VTWEG}">
+                                                <core:Item key="{DATOSMAESTRO>id}" text="{DATOSMAESTRO>descripcion}"/>
+                                            </Select>
+                                        </form:fields>
+                                    </form:FormElement>
+                                    <form:FormElement label="Clase de mov. de combustible">
+                                        <form:fields>
+                                            <Input
+                                                value="{DATOSMAESTRO>BWART_DSCG}"/>
+                                        </form:fields>
+                                    </form:FormElement>
+                                    <form:FormElement label="Material de combustible">
+                                        <form:fields>
+                                            <Input
+                                                value="{DATOSMAESTRO>MATNR_DSCG}"
+                                                description = "{DATOSMAESTRO>MAKTX_DSCG}"
+                                                valueState="Information"
+                                                valueStateText="Seleccione material de combustible"
+                                                showSuggestion="true"
+                                                showTableSuggestionValueHelp="false"
+                                                suggestionRows="{AYUDABUSQUEDA>/B21}"
+                                                suggestionItemSelected="onSuggestionItemSelected">
+                                                <suggestionColumns>
+                                                    <Column>
+                                                        <Label text="Cod. maerial"/>
+                                                    </Column>
+                                                    <Column>
+                                                        <Label text="Descripción"/>
+                                                    </Column>
+                                                </suggestionColumns>
+                                                <suggestionRows>
+                                                    <ColumnListItem>
+                                                        <cells>
+                                                            <ObjectStatus 
+                                                                text="{AYUDABUSQUEDA>BSART}"
+                                                                state="Information"/>
+                                                            <Text text="{AYUDABUSQUEDA>BATXT}"/>
+                                                        </cells>
+                                                    </ColumnListItem>
+                                                </suggestionRows>
+                                            </Input>
+                                        </form:fields>
+                                    </form:FormElement>
+                                    <form:FormElement label="Unidad de medida de combustible">
+                                        <form:fields>
+                                        <Select
+                                                selectedKey="{DATOSMAESTRO>UNICB_DSCG}"
+                                                forceSelection="false" 
+                                                items="{DATOSMAESTRO>/NTESP}">
+                                                <core:Item key="{DATOSMAESTRO>id}" text="{DATOSMAESTRO>descripcion}"/>
+                                            </Select>
+                                        </form:fields>
+                                    </form:FormElement>
+                                    <form:FormElement label="Autor de lectura de horómetro">
+                                        <form:fields>
+                                            <Input
+                                                value="{DATOSMAESTRO>ATLHO_DSCG}" />
+                                        </form:fields>
+                                    </form:FormElement>
+                                    <form:FormElement label="Hora de corte">
+                                        <form:fields>
+                                            <TimePicker
+                                                value = "{DATOSMAESTRO>HRCOR}"
+                                                valueFormat="HH:mm:ss"
+                                                displayFormat="HH:mm:ss"
+                                                change="handleChange"
+                                                maskMode="{= ${/maskMode/state} ? 'On' : 'Off'}"
+                                                placeholder="{/timePickers/TP2/placeholder}" />
+                                        </form:fields>
+                                    </form:FormElement>
+                                </form:formElements>
+                                <form:title>
+                                </form:title>
+                                <form:toolbar>
+                                </form:toolbar>
+                            </form:FormContainer>
+                        </form:formContainers>
+                        <form:layout>
+                            <form:ResponsiveGridLayout
+                                adjustLabelSpan="true"
+                                breakpointL="1024"
+                                breakpointM="600"
+                                breakpointXL="1440"
+                                columnsL="2"
+                                columnsM="1"
+                                columnsXL="-1"
+                                emptySpanL="0"
+                                emptySpanM="0"
+                                emptySpanS="0"
+                                emptySpanXL="-1"
+                                labelSpanL="4"
+                                labelSpanM="3"
+                                labelSpanS="12"
+                                labelSpanXL="-1"
+                                singleContainerFullSize="true"/>
+                        </form:layout>
+                    </form:Form>
+                </content>
+                <headerToolbar>
+                    <OverflowToolbar>
+                        <ObjectStatus
+                            icon="sap-icon://drill-down"
+                            text="Datos de descarga" 
+                            state = "Indication06"/>
+                    </OverflowToolbar>
+                </headerToolbar>
+            </Panel>
+        </items>
+    </VBox>
+</core:FragmentDefinition>

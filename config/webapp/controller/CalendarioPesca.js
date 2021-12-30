@@ -107,90 +107,92 @@ sap.ui.define([
            return result;
         },
 
-        onPressCell:function(oEvent){
-            let nowDate = new Date,
-            fecha1 = oEvent.getParameter("endDate"),
-            fecha2 = oEvent.getParameter("startDate"),
-            oModelMaster = this.getController().getModel("DATOSMAESTRO"),
-            aDataAppointment=oModelMaster.getProperty("/appointments"),
-            oAppointment;
-            if(nowDate<=fecha1){
-                oModelMaster.setProperty("/fecha1",fecha1);
-                oModelMaster.setProperty("/fecha2",fecha2);
-                oModelMaster.setProperty("/fechaActual",this.getController().setFormatDate(fecha1));
-                let oDialogAddTemp = this.getController().mFragments["AddTempPesca"];
-                if(!oDialogAddTemp){
-                    oDialogAddTemp = this.getController().buildCalendarioPesca("AddTempPesca");
-                }
-                let oControl = oDialogAddTemp.getControl();
-                this.getView().addDependent(oControl);
-               //  oControl.open();
-                oControl.bindElement("DATOSMAESTRO>/appointments")
-                oAppointment={
-                   id:  this.makeRandomId(4),
-                   CDTPC: "Añadir temporada",
-                   texto: "",
-                   type: sap.ui.unified.CalendarDayType.Type20,
-                   startDate: fecha1,
-                   endDate: fecha1,
-                   tipoPesca:"",
-                   especie:"",
-                   latInicioGrad:"",
-                   latInicioMin:"",
-                   longInicioGrad:"",
-                   longInicioMin:"",
-                   latFinGrad:"",
-                   latgFinMin:"",
-                   longFinGrad:"",
-                   longFinMin:"",
-                   icon:"sap-icon://add",
-                   status:"0"
-                }
-                let sFechaComp = new Date(oAppointment.startDate),
-                sFecha1;
-                sFechaComp = sFechaComp.getFullYear()+"/"+sFechaComp.getMonth()+"/"+sFechaComp.getDate();
-                let oAppointExist = aDataAppointment.find(oAppoint=>{
-                    let sFecha1 = new Date(oAppoint.startDate);
-                    sFecha1 = sFecha1.getFullYear()+"/"+sFecha1.getMonth()+"/"+sFecha1.getDate();
-                    if(oAppoint.status==="0"&&sFechaComp===sFecha1){
-                        return oAppoint;
-                    }
-                });
-                if(oAppointExist){
-                    this.getController().getMessageDialog("Warning","Solo puede seleccionar por tipo de pesca");
-                    return;
-                }else{
-                    aDataAppointment.push(oAppointment);
-                }
-                oModelMaster.setProperty("/appointments",aDataAppointment),
-                oModelMaster.refresh(true);
-            }else{
-               this.getController().getMessageDialog("Information","No puede agregar temporada");
-               return;
-            }
-        },
+        // onPressCell:function(oEvent){
+        //     let nowDate = new Date,
+        //     fecha1 = oEvent.getParameter("endDate"),
+        //     fecha2 = oEvent.getParameter("startDate"),
+        //     oModelMaster = this.getController().getModel("DATOSMAESTRO"),
+        //     aDataAppointment=oModelMaster.getProperty("/appointments"),
+        //     oAppointment;
+        //     if(nowDate<=fecha1){
+        //         oModelMaster.setProperty("/fecha1",fecha1);
+        //         oModelMaster.setProperty("/fecha2",fecha2);
+        //         oModelMaster.setProperty("/fechaActual",this.getController().setFormatDate(fecha1));
+        //         let oDialogAddTemp = this.getController().mFragments["AddTempPesca"];
+        //         if(!oDialogAddTemp){
+        //             oDialogAddTemp = this.getController().buildCalendarioPesca("AddTempPesca");
+        //         }
+        //         let oControl = oDialogAddTemp.getControl();
+        //         this.getView().addDependent(oControl);
+        //        //  oControl.open();
+        //         oControl.bindElement("DATOSMAESTRO>/appointments")
+        //         oAppointment={
+        //            id:  this.makeRandomId(4),
+        //            CDTPC: "Añadir temporada",
+        //            texto: "",
+        //            type: sap.ui.unified.CalendarDayType.Type20,
+        //            startDate: fecha1,
+        //            endDate: fecha1,
+        //            tipoPesca:"",
+        //            especie:"",
+        //            latInicioGrad:"",
+        //            latInicioMin:"",
+        //            longInicioGrad:"",
+        //            longInicioMin:"",
+        //            latFinGrad:"",
+        //            latgFinMin:"",
+        //            longFinGrad:"",
+        //            longFinMin:"",
+        //            icon:"sap-icon://add",
+        //            status:"0"
+        //         }
+        //         let sFechaComp = new Date(oAppointment.startDate),
+        //         sFecha1;
+        //         sFechaComp = sFechaComp.getFullYear()+"/"+sFechaComp.getMonth()+"/"+sFechaComp.getDate();
+        //         let oAppointExist = aDataAppointment.find(oAppoint=>{
+        //             let sFecha1 = new Date(oAppoint.startDate);
+        //             sFecha1 = sFecha1.getFullYear()+"/"+sFecha1.getMonth()+"/"+sFecha1.getDate();
+        //             if(oAppoint.status==="0"&&sFechaComp===sFecha1){
+        //                 return oAppoint;
+        //             }
+        //         });
+        //         if(oAppointExist){
+        //             this.getController().getMessageDialog("Warning","Solo puede seleccionar por tipo de pesca");
+        //             return;
+        //         }else{
+        //             aDataAppointment.push(oAppointment);
+        //         }
+        //         oModelMaster.setProperty("/appointments",aDataAppointment),
+        //         oModelMaster.refresh(true);
+        //     }else{
+        //        this.getController().getMessageDialog("Information","No puede agregar temporada");
+        //        return;
+        //     }
+        // },
 
         /**
          * Seleccion de fecha en Calendario principal
          * @param {*} oEvent 
          * @returns 
          */
-        onPressCalendar:function(oEvent){
+        onPressCalendar:function(oEvent,oMonthDate){
             let oModelView = this.getController().getModel("detailView");
             if(oModelView.getProperty("/visibleButtonAdd")&&!oModelView.getProperty("/visibleButtonEnable")){
-                let oCalendar = oEvent.getSource(),
-                sStartDate = oEvent.getParameter("startDate"),
-                sEndDate = oEvent.getParameter("endDate"),
-                oLegend = this.getView().byId("legend"),
+                // let oCalendar = oEvent.getSource(),
+                let sStartDate = oEvent.getParameter("startDate"),
+                // sEndDate = oEvent.getParameter("endDate"),
+                // oLegend = this.getView().byId("legend"),
                 oModelMaster = this.getController().getModel("DATOSMAESTRO"),
                 aSpecialDate = oModelMaster.getProperty("/specialDates")||[],
                 aLegendItems = oModelMaster.getProperty("/legendItems")||[],
                 oLegendItem = {},
                 oNewTemp = new Object,
-                oCurrentDate = new Date,
-                sFecha=this.getController().setStringDate(sStartDate);
+                oCurrentDate = new Date;
+
+                if(!sStartDate) sStartDate = oMonthDate;
                 
-                let sFechaActual = this.getController().setDate(oCurrentDate),
+                let sFecha=this.getController().setStringDate(sStartDate),
+                sFechaActual = this.getController().setDate(oCurrentDate),
                 sFechaSelec = this.getController().setDate(sStartDate);
                 
                 if(sFechaActual<=sFechaSelec){
@@ -242,7 +244,9 @@ sap.ui.define([
                     oModelMaster.setProperty("/legendItems",aLegendItems);
 
                 }else{
-                    this.getController().getMessageDialog("Warning","No se puede seleccionar")
+                    if(!oMonthDate){
+                        this.getController().getMessageDialog("Warning","No se puede seleccionar. La fecha de selección "+sFecha+" tiene que ser igual o mayor a la actual")
+                    }
                 }
             }
             
@@ -684,6 +688,19 @@ sap.ui.define([
                 oModelView.setProperty("/visibleButtonEnable",false);
                 oModelView.setProperty("/legendShown",true)
             // }
+        },
+
+        onSelectMonth:function(oEvent){
+            let oStartDate = oEvent.getSource().getParent().getStartDate(),
+            oFirstDay = new Date(oStartDate.getFullYear(),oStartDate.getMonth(),1),
+            oLastDay  = new Date(oStartDate.getFullYear(),oStartDate.getMonth()+1,0),
+            iFirstDay = oFirstDay.getDate(),
+            iLastDay = oLastDay.getDate(),
+            oCurrentDate;
+            for (let index = iFirstDay; index <= iLastDay; index++) {
+                oCurrentDate = new Date(oStartDate.getFullYear(),oStartDate.getMonth(),index)
+                this.onPressCalendar(oEvent,oCurrentDate);
+            }
         }
 	});
 });

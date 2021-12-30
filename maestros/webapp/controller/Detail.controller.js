@@ -72,10 +72,11 @@ sap.ui.define([
 		onListUpdateFinished : function (oEvent) {
 			var sTitle,
 				iTotalItems = oEvent.getParameter("total"),
-				oViewModel = this.getModel("detailView");
+				oViewModel = this.getModel("detailView"),
+                sTableId = oEvent.getParameter("id");
 
 			// only update the counter if the length is final
-			if (this.byId("lineItemsList").getBinding("items").isLengthFinal()) {
+			if (this.byId(sTableId).getBinding("items").isLengthFinal()) {
 				if (iTotalItems) {
 					sTitle = this.getResourceBundle().getText("detailLineItemTableHeadingCount", [iTotalItems]);
 				} else {
@@ -368,7 +369,7 @@ sap.ui.define([
           * Creacion de campos para el formulario editar y nuevo
           * @param {aCampos} aColumnas 
           */
-         crearFormNuevo:function(oMaestro,oContextData,sSelectedKey){
+         crearFormNuevo:function(oMaestro,oContextData,oContext,sSelectedKey){
              this.crearFragments("NewMaster");
              this.crearFragments("FormNew");
              let oDialog = this.mFragments["NewMaster"],
@@ -385,6 +386,10 @@ sap.ui.define([
                     oModelMaster.setProperty("/codEmbar",oContextData.CDEMB);
                     sTitle = `Editar embarcación: ${oContextData.CDEMB}`;
                     oDialog.getControl().setTitle(sTitle);
+                    oDialog.getControl().bindElement({
+                        path: oContext.getPath(),
+                        model: "DATOSMAESTRO"
+                    });
                  }
                  let PanelGeneral=this.buildPanels("Datos Generales"),
                  PanelEmbarcacion=this.buildPanels("Características de la embarcación"),
@@ -435,10 +440,6 @@ sap.ui.define([
                      oContent.addContent(PanelCuota);
                  }
              }
-         },
-
-         buildControlEmb:function(){
-
          },
         
          removeControls:function(){
@@ -537,19 +538,19 @@ sap.ui.define([
              .then(res=>res.json())
              .then(data=>{
                 aData = data.data;
-                let aServicesDom=oMaster.services.filter(serv=>serv.TIPOPARAM==="DOMINIO"),
-                aDataDom;
-                aData.forEach(item=>{
-                    aServicesDom.forEach(serv=>{
-                        if(item[serv?.IDSERVICE]){
-                            aDataDom=oModel.getProperty(`/${serv.IDSERVICE}`);
-                            aDataDom?.forEach(dom=>{
-                                if(dom.id===item[serv.IDSERVICE])
-                                    item[serv.IDSERVICE]=dom.descripcion;
-                            })
-                        }
-                    })
-                })
+                // let aServicesDom=oMaster.services.filter(serv=>serv.TIPOPARAM==="DOMINIO"),
+                // aDataDom;
+                // aData.forEach(item=>{
+                //     aServicesDom.forEach(serv=>{
+                //         if(item[serv?.IDSERVICE]){
+                //             aDataDom=oModel.getProperty(`/${serv.IDSERVICE}`);
+                //             aDataDom?.forEach(dom=>{
+                //                 if(dom.id===item[serv.IDSERVICE])
+                //                     item[serv.IDSERVICE]=dom.descripcion;
+                //             })
+                //         }
+                //     })
+                // })
                 oModel.setProperty(service.PROPERTY,aData)
                 oModel.setProperty("/cantData",aData.length);
                 // configuraciones para maestro grupo de flota

@@ -51,6 +51,21 @@ sap.ui.define([
 
         formatter: formatter,
 
+        formatTable:function(sParam,oMaster){
+            let oModelMaster = this.getController().getModel("DATOSMAESTRO"),
+            aFields = oMaster.fields,
+            aData,oItem;
+            if(!aFields) return sParam;
+            for (let oField of aFields) {
+                aData = oModelMaster.getProperty(`/${oField.IDFIELD}`)
+                if(aData && aData.length > 0){
+                    oItem = aData.find(item=>item.id === sParam);
+                    if(oItem) return oItem.descripcion;
+                }
+            } 
+            return sParam;
+        },
+
 		exit: function() {
 			delete this._oView;
 		},
@@ -142,6 +157,10 @@ sap.ui.define([
 		onExit: function() {
 			this._oFragment.destroy();
         },
+
+        onListUpdateFinished:function(oEvent){
+            this.getController().onListUpdateFinished(oEvent);
+        },
         
         /**
          *  Creacion de columnas
@@ -180,7 +199,8 @@ sap.ui.define([
                 this.getController().getModel("detailView").setProperty("/visibleBtnNew", true)
                 oColEdit = new Column({
                     demandPopin:true,
-                    minScreenWidth:"Large"
+                    minScreenWidth:"Large",
+                    hAlign:"Center"
                 })
                 oColEdit.setHeader(new sap.m.Text({text:"EDITAR"}))
                 oControl.addColumn(oColEdit);
@@ -243,14 +263,27 @@ sap.ui.define([
              }
 
              aFieldsTable.forEach((oItem)=>{
+                let sPath = oItem.BINDTABLE;
+                sPath = sPath.replace(/[{}]/g,'');
+                // sPath = sPath.split("{")[1].split("}")[0];
                  if(oItem.CONTROLTABLE==="TEXT"&&oItem.ORDENMEW!==1){
                     aCells.push(new sap.m.Text({
-                        text:oItem.BINDTABLE
+                        text:{
+                                path:sPath,
+                                formatter: function(sPath) {
+                                    return that.formatTable(sPath,oMaster);
+                                }
+                        }
                     }));
 
                 }else if(oItem.CONTROLTABLE==="INPUT"){
                     aCells.push(new sap.m.Input({
-                        value:oItem.BINDTABLE,
+                        value:{
+                            path:sPath,
+                            formatter: function(sPath) {
+                                return that.formatTable(sPath,oMaster);
+                            }
+                        },
                         change:function(oEvent){
                             let sValue = oEvent.getParameter("value");
                             this.changeDataTable(oEvent,sValue);
@@ -313,12 +346,7 @@ sap.ui.define([
 
             }
             let oColumnList = new ColumnListItem({
-                cells:aCells,
-                type:"Detail",
-                press:function(oEvent){
-                    // set property navigation
-                    this.onNuevoMaestro(oEvent);
-                }.bind(this)
+                cells:aCells
             });
             oControl.bindItems(oService.MODEL+">"+oService.PROPERTY,oColumnList);
          },
@@ -452,8 +480,10 @@ sap.ui.define([
         },
 
         buildControlInput:function(control,oCampo,oMaster,sId){
-            let oModel = this.getController().getModel();
-            control = new sap.m.Input(oCampo.IDFIELD+sId,{
+            let oModel = this.getController().getModel(),
+            idInput = oCampo.IDFIELD+sId;
+            if(oCampo.COMPONENT==="B03") idInput = idInput+"_R"
+            control = new sap.m.Input(idInput,{
                 value:"",
                 maxLength:oCampo.LENGTH,
                 showTableSuggestionValueHelp:false,
@@ -470,19 +500,24 @@ sap.ui.define([
                 if(oCampo.COMPONENT==="B03"){
                     control.setShowValueHelp(true)
                     if(oMaster.IDAPP==="M22"||oMaster.IDAPP==="M13"){
-                        control.bindProperty("value",{
-                            parts:[
-                                {
-                                    path:'/help/CDEMB'
-                                },
-                                {
-                                    path:'/help/NMEMB'
-                                }
-                            ]
-                        });
-                        control.bindProperty("description",{
-                            path:'/help/NMEMB'
-                        })
+                        // let sValue = oModel.getProperty('/help/CDEMB'),
+                        // setDescription = oModel.getProperty('/help/NMEMB');
+
+                        // control.setValue()
+                        
+                        // control.bindProperty("value",{
+                        //     parts:[
+                        //         {
+                        //             path:'/help/CDEMB'
+                        //         },
+                        //         {
+                        //             path:'/help/NMEMB'
+                        //         }
+                        //     ]
+                        // });
+                        // control.bindProperty("description",{
+                        //     path:'/help/NMEMB'
+                        // })
                     }
 
                 }
@@ -572,25 +607,22 @@ sap.ui.define([
         },
 
         showSearchHelp:function(oEvent){
-            // this.getController().crearFragments("AyudaBusquedaEmb");
-            let that = this, 
-            oModelMaster = this.getController().getModel("DATOSMAESTRO"),
-            oModel = oEvent.getSource().getBindingContext().getModel();
-            // sIdControl = oEvent.getParameter("id");
-            // oModelMaster.setProperty("/idControl",sIdControl);
-            // let oDialog = new AyudaBusquedaEmb(this.getView());
-            // oDialog.open();
-            oModel.setProperty("/searchEmbar",{});
-            let INPRP = oModelMaster.getProperty("/INPRP");
-            oModel.setProperty("/INPRP",INPRP);
-            
-            let oView = this.getView(),
+            let oModelMaster = this.getController().getModel("DATOSMAESTRO"),
+            oView = this.getView(),
+            INPRP = oModelMaster.getProperty("/INPRP"),
 			sUrl = HOST2 + "/9acc820a-22dc-4d66-8d69-bed5b2789d3c.AyudasBusqueda.busqembarcaciones-1.0.0",
 			nameComponent = "busqembarcaciones",
-			idComponent = "busqembarcaciones";
+			idComponent = "busqembarcaciones",
+            oModel = oEvent.getSource().getBindingContext().getModel(),
+            sIdInput = oEvent.getParameter("id"),
+            oInput = sap.ui.getCore().byId(sIdInput);
 
-			if(!that.DialogComponent){
-				that.DialogComponent = new sap.m.Dialog({
+            // oModel.setProperty("/searchEmbar",{});
+            oModel.setProperty("/INPRP",INPRP);
+            oModel.setProperty("/input",oInput);
+
+			if(!this.DialogComponent){
+				this.DialogComponent = new sap.m.Dialog({
 					title:"Búsqueda de Embarcaciones",
 					icon:"sap-icon://search",
 					state:"Information",
@@ -599,18 +631,18 @@ sap.ui.define([
 						text:"Cerrar",
 						type:"Reject",
 						press:function(oEvent){
-							that.onCloseDialog(oEvent);
-						}.bind(that)
+							this.onCloseDialog(oEvent);
+						}.bind(this)
 					})
 				});
-				oView.addDependent(that.DialogComponent);
-				oModel.setProperty("/idDialogComp",that.DialogComponent.getId());
+				oView.addDependent(this.DialogComponent);
+				oModel.setProperty("/idDialogComp",this.DialogComponent.getId());
 			}
 
 			let compCreateOk = function(){
 				BusyIndicator.hide()
 			}
-			if(that.DialogComponent.getContent().length===0){
+			if(this.DialogComponent.getContent().length===0){
 				BusyIndicator.show(0);
 				const oContainer = new sap.ui.core.ComponentContainer({
 					id: idComponent,
@@ -624,10 +656,10 @@ sap.ui.define([
 					// manifest: true,
 					async: false
 				});
-				that.DialogComponent.addContent(oContainer);
+				this.DialogComponent.addContent(oContainer);
 			}
 
-			that.DialogComponent.open();
+			this.DialogComponent.open();
         },
 
         /**
@@ -687,8 +719,7 @@ sap.ui.define([
             
             aFields.forEach(oCampo=>{
                 oFormElement = new FormElement({
-                    label:new sap.m.Label({text:oCampo.NAMEFIELD}),
-                    fields:[]
+                    label:new sap.m.Label({text:oCampo.NAMEFIELD})
                 });
                 sBindEdit=`${oServiceTable.MODEL}>/${oCampo.IDFIELD}N`
                 control = this.getController().mFields[oCampo.IDFIELD+"N"];
@@ -736,8 +767,9 @@ sap.ui.define([
                         });
                         control = new sap.m.ComboBox(oCampo.IDFIELD+"N",{
                             placeholder:"Ingrese "+ oCampo.NAMEFIELD,
-                            value:`{${sBindEdit}}`,
+                            // value:`{${sBindEdit}}`,
                             required:oCampo.REQUIRED==="TRUE",
+                            selectedKey:`{${sBindEdit}}`,
                             items: {
                                 path: sPath,
                                 template: oItemTemplate,
@@ -843,11 +875,13 @@ sap.ui.define([
              oModel.setProperty("/master",oMaster);
              aFields.forEach(oField=>{
                 if(!oDataMaster){
-                    oModel.setProperty(`/${oField.IDFIELD}N`,"")
+                    oModel.setProperty(`/${oField.IDFIELD}N`,"");
                 }else{
-                    oModel.setProperty(`/${oField.IDFIELD}N`,oDataMaster[oField.IDFIELD]);  
+                    oModel.setProperty(`/${oField.IDFIELD}N`,oDataMaster[oField.IDFIELD]);
                 }
-             });
+            });
+             oModel.setProperty(`/EMPTO`,"")
+             if(oDataMaster) oModel.setProperty(`/EMPTO`,oDataMaster["EMPTO"]);   
              let oFieldEmb = aFields.find(oField=>oField.IDFIELD==="CDEMB"&&oField.ORDENMEW===1),
              aParams=["s_ps","s_pe","s_ee","s_be","str_hor"];
             //  aParams.forEach(item=>oModel.setProperty(`/${item}`,[]))
@@ -862,7 +896,7 @@ sap.ui.define([
              if(param&&param!=="M13"){
                  this.onEditarEmbarcacion(param,oContextData);
              }else{
-                 this.getController().crearFormNuevo(oMaster,oDataMaster);
+                 this.getController().crearFormNuevo(oMaster,oDataMaster,oContextData);
              }
 
          },
@@ -1032,6 +1066,7 @@ sap.ui.define([
                     }
                     sValue = ""; 
                  }
+                 
                 // oMaster.fields.forEach(oField=>{
                 //     oControl = this.getController().mFields[oField.IDFIELD+"N"];
                 //     sValue = oModelMaster.getProperty(`/${oField.IDFIELD}N`);
@@ -1109,6 +1144,7 @@ sap.ui.define([
                 // oOption.sKey=sValue;
                 oOption[sKey]=sValue
             });
+            oOption.EMPTO = oModelMaster.getProperty(`/EMPTO`);
             aOption.push(oOption);
             return aOption;
          },

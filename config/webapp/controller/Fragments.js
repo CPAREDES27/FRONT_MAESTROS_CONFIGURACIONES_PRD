@@ -4,29 +4,22 @@ sap.ui.define([
     "sap/m/ColumnListItem",
     "sap/ui/layout/form/FormContainer",
     "sap/ui/layout/form/FormElement",
-    "sap/m/IconTabBar",
     "sap/ui/core/BusyIndicator",
     "sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
     "sap/ui/export/Spreadsheet",
-    "../data/data",
-    "./AyudaBusquedaEmb",
     "sap/ui/core/Fragment",
     "../model/formatter"
-	// "sap/ui/unified/calendar/Header"
 ], function(
         ManagedObject,
         Column,
         ColumnListItem,
         FormContainer,
         FormElement,
-        IconTabBar,
         BusyIndicator,
         Filter,
         FilterOperator,
         Spreadsheet,
-        Data,
-        AyudaBusquedaEmb,
         Fragment,
         formatter
     ) {
@@ -42,9 +35,24 @@ sap.ui.define([
 
         formatter:formatter,
 
-        // formatter:function(sFecha){
-        //     return this.getController().setFormatDate(sFecha);
-        // },
+        formatTable:function(sParam){
+            let oModelMaster = this.getController().getModel("DATOSMAESTRO"),
+            aDataIndProp = oModelMaster.getProperty("/INPRP"),
+            aDataEstados = oModelMaster.getProperty("/STATUS"),
+            aDataTemporada =  oModelMaster.getProperty("/CDTPO"),
+            aDataEstaImpr =  oModelMaster.getProperty("/ESIMP"),
+            oItem;
+
+            oItem = aDataIndProp.find(item=>item.id === sParam);
+            if(!oItem) oItem = aDataEstados.find(item=>item.id === sParam);
+            if(!oItem) oItem = aDataTemporada.find(item=>item.id === sParam);
+            if(!oItem) oItem = aDataEstaImpr.find(item=>item.id === sParam);
+            if (oItem){
+                return oItem.descripcion;
+            }else {
+                return sParam;
+            }
+        },
 
 		exit: function() {
 			delete this._oView;
@@ -147,39 +155,24 @@ sap.ui.define([
             oMaster.fields.forEach((oItem)=>{
                 if(oItem.BINDTABLE){
                     if(oItem.CONTROLTABLE==="TEXT"&&oItem.ORDENMEW!==1){
-                        if(oItem.IDFIELD==="ESIMP"){
-                            let sPath = oItem.BINDTABLE;
-                            sPath = sPath.split("{")[1].split("}")[0];
-                            aCells.push(new sap.m.Text({
-                                text:`{
-                                    path:'${sPath}'
-                                }`
-                            }));
+                        let sPath = oItem.BINDTABLE;
+                        sPath = sPath.split("{")[1].split("}")[0];
+                        // aCells.push(new sap.m.Text({
+                        //     text:`{
+                        //         path:'${sPath}',
+                        //         formatter:'.formatter.formatTable'
+                        //     }`
+                        // }));
+                        // aCells.push(new sap.m.Text({
+                        //     text:oItem.BINDTABLE,
 
-                        }else{
-                            aCells.push(new sap.m.Text({
-                                text:oItem.BINDTABLE
-                            }));
-
-                        }
-                    }else if(oItem.CONTROLTABLE==="INPUT"){
-                        aCells.push(new sap.m.Input({
-                            value:oItem.BINDTABLE,
-                            change:function(oEvent){
-                                let sValue = oEvent.getParameter("value"),
-                                oContext = oEvent.getSource().getBindingContext("DatosMaestro"),
-                                oContextMaster = oEvent.getSource().getBindingContext(),
-                                oItem = oContext.getObject(),
-                                oMaster=oContextMaster.getObject(),
-                                sCodigo;
-                                oMaster.fields.forEach(oField=>{
-                                    if(oField.readOnly){
-                                        sCodigo=oItem[oField.idField];
-                                    }
-                                });
-                                let oService=oMaster.services.find(serv=>serv.IDSERVICE==="update");
-                                oService.param.data=`|${sValue}|${sCodigo}|S`;
-                                that.getController().oModelMaestro.setProperty("/oSave",oService);
+                        // }));
+                        aCells.push(new sap.m.Text({
+                            text: {
+                                path: sPath,
+                                formatter: function(sPath) {
+                                    return that.formatTable(sPath);
+                                }
                             }
                         }));
                     }else if(oItem.ORDENMEW===1){
@@ -204,24 +197,16 @@ sap.ui.define([
                 }));
 
             }
-            // aCells.forEach((oCell)=>{
-            //      oCell.bindText('DatosMaestro>Planta')
-            // });
+
             let oColumnList = new ColumnListItem({
                 cells:aCells,
-                type:"Active",
                 press:function(oEvent){
                     // set property navigation
                     this.onNuevoMaestro(oEvent);
                 }.bind(this)
             });
-            // oColumnList.setNavigated();
             oControl.bindItems(oService.MODEL+">"+oService.PROPERTY,oColumnList);
          },
-
-        isNavigated:function(sNavigatedItemId, sItemId){
-			return sNavigatedItemId === sItemId;
-		},
 
          unsetItemsTable:function(){
              let oControl=this._oControl;
@@ -247,12 +232,6 @@ sap.ui.define([
             oButtonSearch,oButtonClean;
 
             aFields = oMaster.fields.filter(oField=>oField.CONTROLSEARCH);
-            if(param==="M13"){
-                aFields = aFields.filter(oField=>oField.KEYTAB==="T00"||oField.ORDENMEW<5);
-            }
-            if(param==="A"){
-                aFields=aFields.filter(oField=>oField.ORDENMEW>4&&oField.KEYPANEL);
-            }
             aFields.forEach(oCampo=>{
                oFormElement = new FormElement({label:oCampo.NAMEFIELD});
 
@@ -316,7 +295,9 @@ sap.ui.define([
         },
 
         buildControlInput:function(control,oCampo,oMaster,sId){
-            control = new sap.m.Input(oCampo.IDFIELD+sId,{
+            let idInput = oCampo.IDFIELD+sId;
+            if(oCampo.COMPONENT==="B03") idInput = idInput+"_R"
+            control = new sap.m.Input(idInput,{
                 value:"",
                 maxLength:oCampo.LENGTH,
                 required:oCampo.REQUIRED==="TRUE",
@@ -430,10 +411,13 @@ sap.ui.define([
 			sUrl = HOST2 + "/9acc820a-22dc-4d66-8d69-bed5b2789d3c.AyudasBusqueda.busqembarcaciones-1.0.0",
 			nameComponent = "busqembarcaciones",
 			idComponent = "busqembarcaciones",
-            oModel = oEvent.getSource().getBindingContext().getModel();
+            oModel = oEvent.getSource().getBindingContext().getModel(),
+            sIdInput = oEvent.getParameter("id"),
+            oInput = sap.ui.getCore().byId(sIdInput);
 
-            oModel.setProperty("/searchEmbar",{});
+            // oModel.setProperty("/searchEmbar",{});
             oModel.setProperty("/INPRP",INPRP);
+            oModel.setProperty("/input",oInput);
 
 			if(!this.DialogComponent){
 				this.DialogComponent = new sap.m.Dialog({
@@ -476,10 +460,16 @@ sap.ui.define([
 			this.DialogComponent.open();
         },
 
-        onCloseDialog:function(){
+        onCloseDialog:function(oEvent){
             let oDialog = oEvent.getSource().getParent();
             oDialog.close();
         },
+
+        /**
+         * Creacion de tabla
+         * @param {*} oMaster 
+         * @param {*} aFields 
+         */
 
         buildTable:function(oMaster,aFields){
             this.setColumnas(oMaster,aFields);
@@ -487,85 +477,10 @@ sap.ui.define([
         },
 
         /**
-         * Creacion de Formulario nuevo y editar
-         * @param {*} arrayCampos 
+         * Opden Impresion de vale details
+         * @param {*} oEvent 
          */
-        // setCamposNuevo:function(oMaster,param){
-        //     let oControl=this._oControl,
-        //     oServiceInit = oMaster.services.find(serv=>serv.INITSERVICE==="TRUE"),
-        //     oServiceTable = oMaster.services.find(serv=>serv.IDSERVICE==="TABLE"),
-        //     oFormContainer = new FormContainer(),
-        //     oFormElement={},
-        //     oItemTemplate,
-        //     control,
-        //     sBindEdit,
-        //     aFields =  oMaster.fields.filter(oField=>oField.CONTROLNEW);
-        //     // oDataEdit = this.getController().oModelMaestro.getProperty("/editar");
-        //      if(param)
-        //         aFields =  oMaster.fields.filter(oField=>oField.keyTab===param);
-            
-        //     aFields.forEach(oCampo=>{
-        //         if(oCampo.CONTROLNEW){
-        //             oFormElement = new FormElement({
-        //                 label:new sap.m.Label({text:oCampo.NAMEFIELD}),
-        //                 fields:[]
-        //             });
-        //             sBindEdit=`${oServiceTable.MODEL}>/${oCampo.IDFIELD}N`
-        //             control = this.getController().mFields[oCampo.IDFIELD+"N"];
-        //             if(!control){
-        //                 if (oCampo.CONTROLNEW==="INPUT"){
-        //                     control = new sap.m.Input(oCampo.IDFIELD+"N",{
-        //                         // value:oDataEdit?oDataEdit[oCampo.IDFIELD]:"",
-        //                         value:`{${sBindEdit}}`,
-        //                         placeholder:"Ingrese "+ oCampo.NAMEFIELD,
-        //                         editable:oCampo.READONLY==="TRUE"?false:true,
-        //                         showValueHelp:oCampo.COMPONENT?true:false,
-        //                         valueHelpRequest:function(){
-        //                             this.onSearchComponent(oMaster,oCampo,oCampo.IDFIELD+"N");   
-        //                         }.bind(this)
-        //                     })
-        //                 }else if(oCampo.CONTROLNEW==="COMBOBOX"){
-        //                     oItemTemplate = new sap.ui.core.ListItem({
-        //                         key:`{${oServiceInit.MODEL}>id}`,
-        //                         text:`{${oServiceInit.MODEL}>descripcion}`
-        //                     });
-        //                     control = new sap.m.ComboBox(oCampo.IDFIELD+"N",{
-        //                         placeholder:"Ingrese "+ oCampo.NAMEFIELD,
-        //                         selectedKey:sBindEdit,
-        //                         items: {
-        //                             path: `${oServiceInit.MODEL}>${oServiceInit.PROPERTY}/0/data`,
-        //                             template: oItemTemplate,
-        //                             templateShareable: false
-        //                         }
-        //                     })
-        //                 }else if(oCampo.CONTROLNEW==="FECHA"){
-        //                     control = new sap.m.DatePicker(oCampo.IDFIELD+"N",{
-                                
-        //                     })
-        //                 }else{
-        //                     control = new sap.m.Button(oCampo.IDFIELD+"N",{
-        //                         text:"Guardar",
-        //                         type:"Emphasized",
-        //                         press:function(oEvent){
-        //                             BusyIndicator.show(0);
-        //                             // this.setItems(arrayCampos)
-        //                             this.onBusquedaSimple(oEvent);
-        //                         }.bind(this)
-        //                     });
-        //                 }
-        //                 this.getController().mFields[oCampo.IDFIELD+"N"]=control;
-        //             };
-        //             control.bindProperty("value",sBindEdit);
-        //             oFormElement.addField(control);
-                    
-        //             oFormContainer.addFormElement(oFormElement);
-        //         }
-
-        //     });
-        //     oControl.addFormContainer(oFormContainer);
-        // },
-
-        openEditImpreVale:function(oEvent){
+        openEditImpreVale: async function(oEvent){
             let oContext = oEvent.getSource().getBindingContext("DATOSMAESTRO"),
             oModelMaster = this.getController().getModel("DATOSMAESTRO"),
             sPath = oContext.getPath(),
@@ -586,23 +501,19 @@ sap.ui.define([
             
             let oFragmentP = this.getController().mFragments["imprValeViv"];
             if(!oFragmentP){
-                oFragmentP = Fragment.load({
+                oFragmentP = await Fragment.load({
                     name:"com.tasa.config.fragments.impresionValeViveres.edit",
                     controller:this
-                }).then(oDialog=>{
-                    this.getView().addDependent(oDialog);
-                    return oDialog;  
-                })
+                });
+                
+                this.getView().addDependent(oFragmentP);
                 this.getController().mFragments["imprValeViv"]=oFragmentP;
             }
-            oFragmentP.then(oDialog=>{
-                // oModelMaster.setProperty("/detalle",oVale)
-                oDialog.bindElement({
-                    path:sPath,
-                    model:"DATOSMAESTRO"
-                })
-                oDialog.open()
+            oFragmentP.bindElement({
+                path:sPath,
+                model:"DATOSMAESTRO"  
             })
+            oFragmentP.open()
         },
 
         onGuardarImpreValViv:function(oEvent){
@@ -633,40 +544,6 @@ sap.ui.define([
             this.onCloseDialog(oEvent)
         },
 
-        onCloseDialog:function(oEvent){
-            let oDialog = oEvent.getSource().getParent();
-            oDialog.close();
-        },
-
-        /**
-         * Contenido para Embarcacion: Tab General
-         */
-
-         /**
-          * 
-          * @param {aItemsTabBar} aItemsTabBar 
-          */
-        setIconTabBar:function(aItemsTabBar){
-            let oControl=this._oControl, 
-            oIconTabBar = new IconTabBar({
-                select:function(oEvent){
-                    this.onFilterSelect(oEvent);
-                }.bind(this)
-            }),
-            oItemTab;
-            aItemsTabBar.forEach((oItem=>{
-                oItemTab=new sap.m.IconTabFilter({
-                    key : oItem.key,
-                    text : oItem.text,
-                    icon : oItem.icon,
-                    iconColor : oItem.iconColor
-                })
-                oIconTabBar.addItem(oItemTab);
-                oIconTabBar.addContent();
-            }));
-            oControl.addContent(oIconTabBar);
-        },
-
          /**
           * Eventos para tabla
           * @param {*} oEvent 
@@ -675,10 +552,12 @@ sap.ui.define([
          onNuevoMaestro:function(oEvent){
              let oContext = this.getControl().getBindingContext(),
              oContextData = oEvent.getSource().getBindingContext("DATOSMAESTRO"),
-             oDataMaster=oContextData.getObject(),
              oMaster = oContext.getObject(),
-             oModelMaster = oContext.getModel();
-             oMaster.fields.forEach(oField=>{
+             oModelMaster = oContext.getModel(),
+             oDataMaster;
+             
+             if(oContextData) oDataMaster=oContextData.getObject();
+            oMaster.fields.forEach(oField=>{
                 if(oField.CONTROLNEW){
                     if(!oDataMaster){
                         oModelMaster.setProperty(`/${oField.IDFIELD}N`,"")
@@ -690,8 +569,7 @@ sap.ui.define([
             if(oMaster["IDAPP"]==="C05"){
                 this.openEditImpreVale(oEvent);
             }else{
-
-                this.getController().crearFormNuevo(oMaster,oContextData);
+                this.getController().crearFormNuevo(oContextData);
             }
 
         },
@@ -912,27 +790,6 @@ sap.ui.define([
 
          onCleanSearch:function(oEvent){
             this.getController().cleanForm(oEvent);
-        },
-
-        onSearchComponent:function(oMaster,oCampo,sIdField){
-            let oComponent=Data.find(oElement=>oElement.idApp===oCampo.COMPONENT),
-            oService = oComponent.services.find(oServ=>oServ.INITSERVICE==="TRUE");
-            if(oService)
-                this.getView().getController()._getServiceBusqueda(oService,oMaster);
-            this.getView().getController()._openSearchComponent(oMaster,sIdField,oComponent);
-        },
-
-        /**
-         * Eventos para Dialog
-         */
-        
-        onFilterSelect:function(oEvent){
-             let oContext = oEvent.getSource().getBindingContext("ConfigMaestros"),
-             oMaestro = oContext.getObject(),
-             sSelectedKey=oEvent.getParameter("selectedKey"),
-             oIconTabBar=oEvent.getSource();
-             oIconTabBar.removeAllContent();
-             this.getController().changeFilterTab(oIconTabBar,sSelectedKey,oMaestro);
         }
 
     });

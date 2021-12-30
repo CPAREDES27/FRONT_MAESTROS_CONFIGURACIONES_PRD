@@ -4,7 +4,7 @@
 	xmlns:core="sap.ui.core">
     <form:Form
         editable="true"
-        binding = "{DATOSMAESTRO>/LISTACONTROLDECOMBUSTIBLE/0}">
+        binding = "{DATOSMAESTRO>/LISTAPRECIOSPESCA/0}">
         <form:title>
             <core:Title
                 emphasized="true"
@@ -30,9 +30,26 @@
                            </Select>
                        </form:fields>
                    </form:FormElement>
-                   <form:FormElement label="Clase de movimiento">
+                   <form:FormElement label="Moneda">
                        <form:fields>
-                           <Input value="{DATOSMAESTRO>BWART}" />
+                           <Select 
+                                selectedKey="{DATOSMAESTRO>CDMND}"
+                                forceSelection="false"
+                                items="{DATOSMAESTRO>/CDMND}">
+                                <core:Item
+                                    key="{DATOSMAESTRO>id}"
+                                    text="{DATOSMAESTRO>descripcion}"/>
+                           </Select>
+                       </form:fields>
+                   </form:FormElement>
+                   <form:FormElement label="% tolerancia por exceso de precio de compra">
+                       <form:fields>
+                           <Input value="{DATOSMAESTRO>PTEPC}" type="Number" />
+                       </form:fields>
+                   </form:FormElement>
+                   <form:FormElement label="% tolerancia por exceso de precio de venta">
+                       <form:fields>
+                           <Input value="{DATOSMAESTRO>PTDPV}" type="Number"/>
                        </form:fields>
                    </form:FormElement>
                </form:formElements>

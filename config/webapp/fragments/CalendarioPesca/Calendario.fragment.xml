@@ -25,6 +25,13 @@
 			<toolbarContent>
 				<Title text="Temporadas" titleStyle="H4"/>
 				<Button 
+					text="Seleccionar mes"
+					visible="{detailView>/visibleButtonAdd}" 
+					icon="sap-icon://add"
+					type="Ghost" 
+					press="onSelectMonth" 
+					tooltip="Seleccione todo los dias del mes actual"/>
+				<Button 
 					text="Habilitar"
 					visible="{detailView>/visibleButtonEnable}" 
 					icon="sap-icon://edit-outside"
@@ -38,7 +45,7 @@
 					visible="{detailView>/visibleButtonAdd}" 
 					icon="sap-icon://add" 
 					press="handleAppointmentCreate" 
-					tooltip="Add"/>
+					tooltip="Agregar temporada"/>
 				<ToggleButton pressed="{path: 'detailView>/legendShown'}" icon="sap-icon://legend"/>
 			</toolbarContent>
 			<rows>

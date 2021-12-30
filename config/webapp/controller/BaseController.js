@@ -76,6 +76,7 @@ sap.ui.define([
 		Count:0,
 
 		CountService:0,
+		
 		buildFragments:function(sNameFrag){
 			this.mFragments = this.mFragments || {};
             var oFragment = this.mFragments[sNameFrag];
@@ -96,10 +97,6 @@ sap.ui.define([
                 this.mFragments[sNameFrag] = oFragment;
             }
 			return oFragment;
-		},
-
-		getMessageDialogIterator: function(sTypeDialog,sMessage){
-
 		},
 		getMessageDialog:function(sTypeDialog,sMessage){
 			// if (!this.oWarningMessageDialog) {
@@ -134,6 +131,7 @@ sap.ui.define([
 					return await oFetch.json();
 				}else{
 					BusyIndicator.hide();
+					Log.error(`Status:${oFetch.status}, ${oFetch.statusText}`);
 					return null;
 				}
 			} catch (error) {

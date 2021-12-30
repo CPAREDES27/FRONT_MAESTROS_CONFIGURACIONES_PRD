@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/m/MessageBox",
 	"../lib/jszip",
-	"../lib/xlsx"
+	"../lib/xlsx",
+	"./Fragments"
 ], function (
 		BaseController, 
 		JSONModel, 
@@ -19,14 +20,14 @@ sap.ui.define([
 		Fragment,
 		MessageBox,
 		jszip,
-		xlsxjs) {
+		xlsxjs,
+		Fragments) {
 	"use strict";
 
 	// shortcut for sap.m.URLHelper
 	var URLHelper = mobileLibrary.URLHelper;
 
 	const HOST = "https://cf-nodejs-qas.cfapps.us10.hana.ondemand.com";
-	var oGlobalBusyDialog = new sap.m.BusyDialog();
 
 	return BaseController.extend("com.tasa.config.controller.Detail", {
 
@@ -50,8 +51,6 @@ sap.ui.define([
 
 			this.setModel(oViewModel, "detailView");
 
-			// this.getOwnerComponent().getModel().dataLoaded().then(this._onMetadataLoaded.bind(this));
-
 			// Contenedor de controles
 			this.mFields={};
 		},
@@ -74,6 +73,8 @@ sap.ui.define([
 
 			if(!oTable) oTable = sap.ui.getCore().byId(oEvent.getParameter("id"));
 
+			let oBinding = oTable.getBinding("items");
+			if(!oBinding) return;
 			// only update the counter if the length is final
 			if (oTable.getBinding("items").isLengthFinal()) {
 				if (iTotalItems) {
@@ -86,11 +87,37 @@ sap.ui.define([
 			}
 		},
 
-		/* =========================================================== */
-		/* begin: internal methods                                     */
-		/* =========================================================== */
+		/**
+		 * Set the full screen mode to false and navigate to master page
+		 */
+		 onCloseDetailPress: function () {
+			this.getModel("appView").setProperty("/actionButtonsInfo/midColumn/fullScreen", false);
+			// No item should be selected on master after detail page is closed
+			this.getOwnerComponent().oListSelector.clearMasterListSelection();
+			this.getRouter().navTo("master");
+		},
 
-		handleSelectFile: function (oEvent) {
+		/**
+		 * Toggle between full and non full screen mode.
+		 */
+		toggleFullScreen: function () {
+			var bFullScreen = this.getModel("appView").getProperty("/actionButtonsInfo/midColumn/fullScreen");
+			this.getModel("appView").setProperty("/actionButtonsInfo/midColumn/fullScreen", !bFullScreen);
+			if (!bFullScreen) {
+				// store current layout and go full screen
+				this.getModel("appView").setProperty("/previousLayout", this.getModel("appView").getProperty("/layout"));
+				this.getModel("appView").setProperty("/layout", "MidColumnFullScreen");
+			} else {
+				// reset to previous layout
+				this.getModel("appView").setProperty("/layout",  this.getModel("appView").getProperty("/previousLayout"));
+			}
+		},
+
+		/**
+		 * Event handler for select files in Carga de archivos
+		 * @param {event} oEvent 
+		 */
+		onHandleSelectFile: function (oEvent) {
 			let sIdUp = oEvent.getParameter("id"),
 			oContext = oEvent.getSource().getBindingContext(),
 			oModel = oContext.getModel();
@@ -104,12 +131,15 @@ sap.ui.define([
               this.mimeDet = mimeDet2;
               this.fileName = fileName2;
               this.fileDetails = fileDetails2;
-            // console.log(this.mimeDet , this.fileName, this.fileDetails);
             } else {
              sap.ui.getCore().fileUploadArr = [];
             }
         },
 
+		/**
+		 * Event handler for select files in Carga
+		 * @param {event} oEvent 
+		 */
 		onCargarArchivo:function(oEvent) {
 			let that = this;
 			let oModelMaster = this.getModel("DATOSMAESTRO");
@@ -126,15 +156,13 @@ sap.ui.define([
 					oWorkbook.SheetNames.forEach(function (sheetName) {
 						// Here is your object for every sheet in workbook
 						aData = XLSX.utils.sheet_to_row_object_array(oWorkbook.Sheets[sheetName]);
-
 					});
 					// let oSheet = oWorkbook.Sheets[oWorkbook.SheetNames[0]];
 					// let oData = XLSX.utils.sheet_to_json(oSheet);
-					console.log(aData);
 
 					// Generación dinámica
 					//Generar tabla
-					that.renderTableArchivos(aData);
+					that._renderTableArchivos(aData);
 					
 					/* aData.forEach(aItem => {
 						var aColumnArchivo = new sap.m.Column({
@@ -144,29 +172,365 @@ sap.ui.define([
 						})
 					}); */
 				};
-
 				reader.readAsBinaryString(oFile);
-
 			}
-
 
 			oModelMaster.setProperty("/listaArchivos",aData)
 		},
-		getTitulos: function(data) { // Encontrar todos los títulos del archivo
-			let titulos = [];
-			let keys;
-			data.forEach(item => {
-				keys = Object.keys(item);
-				keys.forEach(key => {
-					if(!titulos.includes(key)){
-						titulos.push(key);
-					}
-				});
-			});
 
-			return titulos;
+
+		/**
+		 * Event handler for button 'Subir' in Carga Archivos
+		 */
+		onBase64coonversionMethod: function () {
+			var self=this,
+			dataFinal=null,
+			fileMime = this.mimeDet,
+			fileName = this.fileName,
+			fileDetails = this.fileDetails,
+			DocNum = "001";
+
+			if (!FileReader.prototype.readAsBinaryString) {
+			 	FileReader.prototype.readAsBinaryString = function (fileData) {
+			  		var binary = "",
+			  		reader = new FileReader();
+
+					reader.onload = function (e) {
+			  			var bytes = new Uint8Array(reader.result),
+			   			length = bytes.byteLength;
+
+			   			for (var i = 0; i < length; i++) {
+							binary += String.fromCharCode(bytes[i]);
+			   			};
+			   			self.base64ConversionRes = btoa(binary);
+			   			sap.ui.getCore().fileUploadArr.push({
+							"DocumentType": DocNum,
+							"MimeType": fileMime,
+							"FileName": fileName,
+							"Content": self.base64ConversionRes,
+			   			});
+					};
+			 
+					reader.readAsArrayBuffer(fileData);
+			 	};
+			}
+
+			var base=null,
+			reader = new FileReader();
+
+			reader.onload = function (readerEvt) {
+				var binaryString = readerEvt.target.result;
+				self.base64ConversionRes = btoa(binaryString);
+				dataFinal=btoa(binaryString);
+			
+				self._enviarData(dataFinal,fileName);
+				
+			};
+			
+			if(!fileDetails){
+				MessageBox.error("Debe cargar un archivo antes de enviar");
+			}
+			this.fileDetails=null;
+			reader.readAsBinaryString(fileDetails);
 		},
-		renderTableArchivos: function(aDataExcel) {
+
+		onSuggestionItemSelected:function(oEvent){
+			let oRow = oEvent.getParameter("selectedRow"),
+			oInput = oEvent.getSource(),
+			oValue=oRow.getCells()[1].getText();
+			oInput.setDescription(oValue);
+		},
+
+		onSaveNewDistribFlota:function(oEvent){
+			this.Count = 0; 
+            this.CountService = 2;
+			let oModel = this.getModel("DATOSMAESTRO"),
+			oData = oModel.getProperty("/form"),
+			oContext = oEvent.getSource().getBindingContext(),
+			oMaster = oContext.getObject(),
+			oServiceUpdate = oMaster.services.find(oServ => oServ.IDSERVICE === "UPDATE"),
+			aOpcion = [],
+			sCase = oModel.getProperty("/caseUpdate");
+			if(!("CLSIS" in oData)){
+				oData = oEvent.getSource().getBindingContext("DATOSMAESTRO").getObject();
+			}
+			let oParam = {
+				data: "",
+				fieldWhere: sCase==="E" ? "CLSIS" : "",
+				flag: "",
+				keyWhere: oData["CLSIS"] || "",
+				opcion: aOpcion,
+				p_case: sCase,
+				p_user: "FGARCIA",
+				tabla: oServiceUpdate.TABLA
+			},
+			aKeys = Object.keys(oData);
+			aKeys.forEach(key=>{
+				aOpcion.push({
+					field: key,
+					valor: oData[key]
+				})
+			});
+			
+			oServiceUpdate.param = oParam;
+
+			this._updateService(oServiceUpdate,oMaster);
+			this.onCloseDialog(oEvent);
+		},
+
+		onCloseDialog:function(oEvent){
+			let oDialog = oEvent.getSource().getParent();
+			oDialog.close();
+		},
+
+		/**
+		 * Event handler for validation's combos
+		 * @param {event} oEvent 
+		 */
+		onHandleChange:function(oEvent){
+			let oValidatedComboBox = oEvent.getSource(),
+				sSelectedKey = oValidatedComboBox.getSelectedKey(),
+				sValue = oValidatedComboBox.getValue();
+
+			if (!sSelectedKey && sValue) {
+				oValidatedComboBox.setValueState("Error");
+				oValidatedComboBox.setValueStateText("Ingrese un dato válido");
+			} else {
+				oValidatedComboBox.setValueState("None");
+			}
+		},
+
+		/**
+		 * Evento del footer de la pagina
+		 */
+		 onGuardar:function(oEvent){
+			this.Count = 0; 
+            this.CountService = 2;
+			let oContext = oEvent.getSource().getBindingContext(),
+			oMaster = oContext.getObject(),
+			oServiceUpdate = oMaster.services.find(oServ=>oServ.IDSERVICE==="UPDATE"),
+			oModelMaster = this.getModel("DATOSMAESTRO"),
+			oDataUpdate = "",
+			aOpcion=[],
+			aKeys=[],
+			oFieldExist,
+			sFieldWhere,
+			sKeyWhere;
+
+			oDataUpdate = oModelMaster.getProperty("/LISTACONTROLDECOMBUSTIBLE/0");
+			if(!oDataUpdate) oDataUpdate = oModelMaster.getProperty("/LISTACONTROLDEVIVERES/0");
+			if(!oDataUpdate) oDataUpdate = oModelMaster.getProperty("/LISTACONFEVENTOSPESCA");
+			if(!oDataUpdate) oDataUpdate = oModelMaster.getProperty("/LISTAPRECIOSPESCA/0");
+			
+			switch(oMaster.IDAPP) {
+				case "C14":
+					BusyIndicator.show(0);
+					let aDataListaArchivos = oModelMaster.getProperty("/listaArchivos");
+					if(aDataListaArchivos && aDataListaArchivos.length > 0){
+						this.cargaDinamicaArchivos(aDataListaArchivos);
+					}
+					break;
+				case "C09":
+					oDataUpdate.HRCOR = this.formatter.setFormatHour(oDataUpdate["HRCOR"]);
+					// delete oDataUpdate.MATNR_ARRBPTO_CCP;
+					oServiceUpdate.param = {
+						estcmap: oDataUpdate,
+						p_user: "FGARCIA"
+					};
+					this._updateService(oServiceUpdate);
+					break;
+				default:
+					oServiceUpdate.param = {
+						data: "",
+						fieldWhere: "CLSIS",
+						flag: "",
+						keyWhere: oDataUpdate["CLSIS"],
+						opcion: aOpcion,
+						p_case: "E",
+						p_user: "FGARCIA",
+						tabla: oServiceUpdate["TABLA"]
+					};
+					
+					aKeys = Object.keys(oDataUpdate);
+					aKeys.forEach(key=>{
+						if(key !== "MANDT") aOpcion.push({field:key,valor:oDataUpdate[key]})
+					});
+					this._updateService(oServiceUpdate);
+			}
+		},
+
+		/* =========================================================== */
+		/* begin: internal methods                                     */
+		/* =========================================================== */
+
+		/**
+		 * Binds the view to the object path and expands the aggregated line items.
+		 * @function
+		 * @param {sap.ui.base.Event} oEvent pattern match event in route 'object'
+		 * @private
+		 */
+		 _onObjectMatched : function (oEvent) {
+			this.removeControls();
+			var sObjectId =  oEvent.getParameter("arguments").objectId;
+			this.getModel("appView").setProperty("/layout", "TwoColumnsMidExpanded");
+			this.getModel().dataLoaded().then( function() {
+				// var sObjectPath = this.getModel().createKey("Categories", {
+				// 	CategoryID :  sObjectId
+				// });
+				this._bindView("/listaConfig/" + sObjectId);
+			}.bind(this));
+		},
+
+		/**
+		 * Binds the view to the object path. Makes sure that detail view displays
+		 * a busy indicator while data for the corresponding element binding is loaded.
+		 * @function
+		 * @param {string} sObjectPath path to the object to be bound to the view.
+		 * @private
+		 */
+		 _bindView : function (sObjectPath) {
+			// Set busy indicator during view binding
+			var oViewModel = this.getModel("detailView");
+
+			// If the view was not bound yet its not busy, only if the binding requests data it is set to busy again
+			// oViewModel.setProperty("/busy", false);
+            
+			this.getView().bindElement({
+                path : sObjectPath,
+				events: {
+					change : this._onBindingChange.bind(this),
+					dataRequested : function () {
+                        oViewModel.setProperty("/busy", true);
+					},
+					dataReceived: function () {
+                        oViewModel.setProperty("/busy", false);
+					}
+				}
+			});
+		},
+
+		_onBindingChange : function () {
+			var oView = this.getView(),
+				oElementBinding = oView.getElementBinding();
+
+			// No data for the binding
+			if (!oElementBinding.getBoundContext()) {
+				this.getRouter().getTargets().display("detailObjectNotFound");
+				// if object could not be found, the selection in the master list
+				// does not make sense anymore.
+				this.getOwnerComponent().oListSelector.clearMasterListSelection();
+				return;
+			}
+
+            let oObject = oElementBinding.getBoundContext().getObject();
+
+            if(!oObject){
+                this.onCloseDetailPress();
+                return;
+            }
+			if(oObject.IDAPP === "C01") this._getValidCoord();
+			oObject.fields.sort((a,b)=>a.ORDENMEW - b.ORDENMEW);
+
+            // carga de servicios iniciales
+            let aServicesDom = oObject.services.filter(serv=>serv.TIPOPARAM === "DOMINIO"),
+			aServicesHelp = oObject.searchHelp.filter(oServ=>oServ.IDAPP !== "B03"),
+			aServiceTable = oObject.services.filter(serv=>serv.INITSERVICE === "TRUE" && serv.TIPOPARAM === "PARAM"),
+			aServicePesca = oObject.services.filter(serv=>serv.INITSERVICE === "TRUE" && serv.TIPOPARAM === ""),
+            aParams = [],
+            oDominio,
+            oDomService = {},
+			oTableService = {},
+			oModelMaster = this.getModel("DATOSMAESTRO");
+			oTableService.param = {};
+            oDomService.param = {},
+			
+			this.Count = 0;
+			this.CountService = 0;
+			if(aServicesHelp.length > 0) this.CountService = aServicesHelp.length;
+			if(aServicesDom.length > 0 ) this.CountService = this.CountService + 1;
+			if(aServiceTable.length > 0 ) this.CountService = this.CountService + 1;
+			if(aServicePesca.length > 0 ) this.CountService = this.CountService + 1;
+
+			// dominios
+            if(aServicesDom.length > 0){
+                BusyIndicator.show(0);
+                aServicesDom.forEach(serv=>{
+                    oDominio = {};
+                    oDominio.domname = serv.DOMNAME;
+                    oDominio.status = serv.STATUS_DOMNAME;
+                    aParams.push(oDominio);
+                    oDomService.PATH = serv.PATH;
+                    oDomService.MODEL = serv.MODEL;
+                });
+                oDomService.param.dominios = aParams;
+                this._getDataDominios(oDomService,oObject);
+            };
+            // ayudas de busqueda
+			if(aServicesHelp.length > 0){
+                aServicesHelp.forEach(oServ=>{
+                    oServ.param = {};
+                    oServ.param.nombreAyuda=oServ.TABLA
+                    oServ.p_user = "FGARCIA";
+                    this._getSearchingHelp(oServ,oObject);
+                });
+            };
+
+			// Tabla principal
+			if(aServiceTable.length > 0){
+				aServiceTable.forEach(oServ => {
+					oServ.param = {
+						delimitador: oServ.DELIMITADOR,
+						fields: [],
+						no_data: oServ.NO_DATA,
+						option: [],
+						options: [],
+						order: "",
+						p_user: "FGARCIA",
+						rowcount: oServ.ROWCOUNT_S,
+						rowskips: oServ.ROWSKIPS,
+						tabla: oServ.TABLA
+					};
+					oModelMaster.setProperty("/serviceBusqueda",oServ);
+					// oTableService.MODEL = oServ.MODEL;
+					// oTableService.PATH = oServ.PATH;
+					this._getReadTable(oServ,oObject);
+				});
+			};
+
+			// Servicios de pesca
+
+			if(aServicePesca.length > 0){
+				aServicePesca.forEach(oServ => {
+					oServ.param = {
+						p_user: "FGARCIA",
+					};
+					oModelMaster.setProperty("/serviceBusqueda",oServ);
+					this._getReadTable(oServ,oObject);
+				});
+			};
+
+
+			// header y content page
+			this._buildHeaderContent(oObject);
+			this._buildContent(oObject);
+		},
+
+		// getTitulos: function(data) { // Encontrar todos los títulos del archivo
+		// 	let titulos = [];
+		// 	let keys;
+		// 	data.forEach(item => {
+		// 		keys = Object.keys(item);
+		// 		keys.forEach(key => {
+		// 			if(!titulos.includes(key)){
+		// 				titulos.push(key);
+		// 			}
+		// 		});
+		// 	});
+
+		// 	return titulos;
+		// },
+
+		_renderTableArchivos: function(aDataExcel) {
 			let oModelMaster = this.getModel("DATOSMAESTRO");
 			oModelMaster.setProperty("/listaArchivos", aDataExcel);
 
@@ -209,392 +573,50 @@ sap.ui.define([
 				template: aRowArchivo
 			});
 		},
-		enviarData: function(data, fileName){
+		_enviarData: async function(data, fileName){
+			this.Count = 0;
+			this.CountService = 1;
 			let oModel = this.getModel(),
-			sIdUp = oModel.getProperty("/idUploader");
-			oGlobalBusyDialog.open();
-			var body={
+			sIdUp = oModel.getProperty("/idUploader"),
+			sUrl = HOST + "/api/cargaarchivos/CargaDescargaArchivos",
+			oBody={
 				"i_accion": "C",
 				"i_directorio": "/tasa/produce/archivos",
 				"i_filename": fileName,
 				"i_trama": data,
 				"I_PROCESOBTP":"CRGCOMPPRD",
 				"I_USER":"FGARCIA"
+			},
+			oSendFiles = await this.getDataService(sUrl,oBody);
+
+			if(oSendFiles){
+				var validador = oSendFiles.t_mensaje[0].DSMIN;	 
+				sap.ui.getCore().byId(sIdUp).setValue("");
+				if(validador === "Error en la carga"){
+					MessageBox.error(oSendFiles.t_mensaje[0].DSMIN);
+				}else{
+					this._moveFile(oSendFiles.t_mensaje[0].DSMIN);
+				}
+			}else{
+				MessageBox.error("Hubo un error en la carga, inténtelo nuevamente");
+				sap.ui.getCore().byId(sIdUp).setValue("");
 			}
-			// console.log(body);
-			fetch(`${HOST}/api/cargaarchivos/CargaDescargaArchivos`,
-					  {
-						  method: 'POST',
-						  body: JSON.stringify(body)
-					  })
-					  .then(resp => resp.json()).then(data => {
-						//   console.log(data);
-						//  console.log(data.t_mensaje[0].DSMIN);
-						 var validador = data.t_mensaje[0].DSMIN;
-						 
-						 sap.ui.getCore().byId(sIdUp).setValue("");
-						 if(data.t_mensaje[0].DSMIN === "Error en la carga"){
-							 oGlobalBusyDialog.close();
-							 MessageBox.error(data.t_mensaje[0].DSMIN);
-						 }else{
-							this.moveFile(data.t_mensaje[0].DSMIN);
-						 }
-						 
-					  }).catch(error => {
-						  oGlobalBusyDialog.close();
-						  MessageBox.error("Hubo un error en la carga, inténtelo nuevamente");
-						  sap.ui.getCore().byId(sIdUp).setValue("");
-					  }
-				);
 
 		},
-		moveFile: function(cadena){
-			oGlobalBusyDialog.open();
-			var body={
+		_moveFile: async function(cadena){
+			this.Count = 0;
+			this.CountService = 1;
+			var oBody={
 				"p_change": "",
 				"p_code": "1",
 				"p_user": "FGARCIA",
 				"p_valida": ""
-			};
+			},
+			sUrl = HOST + "/api/cargaarchivos/CargaArchivo",
+			oDataMoveFile = await this.getDataService(sUrl,oBody);
 
-			fetch(`${HOST}/api/cargaarchivos/CargaArchivo`,
-					{
-						  method: 'POST',
-						  body: JSON.stringify(body)
-					})
-					  .then(resp => resp.json()).then(data => {
-						
-						MessageBox.success(cadena+"\n"+data.mensaje);
-						oGlobalBusyDialog.close();
-					}).catch(error => {
-						MessageBox.error("Hubo un error en la carga, inténtelo nuevamente");
-						oGlobalBusyDialog.close();
-					}
-			);
-		},
-		base64coonversionMethod: function () {
-			var self=this;
-			var dataFinal=null;
-			var fileMime = this.mimeDet;
-			var fileName = this.fileName;
-			var fileDetails = this.fileDetails;
-			var DocNum = "001";
-			// console.log(fileMime,fileName,fileDetails);
-			var that = this;
-			if (!FileReader.prototype.readAsBinaryString) {
-			 FileReader.prototype.readAsBinaryString = function (fileData) {
-			  var binary = "";
-			  var reader = new FileReader();
-			  reader.onload = function (e) {
-			   var bytes = new Uint8Array(reader.result);
-			   var length = bytes.byteLength;
-			   for (var i = 0; i < length; i++) {
-				binary += String.fromCharCode(bytes[i]);
-			   }
-			   that.base64ConversionRes = btoa(binary);
-			   console.log("hola "+base64ConversionRes);
-			   sap.ui.getCore().fileUploadArr.push({
-				"DocumentType": DocNum,
-				"MimeType": fileMime,
-				"FileName": fileName,
-				"Content": that.base64ConversionRes,
-			   });
-			  };
-			 
-			  reader.readAsArrayBuffer(fileData);
-			 };
-			}
-			var base=null;
-			var reader = new FileReader();
-			reader.onload = function (readerEvt) {
-				// console.log(readerEvt);
-				var binaryString = readerEvt.target.result;
-				that.base64ConversionRes = btoa(binaryString);
-				dataFinal=btoa(binaryString);
-			
-				self.enviarData(dataFinal,fileName);
-				
-			};
-			
-			if(!fileDetails){
-				MessageBox.error("Debe cargar un archivo antes de enviar");
-			}
-			this.fileDetails=null;
-			reader.readAsBinaryString(fileDetails);
-			
-		   },
-
-		/**
-		 * Binds the view to the object path and expands the aggregated line items.
-		 * @function
-		 * @param {sap.ui.base.Event} oEvent pattern match event in route 'object'
-		 * @private
-		 */
-		_onObjectMatched : function (oEvent) {
-			this.removeControls();
-			var sObjectId =  oEvent.getParameter("arguments").objectId;
-			this.getModel("appView").setProperty("/layout", "TwoColumnsMidExpanded");
-			this.getModel().dataLoaded().then( function() {
-				// var sObjectPath = this.getModel().createKey("Categories", {
-				// 	CategoryID :  sObjectId
-				// });
-				this._bindView("/listaConfig/" + sObjectId);
-			}.bind(this));
-		},
-
-		/**
-		 * Binds the view to the object path. Makes sure that detail view displays
-		 * a busy indicator while data for the corresponding element binding is loaded.
-		 * @function
-		 * @param {string} sObjectPath path to the object to be bound to the view.
-		 * @private
-		 */
-		_bindView : function (sObjectPath) {
-			// Set busy indicator during view binding
-			var oViewModel = this.getModel("detailView");
-
-			// If the view was not bound yet its not busy, only if the binding requests data it is set to busy again
-			// oViewModel.setProperty("/busy", false);
-            
-			this.getView().bindElement({
-                path : sObjectPath,
-				events: {
-					change : this._onBindingChange.bind(this),
-					dataRequested : function () {
-                        oViewModel.setProperty("/busy", true);
-					},
-					dataReceived: function () {
-                        oViewModel.setProperty("/busy", false);
-					}
-				}
-			});
-			
-			
-            // oContext = oView.getBindingContext()
-            // if(oContext) oObject = oContext.getObject();
-            // if(!oContext) return;
-            // // Llamar a dominio 
-			// this.loadControls();
-
-			// if(!oObject){
-            //     this.onCloseDetailPress();
-            //     return;
-            // }
-            // oObject.fields.sort((a,b)=>a.ORDENMEW-b.ORDENMEW);
-
-			// let aServicesHelp = oObject.searchHelp.filter(oServ=>oServ.IDAPP!=="B03");
-			// this.cantServ = aServicesHelp.length,
-            // this.count = 0;
-            // this.countService = 2;
-			// if(aServicesHelp.length>0){
-            //     BusyIndicator.show(0);
-            //     aServicesHelp.forEach(oServ=>{
-            //         oServ.param={};
-            //         oServ.param.nombreAyuda=oServ.TABLA
-            //         oServ.p_user = "FGARCIA";
-            //         this._getSearchingHelp(oServ,oObject);
-            //     })
-            // }else{
-			// 	if(oObject["IDAPP"]==="C04"){
-			// 		this.buildContent(oObject);
-			// 	}else if(oObject["IDAPP"]==="C03"){
-			// 		let services = {},
-			// 		oParam = {
-			// 			dominios:[
-			// 				{
-			// 					"domname":"ZINEIF",
-			// 					"status":"A"
-			// 				}
-			// 			]
-			// 		};
-			// 		services.param = oParam;
-			// 		services.PATH = "/api/dominios/Listar";
-			// 		services.MODEL = "DATOSMAESTRO";
-			// 		this._getDataDominios(services,oObject);
-			// 		this.buildContent(oObject);
-			// 		this._getDataControlComb();
-
-			// 	}else if(oObject["IDAPP"]==="C02"||oObject["IDAPP"]==="C14"){
-			// 		this.buildHeaderContent(oObject);
-			// 		this.buildContent(oObject);
-			// 	}else{
-			// 		let oFieldsSearch = oObject.fields.filter(oField=>oField.CONTROLSEARCH);
-			// 		if(oFieldsSearch.length>0)
-			// 			this.buildHeaderContent(oObject);
-			// 		this.buildContent(oObject);
-			// 	}
-			// }
-
-			// let aServicesDom = oObject.services.filter(serv=>serv.TIPOPARAM==="DOMINIO"),
-			// aParams=[],
-			// oService={};
-			// oService.param={};
-			// if(aServicesDom.length>0){
-			// 	BusyIndicator.show(0);
-			// 	aServicesDom.forEach(serv=>{
-			// 		let oDominio={};
-			// 		oDominio.domname=serv.DOMNAME;
-			// 		oDominio.status=serv.STATUS_DOMNAME;
-			// 		aParams.push(oDominio);
-			// 		oService.PATH=serv.PATH;
-			// 		oService.MODEL=serv.MODEL;
-			// 	});
-			// 	oService.param.dominios=aParams;
-			// 	this._getDataDominios(oService,oObject);
-			// }else{
-			// 	let oServiceTable = oObject.services.find(serv=>serv.IDSERVICE==="TABLE");
-			// 	if(oServiceTable){
-            //         oServiceTable.param = {};
-            //         oServiceTable.param.delimitador=oServiceTable.DELIMITADOR;
-            //         oServiceTable.param.fields=[];
-            //         oServiceTable.param.no_data=oServiceTable.NO_DATA;
-            //         oServiceTable.param.option=[];
-            //         oServiceTable.param.options=[];
-            //         oServiceTable.param.order=oServiceTable.ORDER_S;
-            //         oServiceTable.param.p_user="FGARCIA";
-            //         oServiceTable.param.rowcount=oServiceTable.ROWCOUNT_S;
-            //         oServiceTable.param.rowskips=oServiceTable.ROWSKIPS;
-            //         oServiceTable.param.tabla=oServiceTable.TABLA;
-            //         this._getReadTable(oServiceTable,oObject);
-			// 	}
-			// }
-		},
-
-		_onBindingChange : function () {
-			var oView = this.getView(),
-				oElementBinding = oView.getElementBinding();
-
-			// No data for the binding
-			if (!oElementBinding.getBoundContext()) {
-				this.getRouter().getTargets().display("detailObjectNotFound");
-				// if object could not be found, the selection in the master list
-				// does not make sense anymore.
-				this.getOwnerComponent().oListSelector.clearMasterListSelection();
-				return;
-			}
-
-            let oObject = oElementBinding.getBoundContext().getObject();
-
-            if(!oObject){
-                this.onCloseDetailPress();
-                return;
-            }
-			if(oObject.IDAPP === "C01") this._getValidCoord();
-			oObject.fields.sort((a,b)=>a.ORDENMEW - b.ORDENMEW);
-
-            // carga de servicios iniciales
-            let aServicesDom = oObject.services.filter(serv=>serv.TIPOPARAM === "DOMINIO"),
-			aServicesHelp = oObject.searchHelp.filter(oServ=>oServ.IDAPP !== "B03"),
-			aServiceTable = oObject.services.filter(serv=>serv.INITSERVICE === "TRUE" && serv.TIPOPARAM === "PARAM"),
-            aParams = [],
-            oDominio,
-            oDomService = {},
-			oTableService = {};
-			oTableService.param = {};
-            oDomService.param = {};
-			
-			this.Count = 0;
-			this.CountService = 0;
-			if(aServicesHelp.length > 0) this.CountService = aServicesHelp.length;
-			if(aServicesDom.length > 0 ) this.CountService = this.CountService + 1;
-			if(aServiceTable.length > 0 ) this.CountService = this.CountService + 1;
-
-			// dominios
-            if(aServicesDom.length > 0){
-                BusyIndicator.show(0);
-                aServicesDom.forEach(serv=>{
-                    oDominio = {};
-                    oDominio.domname = serv.DOMNAME;
-                    oDominio.status = serv.STATUS_DOMNAME;
-                    aParams.push(oDominio);
-                    oDomService.PATH = serv.PATH;
-                    oDomService.MODEL = serv.MODEL;
-                });
-                oDomService.param.dominios = aParams;
-                this._getDataDominios(oDomService,oObject);
-            };
-            // ayudas de busqueda
-			if(aServicesHelp.length > 0){
-                aServicesHelp.forEach(oServ=>{
-                    oServ.param = {};
-                    oServ.param.nombreAyuda=oServ.TABLA
-                    oServ.p_user = "FGARCIA";
-                    this._getSearchingHelp(oServ,oObject);
-                });
-            };
-
-			// Tabla principal
-			if(aServiceTable.length > 0){
-				aServiceTable.forEach(oServ => {
-					oServ.param = {
-						delimitador: oServ.DELIMITADOR,
-						fields: [],
-						no_data: oServ.NO_DATA,
-						option: [],
-						options: [],
-						order: "",
-						p_user: "FGARCIA",
-						rowcount: oServ.ROWCOUNT_S,
-						rowskips: oServ.ROWSKIPS,
-						tabla: oServ.TABLA
-					};
-					// oTableService.MODEL = oServ.MODEL;
-					// oTableService.PATH = oServ.PATH;
-					this._getReadTable(oServ,oObject);
-				});
-			}
-
-			// header y content page
-			this._buildHeaderContent(oObject);
-			this._buildContent(oObject);
-		},
-
-		_onMetadataLoaded : function () {
-			// Store original busy indicator delay for the detail view
-			// var iOriginalViewBusyDelay = this.getView().getBusyIndicatorDelay(),
-			// 	oViewModel = this.getModel("detailView"),
-			// 	oLineItemTable = this.byId("lineItemsList"),
-			// 	iOriginalLineItemTableBusyDelay = oLineItemTable.getBusyIndicatorDelay();
-
-			// // Make sure busy indicator is displayed immediately when
-			// // detail view is displayed for the first time
-			// oViewModel.setProperty("/delay", 0);
-			// oViewModel.setProperty("/lineItemTableDelay", 0);
-
-			// oLineItemTable.attachEventOnce("updateFinished", function() {
-			// 	// Restore original busy indicator delay for line item table
-			// 	oViewModel.setProperty("/lineItemTableDelay", iOriginalLineItemTableBusyDelay);
-			// });
-
-			// // Binding the view will set it to not busy - so the view is always busy if it is not bound
-			// oViewModel.setProperty("/busy", true);
-			// // Restore original busy indicator delay for the detail view
-			// oViewModel.setProperty("/delay", iOriginalViewBusyDelay);
-		},
-
-		/**
-		 * Set the full screen mode to false and navigate to master page
-		 */
-		onCloseDetailPress: function () {
-			this.getModel("appView").setProperty("/actionButtonsInfo/midColumn/fullScreen", false);
-			// No item should be selected on master after detail page is closed
-			this.getOwnerComponent().oListSelector.clearMasterListSelection();
-			this.getRouter().navTo("master");
-		},
-
-		/**
-		 * Toggle between full and non full screen mode.
-		 */
-		toggleFullScreen: function () {
-			var bFullScreen = this.getModel("appView").getProperty("/actionButtonsInfo/midColumn/fullScreen");
-			this.getModel("appView").setProperty("/actionButtonsInfo/midColumn/fullScreen", !bFullScreen);
-			if (!bFullScreen) {
-				// store current layout and go full screen
-				this.getModel("appView").setProperty("/previousLayout", this.getModel("appView").getProperty("/layout"));
-				this.getModel("appView").setProperty("/layout", "MidColumnFullScreen");
-			} else {
-				// reset to previous layout
-				this.getModel("appView").setProperty("/layout",  this.getModel("appView").getProperty("/previousLayout"));
+			if (oDataMoveFile){
+				MessageBox.success(cadena+"\n"+oDataMoveFile.mensaje);
 			}
 		},
 
@@ -604,25 +626,30 @@ sap.ui.define([
 		 */
 		 _buildHeaderContent: async function(oObject){
 			let oControlHeader,
-			oDetailPage = this.getView().byId("detailPage");
+			oView = this.getView(),
+			oDetailPage = oView.byId("detailPage"),
+			sNameFrag;
 
-			if(oObject["IDAPP"] === "C02" || oObject["IDAPP"] === "C14"){
-				let sNameFrag ;
-				if(oObject["IDAPP"] === "C02") sNameFrag = "cargaArchivos";
-				if(oObject["IDAPP"] === "C14") sNameFrag="Carga";
-				oControlHeader = await Fragment.load({
-                    name:`com.tasa.config.fragments.${sNameFrag}.Form`,
-                    controller:this
-                });
-                
-				oDetailPage.addHeaderContent(oControlHeader);
-				
-			}else if( oObject["IDAPP"] === "C05" ){
-
-				let aFieldsForm =  oObject.fields.filter(oField => oField.CONTROLSEARCH);
-				oControlHeader = this.buildFragments("Form");
-				oControlHeader.buildForm(oObject,aFieldsForm);
-				oDetailPage.addHeaderContent(oControlHeader.getControl());
+			switch (oObject["IDAPP"]) {
+				case "C02":
+					sNameFrag = "cargaArchivos";
+				case "C14":
+					if(!sNameFrag) sNameFrag="Carga";
+					oControlHeader = await Fragment.load({
+						name:`com.tasa.config.fragments.${sNameFrag}.Form`,
+						controller:this
+					});
+					oView.addDependent(oControlHeader);
+					oDetailPage.addHeaderContent(oControlHeader);
+					break;
+				case "C05":
+					let aFieldsForm =  oObject.fields.filter(oField => oField.CONTROLSEARCH);
+					oControlHeader = this.buildFragments("Form");
+					oControlHeader.buildForm(oObject,aFieldsForm);
+					oDetailPage.addHeaderContent(oControlHeader.getControl());
+					break;
+				default:
+					break;
 			}
 				
 		},
@@ -635,76 +662,105 @@ sap.ui.define([
 			let oControlContent,
 			oModelMaster = this.getModel("DATOSMAESTRO"),
 			oModelView = this.getModel("detailView"),
-			oDetailPage = this.getView().byId("detailPage");
+			oDetailPage = this.getView().byId("detailPage"),
+			oView = this.getView(),
+			sNameFrag;
 
 			this.mFragments = this.mFragments || {};
+			// oModelMaster.setProperty("/visibleBtnNew", true);
+			// sap.ui.getCore().byId("idBotonNuevo").setVisible(true);
+			// let sNameFrag;
 
-			if(oObject["IDAPP"] === "C01"){
-				let currentDate = new Date(),
-				startDateMonth = new Date(currentDate.getFullYear(),currentDate.getMonth());
-				this.mFragments = this.mFragments || {};
-				oControlContent = this.mFragments["Calendario"];
-				if(!oControlContent) oControlContent = this.buildCalendarioPesca("Calendario");
-				oModelMaster.setProperty("/startDateInit",currentDate);
-				oModelView.setProperty("/legendShown",false);
-				oDetailPage.setContent(oControlContent.getControl());
-			} else if (/*oObject["IDAPP"] === "C02" || */oObject["IDAPP"] === "C14" ){
-				let sNameFrag;
-				if(oObject["IDAPP"] === "C02") sNameFrag = "cargaArchivos";
-				if(oObject["IDAPP"] === "C14") {
+			switch (oObject["IDAPP"]) {
+				case "C01":
+					let currentDate = new Date();
+					// startDateMonth = new Date(currentDate.getFullYear(),currentDate.getMonth());
+					oControlContent = this.mFragments["Calendario"];
+					if(!oControlContent) {
+						oControlContent = this.buildCalendarioPesca("Calendario");
+					}else{
+						let oCalendar = oControlContent._oFragment.getAggregation('mainContent')[0],
+						sStartDate = oCalendar.getStartDate(),
+						oContext=oCalendar.getBindingContext();
+						if(!oContext) oContext = this.getView().getBindingContext();
+						let oMaster=oContext.getObject();
+						this._getTemporadaPesca(oMaster,sStartDate);
+						oCalendar.setStartDate(new Date());
+					}
+					
+					oModelMaster.setProperty("/startDateInit",currentDate);
+					oModelView.setProperty("/legendShown",false);
+					oDetailPage.setContent(oControlContent.getControl());
+					break;
+				case "C14":
 					sNameFrag = "Carga";
 					oDetailPage.setShowFooter(true);
 					oModelView.setProperty("/visibleBtnSave", true);
 					oModelView.setProperty("/visibleBtnClean", true);
-				};
-				
-				let oControlContent = this.mFragments[`${sNameFrag}Table`];
-				if(!oControlContent){
+					oControlContent = this.mFragments[`${sNameFrag}Table`];
+					if(!oControlContent){
+						oControlContent = await Fragment.load({
+						name:`com.tasa.config.fragments.${sNameFrag}.Table`,
+							controller:this
+						});
+						oView.addDependent(oControlContent);
+						this.mFragments[`${sNameFrag}Table`] = oControlContent;
+					};
+					oDetailPage.setContent(oControlContent);
+					break;
+				case "C03":
+					sNameFrag = "controlCombus";
+				case "C11":
+					if(!sNameFrag) sNameFrag = "PreciosPesca";
 					oControlContent = await Fragment.load({
-					name:`com.tasa.config.fragments.${sNameFrag}.Table`,
+						name:`com.tasa.config.fragments.${sNameFrag}.form`,
 						controller:this
 					});
-					this.getView().addDependent(oControlContent);
-					this.mFragments[`${sNameFrag}Table`] = oControlContent;
-				};
-
-                oDetailPage.setContent(oControlContent);
-			
-			} else if (oObject["IDAPP"] === "C03"){
-				oControlContent = await Fragment.load({
-                    name:`com.tasa.config.fragments.controlCombus.form`,
-                    controller:this
-                });
-                oDetailPage.setContent(oControlContent);
-
-			} else if (oObject["IDAPP"] === "C04"){
-				let oVBox = new sap.m.VBox({});
-				let oFormFragment = await Fragment.load({
-					name:"com.tasa.config.fragments.controlViveres.form",
-					controller:this
-				});
-				oVBox.addItem(oFormFragment);
-				oDetailPage.setContent(oVBox);
-				oDetailPage.setShowFooter(true);
-				oModelView.setProperty("/visibleBtnSave", true);
-				oModelView.setProperty("/visibleBtnClean", false);
-			}else if(oObject["IDAPP"] === "C05" || oObject["IDAPP"] === "C07"){
-				let aFieldsTable = oObject.fields.filter(oField=>oField.CONTROLTABLE);
-				if(aFieldsTable.length > 0){
-					oControlContent = this.buildFragments("Table");
-					oControlContent.buildTable(oObject,aFieldsTable);
-					oControlContent.setItems(oObject);
-				}
-				oDetailPage.setContent(oControlContent.getControl());
-				
-			} else if (oObject["IDAPP"] === "C09" || oObject["IDAPP"] === "C11"){
-				let aSearchFields = oObject.fields.filter(oField=>oField.CONTROLSEARCH);
-				if(aSearchFields.length > 0){
-					oControlContent = this.buildFragments("Form");
-					// oControlContent.setTitle("Ingresar datos");
-				}
-				oDetailPage.setContent(oControlContent.getControl());
-			}
+					oView.addDependent(oControlContent);
+					oDetailPage.setContent(oControlContent);
+					oDetailPage.setShowFooter(true);
+					oModelView.setProperty("/visibleBtnSave", true);
+					oModelView.setProperty("/visibleBtnClean", false);
+					break;
+				case "C04":
+					sNameFrag = "controlViveres";
+				case "C09":
+					let oVBox = new sap.m.VBox({});
+					if(!sNameFrag) sNameFrag = "EventPesca";
+					let oFormFragment = await Fragment.load({
+						name:`com.tasa.config.fragments.${sNameFrag}.form`,
+						controller:this
+					});
+					oVBox.addItem(oFormFragment);
+					oView.addDependent(oVBox);
+					oDetailPage.setContent(oVBox);
+					oDetailPage.setShowFooter(true);
+					oModelView.setProperty("/visibleBtnSave", true);
+					oModelView.setProperty("/visibleBtnClean", false);
+					break;
+				case "C05":
+				case "C07":
+					let aFieldsTable = oObject.fields.filter(oField=>oField.CONTROLTABLE);
+					// if(oObject["IDAPP"] === "C05") oModelMaster.setProperty("/visibleBtnNew", false);
+					if(aFieldsTable.length > 0){
+						oControlContent = this.buildFragments("Table");
+						oControlContent.buildTable(oObject,aFieldsTable);
+						// oControlContent.setItems(oObject);
+					}
+					oDetailPage.setContent(oControlContent.getControl());
+					break;
+				case "C09":
+				case "C11":
+					let aSearchFields = oObject.fields.filter(oField=>oField.CONTROLSEARCH);
+					if(aSearchFields.length > 0){
+						oControlContent = this.buildFragments("Form");
+					}
+					oDetailPage.setContent(oControlContent.getControl());
+					break;
+				default:
+					break;
+			};
+			// this.getView().addDependent(oControlContent);
 		},
 
 		/**
@@ -713,9 +769,17 @@ sap.ui.define([
 		 * @param {*} oContextData 
 		 */
 
-		crearFormNuevo: async function(oMaster,oContextData){
-			let oModelMaster = oContextData.getModel(),
-			sTitleDialog = oContextData ? "Editar registro":"Nuevo registro";
+		crearFormNuevo: async function(oContextData){
+			let oModelMaster = this.getModel("DATOSMAESTRO"),
+			sTitleDialog = "Nuevo registro",
+			sPath = "/form";
+			oModelMaster.setProperty(sPath,{});
+			oModelMaster.setProperty("/caseUpdate","N");
+			if(oContextData){
+				sTitleDialog = "Editar registro";
+				sPath = oContextData.getPath();
+				oModelMaster.setProperty("/caseUpdate","E");
+			}
 			oModelMaster.setProperty("/titleDialogDistribFlota",sTitleDialog);
 			if(!this.editDialogDistrib){
 				this.editDialogDistrib = await Fragment.load({
@@ -724,21 +788,18 @@ sap.ui.define([
 				});
 				this.getView().addDependent(this.editDialogDistrib);
 			}
-			this.editDialogDistrib.bindElement("DATOSMAESTRO>"+oContextData.getPath());
+			this.editDialogDistrib.bindElement("DATOSMAESTRO>"+ sPath);
 			this.editDialogDistrib.open();
-		},
-
-		onCloseDialog:function(oEvent){
-			let oDialog = oEvent.getSource().getParent();
-			oDialog.close();
 		},
 
 		removeControls:function(){
 			let oView = this.getView(),
 			oDetailPage = oView.byId("detailPage"),
 			aHeaderContent = oDetailPage.getHeaderContent(),
-			oContentPage = oDetailPage.getContent();
+			oContentPage = oDetailPage.getContent(),
+			oModelMaster = this.getModel("DATOSMAESTRO");
 			oDetailPage.setShowFooter(false);
+			oModelMaster.setData({});
 			if(aHeaderContent.length > 0){
 				let aFormContainer,
 				aFormElement;
@@ -798,12 +859,6 @@ sap.ui.define([
 			let oRowSelection = oEvent.getParameter();
 		},
 
-		onSuggestionItemSelected:function(oEvent){
-			let oRow = oEvent.getParameter("selectedRow"),
-			oInput = oEvent.getSource(),
-			oValue=oRow.getCells()[1].getText();
-			oInput.setDescription(oValue);
-		},
 		cargaDinamicaArchivos: async function(listDataArchivos) {
 			let oModelMaestro = this.getModel("DATOSMAESTRO");
 			let tipoCarga = oModelMaestro.getProperty("/tipoCarga");
@@ -822,8 +877,6 @@ sap.ui.define([
 				.then(response => response.json())
 				.then(data => data);
 
-				console.log(result);
-
 				if(result.mensaje === "Ok") {
 					oTableArchivos.removeAllColumns();
 					oTableArchivos.unbindItems();
@@ -840,80 +893,20 @@ sap.ui.define([
 				MessageBox.error("Debe seleccionar un tipo de carga");
 			}
 		},
-		
-
-		/**
-		 * Evento del footer de la pagina
-		 */
-		onGuardar:function(oEvent){
-			BusyIndicator.show(0);
-			this.Count = 0; 
-            this.CountService = 2;
-			let oContext = oEvent.getSource().getBindingContext(),
-			oMaster = oContext.getObject(),
-			oServiceUpdate = oMaster.services.find(oServ=>oServ.IDSERVICE==="UPDATE"),
-			oModelMaster = this.getModel("DATOSMAESTRO"),
-			aDataUpdate = oModelMaster.getProperty("/LISTACONTROLDEVIVERES"),
-			aOpcion=[],
-			aKeys=[],
-			oFieldExist,
-			sFieldWhere,
-			sKeyWhere;
-
-			switch(oMaster.IDAPP) {
-				case "C14":
-					let aDataListaArchivos = oModelMaster.getProperty("/listaArchivos");
-					if(aDataListaArchivos && aDataListaArchivos.length > 0){
-						this.cargaDinamicaArchivos(aDataListaArchivos);
-					}
-					break;
-				case "C04":
-					aDataUpdate.forEach(item=>{
-						aKeys = Object.keys(item)
-						oMaster.fields.forEach(oField=>{
-							oFieldExist = aKeys.find(key=>key===oField.IDFIELD)
-							if(oFieldExist){
-								aOpcion.push({
-									field:oField.IDFIELD,
-									valor:item[oField.IDFIELD]
-								})
-							}
-							if(oField.ORDENMEW===1){
-								sFieldWhere=oField.IDFIELD;
-								sKeyWhere=item[oField.IDFIELD]
-							}
-						})
-					})
-					// oModelMaster.getProperty("/")
-					oServiceUpdate.param={
-						data:"",
-						fieldWhere:sFieldWhere,
-						keyWhere:sKeyWhere,
-						flag:"X",
-						opcion:aOpcion,
-						p_case:"E",
-						p_user:"FGARCIA",
-						tabla:oServiceUpdate.TABLA
-					}
-					
-					this._updateService(oServiceUpdate);
-					break;
-			}
-			
-			BusyIndicator.hide();
-		},
 
 		 /**
           * Consumiendo servicios
           * @param {*} oModel 
           */
-		 _getReadTable: async function(service,oMaster){
+		 _getReadTable: async function(service){
 			let oModel = this.getModel(service.MODEL),
 			sUrl = HOST + service.PATH,
 			aDatatable = await this.getDataService(sUrl, service.param);
 			
 			if(aDatatable){
-				oModel.setProperty(service.PROPERTY,aDatatable.data);
+				let aData = aDatatable.data;
+				if(!aData) aData = aDatatable.st_cmap;
+				oModel.setProperty(service.PROPERTY,aData);
 			}
 	     },
 
@@ -946,6 +939,12 @@ sap.ui.define([
 				oModelService.setProperty(`/name${service.IDAPP}`,aFieldsName);
 			}
 		},
+
+		/**
+		 * Calendario de temporada
+		 * @param {*} oObject 
+		 * @param {*} sStartDate 
+		 */
 		_getTemporadaPesca:function(oObject,sStartDate){
 			let oModelConfig = this.getModel("DATOSMAESTRO"),
 			sUrl = HOST+"/api/General/ConsultaGeneral/",
@@ -1110,40 +1109,25 @@ sap.ui.define([
 			})
 		},
 
-		_updateService: async function(oService,oMaster){
+		/**
+		 * Update services
+		 * @param {*} oService 
+		 * @param {*} oMaster 
+		 */
+		_updateService: async function(oService){
 			let sUrl = HOST+oService.PATH,
 			oModelMaster = this.getModel(oService.MODEL),
 			oUpdateData = await this.getDataService(sUrl,oService.param);
 			if(oUpdateData){
-				let sMessage = oUpdateData.t_mensaje[0].DSMIN;
+				// let sMessage = oUpdateData.t_mensaje[0].DSMIN;
+				let sMessage = oUpdateData.mensaje;
 				this.getMessageDialog("Success",sMessage);
 				let oSearchService = oModelMaster.getProperty("/serviceBusqueda");
-				this._getReadTable(oSearchService,oMaster);
+				this._getReadTable(oSearchService);
+			}else{
+				this.getMessageDialog("Error","No se pudo guardar");
 			}
 		},
-		/**
-		 *  Servicio para consumir la ayuda de busqueda
-		 * @param {object} oService 
-		 */
-		getDataSearchHelp:function(oService){
-            let sUrl = HOST+oService.PATH,
-            oModelMaster = this.getModel(oService.MODEL),
-             oDataUpdate=this.getDataService(sUrl, oService.param);
-             oDataUpdate
-             .then(data=>{
-                oModelMaster.setProperty("/dataEmbarcaciones",data);
-                oModelMaster.setProperty("/pageTable",{
-                    text:`Página ${oService.param.p_pag} de ${data.p_totalpag}`,
-                    page:oService.param.p_pag
-                });
-                 BusyIndicator.hide();
-                // this.mFragments["NewMaster"].getControl().close();
-                // this.getMessageDialog("Success",data.dsmin);
-             })
-			 .catch(error=>{
-				 console.log(error);
-			 })
-         },
 
 		 /**
 		  *  Serivicio para consumir detalle de app Impr. Vale de Viveres
@@ -1208,27 +1192,6 @@ sap.ui.define([
 				BusyIndicator.hide();
 				oModelMaster.setProperty("/listaControlComb",data.data[0])
 			})
-		 },
-
-		 onSaveControlCombus: async function(){
-			BusyIndicator.show(0);
-			let oModelMaster = this.getModel("DATOSMAESTRO"),
-			sUrl = HOST + "/api/General/Update_Table/",
-			oDataForm =  oModelMaster.getProperty("/LISTACONTROLDECOMBUSTIBLE/0"),
-			sData = `|${oDataForm["CLSIS"]}|${oDataForm["INEIF"]}|${oDataForm["BWART"]}|${oDataForm["MATNR"]}|${oDataForm["WERKS"]}|${oDataForm["CDUMD"]}`,
-			param = {
-				data: sData,
-				flag: "",
-				p_case: "E",
-				p_user: "FGARCIA",
-				tabla: "ZFLCCC"
-			  },
-			  oUpdateData = await this.getDataService(sUrl,param);
-
-			  if(oUpdateData){
-				  this.getMessageDialog("Success",oUpdateData.t_mensaje[0].DSMIN);
-				  BusyIndicator.hide();
-			  }
 		 }
 	});
 
