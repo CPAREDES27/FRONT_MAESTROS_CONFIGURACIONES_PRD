@@ -4,12 +4,10 @@ sap.ui.define([
 ], function (BaseController, JSONModel) {
 	"use strict";
 
-    const HOST = "https://cf-nodejs-qas.cfapps.us10.hana.ondemand.com";
-
 	return BaseController.extend("com.tasa.maestros.controller.App", {
 
 		onInit : function () {
-			var oViewModel,
+            var oViewModel,
 				fnSetAppNotBusy,
 				iOriginalBusyDelay = this.getView().getBusyIndicatorDelay();
 
@@ -38,29 +36,28 @@ sap.ui.define([
 			// apply content density mode to root view
 			this.getView().addStyleClass(this.getOwnerComponent().getContentDensityClass());
 
-			this._getListaMaestros(oViewModel);
-            // this._getCurrentUser(oViewModel);
+            this.host = this.getHostService();
+			this.Count = 0; 
+            this.CountService = 1;
+            this._getListaMaestros(oViewModel);
 		},
 
-		_getListaMaestros:function(oViewModel,sEmail){
+		_getListaMaestros: async function(oViewModel){
             let oModel = this.getModel(),
-            that = this,
+            oUser = await this._getCurrentUser(),
             iOriginalBusyDelay = this.getView().getBusyIndicatorDelay(),
-            sUrl = HOST+"/api/General/AppMaestros/",
+            sUrl = this.host+"/api/General/AppMaestros/",
             oParams = {
                 p_app: "",
-                // "p_rol": sEmail,
-                p_rol: "CTIRADO@XTERNAL.BIZ",
+                "p_rol": oUser.email,
                 p_tipo:"MAESTRO"
-            };
+            },
+            aDataMaster = await this.getDataService(sUrl, oParams);
 
-            let aDataMaster = this.getDataService(sUrl, oParams);
-            aDataMaster
-            .then(res=>res.json())
-            .then(data=>{
-                let aApps = data.t_tabapp,
-                aFields = data.t_tabfield,
-                aServices = data.t_tabservice,
+            if(aDataMaster){
+                let aApps = aDataMaster.t_tabapp,
+                aFields = aDataMaster.t_tabfield,
+                aServices = aDataMaster.t_tabservice,
                 aFieldsApp,
                 aServicesApp,
                 aSearchingHelpApp,
@@ -88,21 +85,9 @@ sap.ui.define([
                 });
                 oModel.setProperty("/listaMaestros",aApps);
                 oModel.setProperty("/helpFieldList",aFields);
+                oModel.setProperty("/user",oUser);
                 oViewModel.setProperty("/busy",false);
                 oViewModel.setProperty("/delay",iOriginalBusyDelay);
-            })
-            .catch(error=>{
-                this.getMessageDialog("Error", `Se presento un error: ${error}`);
-                oViewModel.setProperty("/busy",false);
-                oViewModel.setProperty("/delay",iOriginalBusyDelay);
-            })
-        },
-
-        _getCurrentUser: async function(oViewModel){
-            let oUserInfo = await sap.ushell.Container.getServiceAsync("UserInfo");
-            if(oUserInfo){
-                let sEmail = oUserInfo.getEmail().toUpperCase();
-                this._getListaMaestros(oViewModel,sEmail);
             }
         }
 

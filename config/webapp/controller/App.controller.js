@@ -4,9 +4,9 @@ sap.ui.define([
 ], function (BaseController, JSONModel) {
 	"use strict";
 
-	const HOST = "https://cf-nodejs-qas.cfapps.us10.hana.ondemand.com";
+	// const HOST = this.getHostService();
     // const USER_HOST = "https://current-user-qas.cfapps.us10.hana.ondemand.com";
-    const USER_HOST ="https://nodeapp-api-qas.cfapps.us10.hana.ondemand.com/";
+    // const USER_HOST ="https://nodeapp-api-qas.cfapps.us10.hana.ondemand.com/";
 	
 	return BaseController.extend("com.tasa.config.controller.App", {
 
@@ -39,20 +39,22 @@ sap.ui.define([
 
 			// apply content density mode to root view
 			this.getView().addStyleClass(this.getOwnerComponent().getContentDensityClass());
+
+            this.host = this.getHostService();
             this.Count = 0; 
             this.CountService = 1;
-			this._getListaMaestros(oViewModel);
-            // this._getCurrentUser(oViewModel);
+            this._getListaMaestros(oViewModel);
+
 		},
 
-		_getListaMaestros: async function(oViewModel,sEmail){
+		_getListaMaestros: async function(oViewModel){
             let oModel = this.getModel(),
+            oUser = await this._getCurrentUser(),
             iOriginalBusyDelay = this.getView().getBusyIndicatorDelay(),
-            sUrl = HOST+"/api/General/AppMaestros/",
+            sUrl = this.host+"/api/General/AppMaestros/",
             oParams = {
                 p_app: "",
-                // p_rol: sEmail,
-                p_rol: "CTIRADO@XTERNAL.BIZ",
+                p_rol: oUser.email,
 				p_tipo: "CONFIGURACIONES"
             },
             oDataMaestros = await this.getDataService(sUrl,oParams);
@@ -88,20 +90,12 @@ sap.ui.define([
                 });
                 oModel.setProperty("/listaConfig",aApps);
                 oModel.setProperty("/helpFieldList",aFields);
+                oModel.setProperty("/user",oUser);
             }else{
                 this.getMessageDialog("Information", `No se econtraron registros`);    
             }
             oViewModel.setProperty("/busy",false);
             oViewModel.setProperty("/delay",iOriginalBusyDelay);
-        },
-
-        _getCurrentUser: async function(oViewModel){
-            let oUserInfo = await sap.ushell.Container.getServiceAsync("UserInfo");
-            if(oUserInfo){
-                let sEmail = oUserInfo.getEmail().toUpperCase();
-                this._getListaMaestros(oViewModel,sEmail);
-            }
         }
-
 	});
 });

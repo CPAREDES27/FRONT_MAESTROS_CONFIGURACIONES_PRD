@@ -41,12 +41,14 @@ sap.ui.define([
             aDataEstados = oModelMaster.getProperty("/STATUS"),
             aDataTemporada =  oModelMaster.getProperty("/CDTPO"),
             aDataEstaImpr =  oModelMaster.getProperty("/ESIMP"),
+            aDataUnidadMed = oModelMaster.getProperty("/CDUPL"),
             oItem;
 
-            oItem = aDataIndProp.find(item=>item.id === sParam);
-            if(!oItem) oItem = aDataEstados.find(item=>item.id === sParam);
-            if(!oItem) oItem = aDataTemporada.find(item=>item.id === sParam);
-            if(!oItem) oItem = aDataEstaImpr.find(item=>item.id === sParam);
+            if(aDataIndProp) oItem = aDataIndProp.find(item=>item.id === sParam);
+            if(!oItem && aDataEstados) oItem = aDataEstados.find(item=>item.id === sParam);
+            if(!oItem && aDataTemporada) oItem = aDataTemporada.find(item=>item.id === sParam);
+            if(!oItem && aDataEstaImpr) oItem = aDataEstaImpr.find(item=>item.id === sParam);
+            if(!oItem && aDataUnidadMed) oItem = aDataUnidadMed.find(item=>item.id === sParam);
             if (oItem){
                 return oItem.descripcion;
             }else {

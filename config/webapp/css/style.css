@@ -1,0 +1,6 @@
+/* Enter your custom styles here */
+.sapUiCalendarAppContainer>.sapUiCalendarAppContainerLeft{
+    /* color: brown; */
+    /* background-color: brown; */
+    display: none !important;
+}

@@ -1,7 +1,9 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/core/routing/History"
-], function (Controller, History) {
+	"sap/ui/core/routing/History",
+	"sap/base/Log",
+	"sap/ui/core/BusyIndicator",
+], function (Controller, History,Log,BusyIndicator) {
 	"use strict";
 
 	return Controller.extend("com.tasa.maestros.controller.BaseController", {
@@ -60,6 +62,32 @@ sap.ui.define([
 				this.getRouter().navTo("master", {}, true);
 			}
 		},
+
+		/**
+		 * 
+		 * @returns url service
+		 */
+		 getHostService: function () {
+            var urlIntance = window.location.origin,
+            servicioNode ; 
+
+			if (urlIntance.indexOf('tasaqas') !== -1) {
+                servicioNode = 'qas'; // aputando a QAS
+            } else if (urlIntance.indexOf('tasaprd') !== -1) {
+                servicioNode = 'prd'; // apuntando a PRD
+            }else if(urlIntance.indexOf('localhost') !== -1){
+				servicioNode = 'cheerful-bat-js'; // apuntando a DEV
+			}else{
+				servicioNode = 'cheerful-bat-js'; // apuntando a DEV
+			}
+
+            return `https://cf-nodejs-${servicioNode}.cfapps.us10.hana.ondemand.com`;
+        },
+
+		Count:0,
+
+		CountService:0,
+		
 		getMessageDialog:function(sTypeDialog,sMessage){
 			let oMessageDialog;
 			if (!oMessageDialog) {
@@ -90,13 +118,61 @@ sap.ui.define([
 			return oControl;
 		},
 
-		getDataService:function(sUrl,oBody){
-			const oDataPromise = fetch(sUrl,{
-				method:'POST',
-				body:JSON.stringify(oBody)
-			});
-			return oDataPromise;
+		/**
+		 * Method for getting data from services
+		 * @param {*} sUrl 
+		 * @param {*} oBody 
+		 * @returns 
+		 */
+		getDataService: async function(sUrl,oBody){
+			try {
+				BusyIndicator.show(0);
+				this.Count++;
+				let oFetch = await fetch(sUrl,{
+					method:'POST',
+					body:JSON.stringify(oBody)
+				});
+				if(oFetch.status===200){
+					if(this.Count === this.CountService) BusyIndicator.hide();
+					return await oFetch.json();
+				}else{
+					BusyIndicator.hide();
+					Log.error(`Status:${oFetch.status}, ${oFetch.statusText}`);
+					return null;
+				}
+			} catch (error) {
+				Log.error(`Error:${error}`);
+				BusyIndicator.hide();
+				this.getMessageDialog("Error","No se pudo conectar");
+			}
 		},
+
+		/**
+		 * 
+		 * @returns User loggued
+		 */
+		_getCurrentUser: async function(){
+            let oUshell = sap.ushell,
+            oUser={};
+            if(oUshell){
+                oUser = await sap.ushell.Container.getServiceAsync("UserInfo");
+                let sEmail = oUser.getEmail().toUpperCase(),
+                sName = sEmail.split("@")[0],
+                sDominio= sEmail.split("@")[1];
+                if(sDominio === "XTERNAL.BIZ") sName = "FGARCIA";
+                oUser = {
+                    email:sEmail,
+                    name:sName
+                }
+            }else{
+                oUser = {
+                    email:"CTIRADO@XTERNAL.BIZ",
+                    name: "FGARCIA"
+                };
+            }
+			return oUser
+        },
+
 		paramDate:function(oDate){
 				let day = oDate.getDate()
 				let month = oDate.getMonth() + 1
@@ -107,6 +183,20 @@ sap.ui.define([
 				if(day < 10)
 					day = `0${day}`;
 				return `${year}${month}${day}`
+		},
+
+		/**
+		 *  Ingresa string dd/mm/yyyy ; retorna yyyymmdd
+		 * @param {string} sDate 
+		 * @returns 
+		 */
+		 formatDateInverse:function(sDate){
+			if(sDate){
+				let sNewDate =`${sDate.split("/")[2]}${sDate.split("/")[1]}${sDate.split("/")[0]}`;
+				return sNewDate;
+			}else{
+				return "";
+			}
 		},
 
 	});

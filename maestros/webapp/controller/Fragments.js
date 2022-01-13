@@ -473,8 +473,10 @@ sap.ui.define([
                 });
                 oFormElementButtom.addField(oButtonSearch);
                 oFormElementButtom.addField(oButtonClean);
-                oFormContainerButton.addFormElement(oFormElementButtom);
-                oControl.addFormContainer(oFormContainerButton)
+                // oFormContainerButton.addFormElement(oFormElementButtom);
+                // oControl.addFormContainer(oFormContainerButton);
+                oFormContainer.addFormElement(oFormElementButtom);
+                // oControl.addFormContainer(oFormContainer);
             }
             
         },
@@ -782,7 +784,9 @@ sap.ui.define([
                         })
                     }else if(oCampo.CONTROLNEW==="DATE"){
                         control = new sap.m.DatePicker(oCampo.IDFIELD+"N",{
-                            displayFormat:"dd/MM/yyyy"
+                            value:`{${sBindEdit}}`,
+                            displayFormat:"dd/MM/yyyy",
+                            valueFormat:"dd/MM/yyyy"
                         })
                     }else if(oCampo.CONTROLNEW==="CHECKBOX"){
                         control = new sap.m.CheckBox(oCampo.IDFIELD+"N",{
@@ -927,7 +931,8 @@ sap.ui.define([
          },
 
          onSaveHistCompet:function(oEvent){
-            BusyIndicator.show(0);
+            this.CountService = 1;
+            this.Count=0;
             let oContext = oEvent.getSource().getBindingContext(),
             oMaster = oContext.getObject(),
             oService = oMaster.services.find(oServ=>oServ["IDSERVICE"]==="CARGAMASIV"), 
@@ -997,7 +1002,8 @@ sap.ui.define([
 		},
             
          _saveNewEdit:function(oEvent){
-             BusyIndicator.show(0);
+            this.CountService = 4;
+            this.Count=0;
             let oMaster = oEvent.getSource().getBindingContext().getObject(),
              oModelMaster = this.getController().getModel("DATOSMAESTRO"),
              serv = oMaster.services.find(oServ=>oServ.IDSERVICE==="UPDATE"),
@@ -1047,6 +1053,8 @@ sap.ui.define([
                             sValue = oItem?.id;
                             if(!sValue) sValue = "";
                         }
+                    }else if(oField.CONTROLNEW==="DATE"){
+                        sValue = this.getController().formatDateInverse(sValue);
                     }
                     if(oField.ORDENMEW===1){
                         sFieldWhere = oField.IDFIELD
@@ -1066,35 +1074,6 @@ sap.ui.define([
                     }
                     sValue = ""; 
                  }
-                 
-                // oMaster.fields.forEach(oField=>{
-                //     oControl = this.getController().mFields[oField.IDFIELD+"N"];
-                //     sValue = oModelMaster.getProperty(`/${oField.IDFIELD}N`);
-                //     if(oField.CONTROLNEW==="COMBOBOX"){
-                //         if(oControl.getSelectedKey()!==""){
-                //             sValue=oControl.getSelectedKey();
-                //         }else{
-                //             let aData = oModelMaster.getProperty(`/${oField.IDFIELD}`),
-                //             oItem = aData.find(item=>item.descripcion===sValue);
-                //             sValue = oItem?.id;
-                //         }
-                //     }
-                //     if(oField.ORDENMEW===1){
-                //         sFieldWhere = oField.IDFIELD
-                //         sKeyWhere = sValue
-                //     }
-                //     if(oField.CONTROLNEW&&oField.READONLY==="FALSE"){
-                //         oOption={
-                //             field:oField.IDFIELD,
-                //             valor:sValue
-                //         }
-                //         aOption.push(oOption); 
-                //     }
-                //     if(oField.REQUIRED==="TRUE"&&sValue===""){
-                //         this.getController().getMessageDialog("Error","Ingrese el campo"+oField.NAMEFIELD)
-                //         return;
-                //     }
-                // });
                     
                 serv.param={
                     data: "",
@@ -1292,6 +1271,8 @@ sap.ui.define([
          * Eventos para Formulario basico
          */
         onBusquedaSimple:function(oEvent){
+            this.getController().Count=0;
+            this.getController().CountService = 1;
              let oContext = this._oControl.getBindingContext(),
              oMaestro = oContext.getObject(),
             //  oService = oMaestro.services.find(serv=>serv.TIPOPARAM==="PARAM"),

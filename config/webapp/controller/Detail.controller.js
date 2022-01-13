@@ -261,7 +261,7 @@ sap.ui.define([
 				keyWhere: oData["CLSIS"] || "",
 				opcion: aOpcion,
 				p_case: sCase,
-				p_user: "FGARCIA",
+				p_user:  this.sUserName,
 				tabla: oServiceUpdate.TABLA
 			},
 			aKeys = Object.keys(oData);
@@ -335,7 +335,7 @@ sap.ui.define([
 					// delete oDataUpdate.MATNR_ARRBPTO_CCP;
 					oServiceUpdate.param = {
 						estcmap: oDataUpdate,
-						p_user: "FGARCIA"
+						p_user:  this.sUserName
 					};
 					this._updateService(oServiceUpdate);
 					break;
@@ -347,7 +347,7 @@ sap.ui.define([
 						keyWhere: oDataUpdate["CLSIS"],
 						opcion: aOpcion,
 						p_case: "E",
-						p_user: "FGARCIA",
+						p_user:  this.sUserName,
 						tabla: oServiceUpdate["TABLA"]
 					};
 					
@@ -431,6 +431,11 @@ sap.ui.define([
 			if(oObject.IDAPP === "C01") this._getValidCoord();
 			oObject.fields.sort((a,b)=>a.ORDENMEW - b.ORDENMEW);
 
+			// confid user
+			let oModel = this.getModel(),
+            oUser = oModel.getProperty("/user");
+            this.sUserName = oUser.name;
+
             // carga de servicios iniciales
             let aServicesDom = oObject.services.filter(serv=>serv.TIPOPARAM === "DOMINIO"),
 			aServicesHelp = oObject.searchHelp.filter(oServ=>oServ.IDAPP !== "B03"),
@@ -470,7 +475,7 @@ sap.ui.define([
                 aServicesHelp.forEach(oServ=>{
                     oServ.param = {};
                     oServ.param.nombreAyuda=oServ.TABLA
-                    oServ.p_user = "FGARCIA";
+                    oServ.p_user =  this.sUserName;
                     this._getSearchingHelp(oServ,oObject);
                 });
             };
@@ -485,7 +490,7 @@ sap.ui.define([
 						option: [],
 						options: [],
 						order: "",
-						p_user: "FGARCIA",
+						p_user:  this.sUserName,
 						rowcount: oServ.ROWCOUNT_S,
 						rowskips: oServ.ROWSKIPS,
 						tabla: oServ.TABLA
@@ -502,7 +507,7 @@ sap.ui.define([
 			if(aServicePesca.length > 0){
 				aServicePesca.forEach(oServ => {
 					oServ.param = {
-						p_user: "FGARCIA",
+						p_user:  this.sUserName,
 					};
 					oModelMaster.setProperty("/serviceBusqueda",oServ);
 					this._getReadTable(oServ,oObject);
@@ -585,7 +590,7 @@ sap.ui.define([
 				"i_filename": fileName,
 				"i_trama": data,
 				"I_PROCESOBTP":"CRGCOMPPRD",
-				"I_USER":"FGARCIA"
+				"I_USER": this.sUserName
 			},
 			oSendFiles = await this.getDataService(sUrl,oBody);
 
@@ -609,7 +614,7 @@ sap.ui.define([
 			var oBody={
 				"p_change": "",
 				"p_code": "1",
-				"p_user": "FGARCIA",
+				"p_user":  this.sUserName,
 				"p_valida": ""
 			},
 			sUrl = HOST + "/api/cargaarchivos/CargaArchivo",
@@ -825,6 +830,7 @@ sap.ui.define([
 
 		cleanForm:function(sParam1,sParam2){
 			let oMaster,
+			oModelMaster = this.getModel("DATOSMAESTRO"),
 			control;
 			if(sParam2){
 				oMaster=sParam1;
@@ -832,7 +838,8 @@ sap.ui.define([
 				let oContext = sParam1.getSource().getBindingContext();
 				oMaster = oContext.getObject();
 			}
-		   let aDataFields = oMaster.fields.filter(oField=>oField.CONTROLSEARCH);
+		   let aDataFields = oMaster.fields.filter(oField=>oField.CONTROLSEARCH),
+		   oService = oMaster.services.find(oServ => oServ.IDSERVICE === "TABLE");
 
 		   aDataFields.forEach(oField=>{
 			   control=this.mFields[oField.IDFIELD+"0"];
@@ -852,6 +859,7 @@ sap.ui.define([
 					   control.setValue(100);
 			   }
 		   });
+		   oModelMaster.setProperty(oService.PROPERTY,[]);
 		   BusyIndicator.hide();
 		},
 
@@ -913,7 +921,8 @@ sap.ui.define([
 		_getDataDominios: async function(service,oMaster){
             let oModelMaster = this.getModel(service.MODEL),
             sUrl = HOST + service.PATH,
-            oGetDominios = await this.getDataService(sUrl, service.param);
+            oGetDominios = await this.getDataService(sUrl, service.param),
+			aServiceTable = oMaster.services.filter(serv=>serv.INITSERVICE === "TRUE" && serv.TIPOPARAM === "PARAM");
 
             if(oGetDominios){
                 let aServicesDom = oMaster.services.filter(serv=>serv.TIPOPARAM === "DOMINIO");
@@ -923,7 +932,29 @@ sap.ui.define([
                             oModelMaster.setProperty(`/${serv.IDSERVICE}`,dom.data);
                     });
                 });
-            }
+            };
+
+			// // Tabla principal
+			// if(aServiceTable.length > 0){
+			// 	aServiceTable.forEach(oServ => {
+			// 		oServ.param = {
+			// 			delimitador: oServ.DELIMITADOR,
+			// 			fields: [],
+			// 			no_data: oServ.NO_DATA,
+			// 			option: [],
+			// 			options: [],
+			// 			order: "",
+			// 			p_user:  this.sUserName,
+			// 			rowcount: oServ.ROWCOUNT_S,
+			// 			rowskips: oServ.ROWSKIPS,
+			// 			tabla: oServ.TABLA
+			// 		};
+			// 		oModelMaster.setProperty("/serviceBusqueda",oServ);
+			// 		// oTableService.MODEL = oServ.MODEL;
+			// 		// oTableService.PATH = oServ.PATH;
+			// 		this._getReadTable(oServ,oMaster);
+			// 	});
+			// };
         },
 	    _getSearchingHelp: async function(service,oObject){
 			let oModelService = this.getModel(service.MODEL),
@@ -954,7 +985,7 @@ sap.ui.define([
 			sEndDateFormat = this.paramDate(dateOut),
 			oBody={
 				nombreConsulta: "CONSGENCLDRTEMPFECHA",
-				p_user: "FGARCIA",
+				p_user:  this.sUserName,
 				parametro1: sStartDateFormat,
 				parametro2: sEndDateFormat,
 				parametro3: "",
@@ -1062,7 +1093,7 @@ sap.ui.define([
 			sUrl = HOST+"/api/General/ConsultaGeneral/",
 			oBody={
 				nombreConsulta: "CONSGENCONSTLAT",
-				p_user: "FGARCIA",
+				p_user:  this.sUserName,
 				parametro1: "",
 				parametro2: "",
 				parametro3: "",
@@ -1181,7 +1212,7 @@ sap.ui.define([
 					// }
 				],
 				"order": "",
-				"p_user": "FGARCIA",
+				"p_user":  this.sUserName,
 				"rowcount": 0,
 				"rowskips": 0,
 				"tabla": "ZFLCCC"

@@ -14,7 +14,6 @@ sap.ui.define([
 	CalendarioPesca,
 	DateFormat) {
 	"use strict";
-	const HOST = "https://cf-nodejs-qas.cfapps.us10.hana.ondemand.com";
 
 	return Controller.extend("com.tasa.config.controller.BaseController", {
 		/**
@@ -72,10 +71,32 @@ sap.ui.define([
 				this.getRouter().navTo("master", {}, true);
 			}
 		},
-
+		
 		Count:0,
 
 		CountService:0,
+
+		/**
+		 * 
+		 * @returns url service
+		 */
+		 getHostService: function () {
+            var urlIntance = window.location.origin,
+            servicioNode ; 
+
+			if (urlIntance.indexOf('tasaqas') !== -1) {
+                servicioNode = 'qas'; // aputando a QAS
+            } else if (urlIntance.indexOf('tasaprd') !== -1) {
+                servicioNode = 'prd'; // apuntando a PRD
+            }else if(urlIntance.indexOf('localhost') !== -1){
+				servicioNode = 'cheerful-bat-js'; // apuntando a DEV
+			}else{
+				servicioNode = 'cheerful-bat-js'; // apuntando a DEV
+			}
+
+            return `https://cf-nodejs-${servicioNode}.cfapps.us10.hana.ondemand.com`;
+        },
+
 		
 		buildFragments:function(sNameFrag){
 			this.mFragments = this.mFragments || {};
@@ -118,6 +139,12 @@ sap.ui.define([
 			this.oWarningMessageDialog.open();
 		},
 
+		/**
+		 * 
+		 * @param {*} sUrl 
+		 * @param {*} oBody 
+		 * @returns 
+		 */
 		getDataService:async function(sUrl,oBody){
 			try {
 				BusyIndicator.show(0);
@@ -140,6 +167,32 @@ sap.ui.define([
 				this.getMessageDialog("Error","No se pudo conectar");
 			}
 		},
+
+		/**
+		 * 
+		 * @returns User loggued
+		 */
+		 _getCurrentUser: async function(){
+            let oUshell = sap.ushell,
+            oUser={};
+            if(oUshell){
+                oUser = await sap.ushell.Container.getServiceAsync("UserInfo");
+                let sEmail = oUser.getEmail().toUpperCase(),
+                sName = sEmail.split("@")[0],
+                sDominio= sEmail.split("@")[1];
+                if(sDominio === "XTERNAL.BIZ") sName = "FGARCIA";
+                oUser = {
+                    email:sEmail,
+                    name:sName
+                }
+            }else{
+                oUser = {
+                    email:"CTIRADO@XTERNAL.BIZ",
+                    name: "FGARCIA"
+                };
+            }
+			return oUser
+        },
 
 		/**
 		 *  Recibe objecto Date y devuelce string dd/mm/yyyy

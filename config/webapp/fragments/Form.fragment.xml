@@ -2,7 +2,9 @@
     xmlns="sap.m"
     xmlns:c="sap.ui.core"
     xmlns:form="sap.ui.layout.form">
-    <form:Form title="Datos de selección">
+    <form:Form 
+        title="Datos de selección"
+        editable="true">
         <form:layout>
             <form:ResponsiveGridLayout 
             columnsXL="1"
