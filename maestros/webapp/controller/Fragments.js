@@ -931,8 +931,8 @@ sap.ui.define([
          },
 
          onSaveHistCompet:function(oEvent){
-            this.CountService = 1;
-            this.Count=0;
+            this.getController().CountService = 1;
+            this.getController().Count=0;
             let oContext = oEvent.getSource().getBindingContext(),
             oMaster = oContext.getObject(),
             oService = oMaster.services.find(oServ=>oServ["IDSERVICE"]==="CARGAMASIV"), 
@@ -1002,8 +1002,8 @@ sap.ui.define([
 		},
             
          _saveNewEdit:function(oEvent){
-            this.CountService = 4;
-            this.Count=0;
+            this.getController().CountService = 2;
+            this.getController().Count=0;
             let oMaster = oEvent.getSource().getBindingContext().getObject(),
              oModelMaster = this.getController().getModel("DATOSMAESTRO"),
              serv = oMaster.services.find(oServ=>oServ.IDSERVICE==="UPDATE"),

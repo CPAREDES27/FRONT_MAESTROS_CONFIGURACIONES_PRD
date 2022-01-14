@@ -658,7 +658,7 @@ sap.ui.define([
                 }else{
                     that.getMessageDialog("Error","No se resgitró");
                 }
-                this.CountService=3;
+                // this.CountService=4;
                 let oServiceBusqueda = oModel.getProperty("/serviceBusqueda");
                 if(!oServiceBusqueda){
                     oServiceBusqueda = oMaster.services.find(serv=>serv.IDSERVICE==="TABLE");

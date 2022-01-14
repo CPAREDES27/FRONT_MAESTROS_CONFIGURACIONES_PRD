@@ -221,21 +221,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Used to create GroupHeaders with non-capitalized caption.
-		 * These headers are inserted into the master list to
-		 * group the master list's items.
-		 * @param {Object} oGroup group whose text is to be displayed
-		 * @public
-		 * @returns {sap.m.GroupHeaderListItem} group header with non-capitalized caption.
-		 */
-		createGroupHeader : function (oGroup) {
-			return new GroupHeaderListItem({
-				title : oGroup.text,
-				upperCase : false
-			});
-		},
-
-		/**
 		 * Event handler for navigating back.
 		 * We navigate back in the browser historz
 		 * @public
@@ -256,9 +241,7 @@ sap.ui.define([
 				filterBarLabel: "",
 				delay: 0,
 				title: this.getResourceBundle().getText("masterTitleCount", [0]),
-				noDataText: this.getResourceBundle().getText("masterListNoDataText"),
-				sortBy: "CategoryID",
-				groupBy: "None"
+				noDataText: this.getResourceBundle().getText("masterListNoDataText")
 			});
 		},
 
