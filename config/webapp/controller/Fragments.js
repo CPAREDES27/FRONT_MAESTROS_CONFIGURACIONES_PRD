@@ -410,10 +410,8 @@ sap.ui.define([
             let oModelMaster = this.getController().getModel("DATOSMAESTRO"),
             oView = this.getView(),
             INPRP = oModelMaster.getProperty("/INPRP"),
-			sUrl = HOST2 + "/9acc820a-22dc-4d66-8d69-bed5b2789d3c.AyudasBusqueda.busqembarcaciones-1.0.0",
-			nameComponent = "busqembarcaciones",
-			idComponent = "busqembarcaciones",
             oModel = oEvent.getSource().getBindingContext().getModel(),
+            oContainer = oModel.getProperty("/busqembarcaciones"),
             sIdInput = oEvent.getParameter("id"),
             oInput = sap.ui.getCore().byId(sIdInput);
 
@@ -436,26 +434,13 @@ sap.ui.define([
 					})
 				});
 				oView.addDependent(this.DialogComponent);
-				oModel.setProperty("/idDialogComp",this.DialogComponent.getId());
 			}
+            oModel.setProperty("/idDialogComp",this.DialogComponent.getId());
 
-			let compCreateOk = function(){
-				BusyIndicator.hide()
-			}
+            oContainer.attachComponentCreated(function(evt){
+				BusyIndicator.hide();
+			});
 			if(this.DialogComponent.getContent().length===0){
-				BusyIndicator.show(0);
-				const oContainer = new sap.ui.core.ComponentContainer({
-					id: idComponent,
-					name: nameComponent,
-					url: sUrl,
-					settings: {},
-					componentData: {},
-					propagateModel: true,
-					componentCreated: compCreateOk,
-					height: '100%',
-					// manifest: true,
-					async: false
-				});
 				this.DialogComponent.addContent(oContainer);
 			}
 

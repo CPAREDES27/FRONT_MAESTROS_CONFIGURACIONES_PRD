@@ -51,18 +51,14 @@ sap.ui.define([
 
         formatter: formatter,
 
-        formatTable:function(sParam,oMaster){
+        formatTable:function(sParam,sFieldId){
             let oModelMaster = this.getController().getModel("DATOSMAESTRO"),
-            aFields = oMaster.fields,
-            aData,oItem;
-            if(!aFields) return sParam;
-            for (let oField of aFields) {
-                aData = oModelMaster.getProperty(`/${oField.IDFIELD}`)
-                if(aData && aData.length > 0){
-                    oItem = aData.find(item=>item.id === sParam);
-                    if(oItem) return oItem.descripcion;
-                }
-            } 
+            aData = oModelMaster.getProperty(`/${sFieldId}`),
+            oItem;
+            if(aData && aData.length > 0){
+                oItem = aData.find(item=>item.id === sParam);
+                if(oItem) return oItem.descripcion;
+            }
             return sParam;
         },
 
@@ -271,7 +267,7 @@ sap.ui.define([
                         text:{
                                 path:sPath,
                                 formatter: function(sPath) {
-                                    return that.formatTable(sPath,oMaster);
+                                    return that.formatTable(sPath,oItem.IDFIELD);
                                 }
                         }
                     }));
@@ -281,7 +277,7 @@ sap.ui.define([
                         value:{
                             path:sPath,
                             formatter: function(sPath) {
-                                return that.formatTable(sPath,oMaster);
+                                return that.formatTable(sPath,oItem.IDFIELD);
                             }
                         },
                         change:function(oEvent){
@@ -328,8 +324,15 @@ sap.ui.define([
                         }.bind(this)
                     }))
                 }else if(oItem.ORDENMEW===1){
+                    let sPath = oItem.BINDTABLE.replace(/[{}]/g,'');
                     aCells.push(new sap.m.ObjectStatus({
-                        text:oItem.BINDTABLE,
+                        text:{
+                            path: sPath,
+                            formatter: function(sPath) {
+                                return that.formatTable(sPath,oItem.IDFIELD);
+                            }
+                        },
+                        // text:oItem.BINDTABLE,
                         state:"Indication06"
                     }))
                 }
@@ -591,7 +594,11 @@ sap.ui.define([
                     cells:aCells
                 })
                 // const oService = app.services.find(serv=>serv.IDSERVICE==="Table")
-                control.bindSuggestionRows("AYUDABUSQUEDA>/"+oCampo.COMPONENT,oTemplate)
+                control.bindSuggestionRows({
+                    path:"AYUDABUSQUEDA>/"+oCampo.COMPONENT,
+                    length:9999,
+                    template:oTemplate
+                });
                 control.setShowSuggestion(true);
                 control.setValueState("Information");
                 control.setValueStateText("Selecione "+oCampo.NAMEFIELD);
@@ -612,10 +619,8 @@ sap.ui.define([
             let oModelMaster = this.getController().getModel("DATOSMAESTRO"),
             oView = this.getView(),
             INPRP = oModelMaster.getProperty("/INPRP"),
-			sUrl = HOST2 + "/9acc820a-22dc-4d66-8d69-bed5b2789d3c.AyudasBusqueda.busqembarcaciones-1.0.0",
-			nameComponent = "busqembarcaciones",
-			idComponent = "busqembarcaciones",
             oModel = oEvent.getSource().getBindingContext().getModel(),
+            oContainer = oModel.getProperty("/busqembarcaciones"),
             sIdInput = oEvent.getParameter("id"),
             oInput = sap.ui.getCore().byId(sIdInput);
 
@@ -638,26 +643,13 @@ sap.ui.define([
 					})
 				});
 				oView.addDependent(this.DialogComponent);
-				oModel.setProperty("/idDialogComp",this.DialogComponent.getId());
 			}
+            oModel.setProperty("/idDialogComp",this.DialogComponent.getId());
 
-			let compCreateOk = function(){
-				BusyIndicator.hide()
-			}
+            oContainer.attachComponentCreated(function(evt){
+				BusyIndicator.hide();
+			});
 			if(this.DialogComponent.getContent().length===0){
-				BusyIndicator.show(0);
-				const oContainer = new sap.ui.core.ComponentContainer({
-					id: idComponent,
-					name: nameComponent,
-					url: sUrl,
-					settings: {},
-					componentData: {},
-					propagateModel: true,
-					componentCreated: compCreateOk,
-					height: '100%',
-					// manifest: true,
-					async: false
-				});
 				this.DialogComponent.addContent(oContainer);
 			}
 
@@ -1016,6 +1008,7 @@ sap.ui.define([
              aOption=[],
              oControl;
              if(oMaster.IDAPP==="M13"){
+                this.getController().CountService = 1;
                  let aEmbarcacion = this.getDataEmbarcacion(oMaster.fields,oModelMaster),
                  aPermPescaEmbar = this.getDataPescaEmbar(oModelMaster),
                  aPermPescaEspec = this.getDataPescaEspec(oModelMaster),

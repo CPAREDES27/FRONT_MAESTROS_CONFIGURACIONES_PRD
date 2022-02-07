@@ -662,16 +662,26 @@ sap.ui.define([
                 let oServiceBusqueda = oModel.getProperty("/serviceBusqueda");
                 if(!oServiceBusqueda){
                     oServiceBusqueda = oMaster.services.find(serv=>serv.IDSERVICE==="TABLE");
-                    oServiceBusqueda.param={};
-                    oServiceBusqueda.param.delimitador=oServiceBusqueda.DELIMITADOR;
-                    oServiceBusqueda.param.fields=[];
-                    oServiceBusqueda.param.no_data=oServiceBusqueda.NO_DATA;
-                    oServiceBusqueda.param.option=[];
-                    oServiceBusqueda.param.options=[];
-                    oServiceBusqueda.param.order=oServiceBusqueda.ORDER_S;
-                    oServiceBusqueda.param.p_user=this.sUserName;
-                    oServiceBusqueda.param.rowskips=oServiceBusqueda.ROWSKIPS;
-                    oServiceBusqueda.param.tabla=oServiceBusqueda.TABLA;
+                    oServiceBusqueda.param = {
+                        delimitador: oServiceBusqueda.DELIMITADOR,
+                        fields: [],
+                        no_data:oServiceBusqueda.NO_DATA,
+                        option: [],
+                        options:    [],
+                        order:  oServiceBusqueda.ORDER_S,
+                        p_user: this.sUserName,
+                        rowskips:   oServiceBusqueda.ROWSKIPS,
+                        tabla:  oServiceBusqueda.TABLA,
+                    };
+                    // oServiceBusqueda.param.delimitador=oServiceBusqueda.DELIMITADOR;
+                    // oServiceBusqueda.param.fields=[];
+                    // oServiceBusqueda.param.no_data=oServiceBusqueda.NO_DATA;
+                    // oServiceBusqueda.param.option=[];
+                    // oServiceBusqueda.param.options=[];
+                    // oServiceBusqueda.param.order=oServiceBusqueda.ORDER_S;
+                    // oServiceBusqueda.param.p_user=this.sUserName;
+                    // oServiceBusqueda.param.rowskips=oServiceBusqueda.ROWSKIPS;
+                    // oServiceBusqueda.param.tabla=oServiceBusqueda.TABLA;
     
                     let oFieldRowCount = oMaster.fields.find(oField=>oField.IDFIELD==="ROWCOUNT");
                     oServiceBusqueda.param.rowcount=oFieldRowCount?"100":"";

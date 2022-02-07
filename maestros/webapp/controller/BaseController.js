@@ -76,7 +76,8 @@ sap.ui.define([
             } else if (urlIntance.indexOf('tasaprd') !== -1) {
                 servicioNode = 'prd'; // apuntando a PRD
             }else if(urlIntance.indexOf('localhost') !== -1){
-				servicioNode = 'cheerful-bat-js'; // apuntando a DEV
+				// servicioNode = 'cheerful-bat-js'; // apuntando a DEV
+				servicioNode = 'qas'; // aputando a QAS
 			}else{
 				servicioNode = 'cheerful-bat-js'; // apuntando a DEV
 			}
@@ -100,8 +101,10 @@ sap.ui.define([
                 sUrlSubaccount = 'tasaprd'; // apuntando a PRD
                 sParam = "IDH4_PRD"
             }else if(urlIntance.indexOf('localhost') !== -1){
-				sUrlSubaccount = 'tasadev'; // apuntando a DEV
-                sParam = "IDH4_DEV"
+				// sUrlSubaccount = 'tasadev'; // apuntando a DEV
+                // sParam = "IDH4_DEV"
+				sUrlSubaccount = 'tasaqas'; // aputando a QAS
+                sParam = "IDH4_QAS"
 			}else{
 				sUrlSubaccount = 'tasadev'; // apuntando a DEV
                 sParam = "IDH4_DEV"

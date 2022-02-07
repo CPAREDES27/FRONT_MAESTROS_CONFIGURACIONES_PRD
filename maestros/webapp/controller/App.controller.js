@@ -36,9 +36,11 @@ sap.ui.define([
 			// apply content density mode to root view
 			this.getView().addStyleClass(this.getOwnerComponent().getContentDensityClass());
 
+            let oModel = this.getModel();
+
             this.host = this.getHostService();
 			this.Count = 0; 
-            this.CountService = 1;
+            this.CountService = 2;
             this._getListaMaestros(oViewModel);
 		},
 
@@ -55,6 +57,8 @@ sap.ui.define([
             aDataMaster = await this.getDataService(sUrl, oParams);
 
             if(aDataMaster){
+                oModel.setProperty("/user",oUser);
+                this.getSearchingHelpId(oModel);
                 let aApps = aDataMaster.t_tabapp,
                 aFields = aDataMaster.t_tabfield,
                 aServices = aDataMaster.t_tabservice,
@@ -85,11 +89,70 @@ sap.ui.define([
                 });
                 oModel.setProperty("/listaMaestros",aApps);
                 oModel.setProperty("/helpFieldList",aFields);
-                oModel.setProperty("/user",oUser);
                 oViewModel.setProperty("/busy",false);
                 oViewModel.setProperty("/delay",iOriginalBusyDelay);
             }
-        }
+        },
+        getSearchingHelpId: async function(oModel){
+			let that = this, 
+            oUser = oModel.getProperty("/user"),
+			sAyudaBusqUrl = this.getHostService() +"/api/General/ConsultaGeneral/",
+			oAyudaBusqService = {                                         // parametros para Ayudas de Busqueda
+                name : "Ayuda de Búsqueda",
+                url : sAyudaBusqUrl,
+                param : {
+                    nombreConsulta: "CONSGENCONST",
+                    p_user: oUser.name,
+                    parametro1: this.getHostSubaccount().param,
+                    parametro2: "",
+                    parametro3: "",
+                    parametro4: "",
+                    parametro5: "",
+                    parametro6: ""
+                }
+            },
+			oAyudaBusqData = await this.getDataService(sAyudaBusqUrl,oAyudaBusqService.param);
+
+			if(oAyudaBusqData){
+                let aAyudaBusqData = oAyudaBusqData.data;
+                if(aAyudaBusqData.length > 0){
+                    oModel.setProperty("/ayudaBusqId",aAyudaBusqData[0].LOW);
+					this.getSerachingHelpComponents(oModel,aAyudaBusqData[0].LOW);
+                }else{
+                    this.setAlertMessage("information","No existen registros de la Ayuda de Búsqueda")
+                }
+            };
+
+		},
+
+		getSerachingHelpComponents:function(oModel,sAyudaBusqId){
+			let sUrlSubaccount = this.getHostSubaccount().url,
+			aSearchingHelp = ["busqembarcaciones"],
+			oComponent,
+			nameComponent,
+			idComponent,
+			urlComponent;
+			
+			aSearchingHelp.forEach(elem=>{
+				oComponent = {};
+				nameComponent = elem;
+				idComponent = elem;
+				urlComponent = `${sUrlSubaccount}/${sAyudaBusqId}.AyudasBusqueda.${elem}-1.0.0`;
+				oComponent = new sap.ui.core.ComponentContainer({
+					id:idComponent,
+					name:nameComponent,
+					url:urlComponent,
+					settings:{},
+					componentData:{},
+					propagateModel:true,
+					// componentCreated:comCreateOk,
+					height:'100%',
+					// manifest:true,
+					async:false
+				});
+				oModel.setProperty(`/${elem}`,oComponent);
+			});
+		}
 
 	});
 });
