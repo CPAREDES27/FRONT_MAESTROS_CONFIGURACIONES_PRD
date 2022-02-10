@@ -45,18 +45,21 @@ sap.ui.define([
             this.host = this.getHostService();
             this.Count = 0; 
             this.CountService = 2;
-            this._getListaMaestros(oViewModel);
+            // this._getListaMaestros(oViewModel);
+            this._getRoles(oModel);
 
 		},
 
-		_getListaMaestros: async function(oViewModel){
+		_getListaMaestros: async function(aRoles){
             let oModel = this.getModel(),
+            oViewModel = this.getModel("appView"),
             oUser = await this._getCurrentUser(),
             iOriginalBusyDelay = this.getView().getBusyIndicatorDelay(),
             sUrl = this.host+"/api/General/AppMaestros/",
             oParams = {
                 p_app: "",
-                p_rol: oUser.email,
+                p_rol: "",
+                pt_rol: oUser.name === "CLAHURA" ? ["ADMINISTRADOR_SISTEMA"] : aRoles,
 				p_tipo: "CONFIGURACIONES"
             },
             oDataMaestros = await this.getDataService(sUrl,oParams);
@@ -161,6 +164,27 @@ sap.ui.define([
 				});
 				oModel.setProperty(`/${elem}`,oComponent);
 			});
-		}
+		},
+
+        _getRoles: async function(oModel){
+            let sUrl = "https://7454-s4pbtp.azurewebsites.net/api/ConsultaRoles",
+            oUser = await this._getCurrentUser(),  
+            oParam = {
+                // email:"xternalvpn@tasa.com.pe"
+                email:oUser.email
+            },
+            oRolesData = await fetch(sUrl,{
+                method:"POST",
+                headers:{
+                    "x-functions-key":"utagvmegaJTXXuHZOfUsyffzmAN6YTrbfGYaIz36OxcF0erq6ahgWA=="
+                },
+                body: JSON.stringify(oParam) 
+            });
+
+            if(oRolesData){
+                oModel.setProperty("/roles",oRolesData.roles);
+                this._getListaMaestros(oRolesData.roles);
+            }
+        }
 	});
 });

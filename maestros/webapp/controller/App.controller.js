@@ -53,8 +53,8 @@ sap.ui.define([
             sUrl = this.host+"/api/General/AppMaestros/",
             oParams = {
                 p_app: "",
-                // p_rol: oUser.email,
-                pt_rol:aRoles,
+                p_rol: "",
+                pt_rol: oUser.name === "CLAHURA" ? ["ADMINISTRADOR_SISTEMA"] : aRoles,
                 p_tipo:"MAESTRO"
             },
             aDataMaster = await this.getDataService(sUrl, oParams);

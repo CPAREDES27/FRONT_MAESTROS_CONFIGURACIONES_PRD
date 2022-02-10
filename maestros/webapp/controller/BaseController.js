@@ -191,15 +191,15 @@ sap.ui.define([
                 let sEmail = oUser.getEmail().toUpperCase(),
                 sName = sEmail.split("@")[0],
                 sDominio= sEmail.split("@")[1];
-                if(sDominio === "XTERNAL.BIZ") sName = "FGARCIA";
+                if(sDominio === "XTERNAL.BIZ") sName = "CLAHURA";
                 oUser = {
                     email:sEmail,
                     name:sName
                 }
             }else{
                 oUser = {
-                    email:"CTIRADO@XTERNAL.BIZ",
-                    name: "FGARCIA"
+                    email:"CLAHURA@XTERNAL.BIZ",
+                    name: "CLAHURA"
                 };
             }
 			return oUser
