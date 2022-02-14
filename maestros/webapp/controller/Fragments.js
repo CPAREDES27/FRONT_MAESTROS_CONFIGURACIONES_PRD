@@ -40,8 +40,6 @@ sap.ui.define([
 		CSSColor = coreLibrary.CSSColor,
 		ValueState = coreLibrary.ValueState;
 
-    const HOST2 = "https://tasaqas.launchpad.cfapps.us10.hana.ondemand.com";
-
     return ManagedObject.extend("com.tasa.maestros.controller.Fragments",{
         constructor: function(oView,sFragName) {
 			this._oView = oView;

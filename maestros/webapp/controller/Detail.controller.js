@@ -560,11 +560,14 @@ sap.ui.define([
                  if(oMaster.IDAPP==="M20"){
                      let oTable = this.getView().byId("lineItemsList"),
                      aItems = oTable.getItems(),
-                     oCell;
+                     oCell,
+                     oButton;
                      aItems.forEach(oItem=>{
                          oCell = oItem.getCells()[2];
-                         oCell.addStyleClass(oCell.getText());
-                         oCell.setText("______");
+                         oButton = oItem.getCells()[4];
+                         oButton.setEnabled(false);
+                         oCell.addStyleClass(`${oCell.getText()}`);
+                         if(oCell.getText() === "______") oCell.setText("");
                      })
                  }
              }
