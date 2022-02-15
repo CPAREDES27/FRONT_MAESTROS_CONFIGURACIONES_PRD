@@ -538,11 +538,13 @@ sap.ui.define([
 		_renderTableArchivos: function(aDataExcel) {
 			let oModelMaster = this.getModel("DATOSMAESTRO");
 			oModelMaster.setProperty("/listaArchivos", aDataExcel);
+			oModelMaster.setProperty("/cantData", aDataExcel.length);
 
 			let aData = [...aDataExcel];
 			const titulos = aData.shift();
 
 			oModelMaster.setProperty("/listaArchivosView", aData);
+			
 
 			let oContainerTable = this.mFragments["CargaTable"];
 
@@ -897,8 +899,12 @@ sap.ui.define([
 				oModelMaestro.setProperty("/tipoCarga", undefined);
 				oModelMaestro.setProperty("/listaArchivos", []);
 				oModelMaestro.setProperty("/listaArchivosView", []);
+				oModelMaestro.setProperty("/cantData", []);
+				sap.ui.getCore().byId("idUploadFile").setValue("");
+				BusyIndicator.hide();
 			} else {
 				MessageBox.error("Debe seleccionar un tipo de carga");
+				BusyIndicator.hide();
 			}
 		},
 
@@ -1223,6 +1229,23 @@ sap.ui.define([
 				BusyIndicator.hide();
 				oModelMaster.setProperty("/listaControlComb",data.data[0])
 			})
+		 },
+		 onClearAll: function(){
+			let oModelMaestro = this.getModel("DATOSMAESTRO");
+			
+			let oContainerTable = this.mFragments["CargaTable"];
+			var oTableArchivos = oContainerTable.getContent()[0];
+
+			oTableArchivos.removeAllColumns();
+			oTableArchivos.unbindItems();
+
+			oModelMaestro.setProperty("/listaArchivos", []);
+			oModelMaestro.setProperty("/listaArchivosView", []);
+			oModelMaestro.setProperty("/cantData", []);
+
+						
+			sap.ui.getCore().byId("idTipo").setSelectedKey("");
+			sap.ui.getCore().byId("idUploadFile").setValue("");
 		 }
 	});
 

@@ -12,7 +12,7 @@
                 <form:formElements>
                     <form:FormElement label="Tipo">
                         <form:fields>
-                            <Select
+                            <Select id="idTipo"
                                 items="{path: 'DATOSMAESTRO>/ZDO_TPCARG'}"
                                 selectedKey="{DATOSMAESTRO>/tipoCarga}" 
                                 forceSelection="false">
@@ -30,7 +30,8 @@
                                 name="myFileUpload"
                                 uploadUrl="upload/"
                                 tooltip="Subir un archivo desde el servidor local"
-                                change="onCargarArchivo"/>
+                                change="onCargarArchivo"
+                                id="idUploadFile"/>
                             <!-- <Button
                                 text="Subir"
                                 icon="sap-icon://upload"
