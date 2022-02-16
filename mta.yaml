@@ -51,6 +51,10 @@ modules:
       - comtasaconfig.zip
       name: comtasaconfig
       target-path: resources/
+    - artifacts:
+      - comtasagestdoc.zip
+      name: comtasagestdoc
+      target-path: resources/
 - name: comtasamaestros
   type: html5
   path: maestros
@@ -64,6 +68,16 @@ modules:
 - name: comtasaconfig
   type: html5
   path: config
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: comtasagestdoc
+  type: html5
+  path: gestdoc
   build-parameters:
     build-result: dist
     builder: custom

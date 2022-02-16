@@ -6,7 +6,7 @@
         "clean": "rimraf resources mta_archives mta-op*",
         "build": "rimraf resources mta_archives && mbt build --mtar archive",
         "deploy": "cf8 deploy mta_archives/MasterConfig_0.0.1.mtar --retries 1",
-        "undeploy": "cf8 undeploy MasterConfig --delete-services --delete-service-keys"
+        "undeploy": "cf undeploy MasterConfig --delete-services --delete-service-keys"
     },
     "devDependencies": {
         "mbt": "^1.0.15",

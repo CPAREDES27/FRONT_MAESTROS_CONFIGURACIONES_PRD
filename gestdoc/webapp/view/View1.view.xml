@@ -1,0 +1,22 @@
+<mvc:View
+    controllerName="com.tasa.gestdoc.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc"
+    displayBlock="true"
+    xmlns="sap.m"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+    <Shell id="shell" appWidthLimited="false" >
+        <App id="app">
+            <pages>
+                <Page id="page" title="{i18n>title}">
+                    <content >
+                        <html:iframe 
+                            width="100%" 
+                            height="100%"
+                            src="https://app.powerbi.com/reportEmbed?reportId=330b189e-dba4-4b07-81a8-0308bae9ceb3&amp;autoAuth=true&amp;ctid=b7e26f48-2292-4a14-a355-1aeb8489ae3d&amp;config=eyJjbHVzdGVyVXJsIjoiaHR0cHM6Ly93YWJpLXNvdXRoLWNlbnRyYWwtdXMtcmVkaXJlY3QuYW5hbHlzaXMud2luZG93cy5uZXQvIn0%3D%22">
+                        </html:iframe> 
+                    </content>
+                </Page>
+            </pages>
+        </App>
+    </Shell>
+</mvc:View>
